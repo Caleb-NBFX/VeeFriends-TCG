@@ -1,0 +1,2502 @@
+[
+    {
+        "character": "5555 FAN",
+        "tier": "Tier 2",
+        "score": 70,
+        "aura": 23,
+        "skill": 23,
+        "stamina": 24,
+        "quote": "\"SOME PEOPLE LIKE BANDWAGONS. I LIKE FIVES.\"",
+        "image": "5555-fan-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "ACCOUNTABLE ANT",
+        "tier": "Tier 1",
+        "score": 72,
+        "aura": 25,
+        "skill": 23,
+        "stamina": 24,
+        "quote": "\"I KNOW A LOT OF YOU FEAR ACCOUNTABILITY, BUT I PROMISE YOU IT\u2019S THE UNLOCK TO HAPPINESS.\"",
+        "image": "accountable-ant-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "ACCOUNTABLE ANTEATER",
+        "tier": "Tier 4",
+        "score": 65,
+        "aura": 20,
+        "skill": 24,
+        "stamina": 21,
+        "quote": "\"BLAMING IS EASY, ACCOUNTABILITY IS HARD.\"",
+        "image": "accountable-anteater-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "ADAPTABLE ALIEN",
+        "tier": "Tier 4",
+        "score": 72,
+        "aura": 24,
+        "skill": 24,
+        "stamina": 24,
+        "quote": "\"YOUR ABILITY TO ADAPT IS THE KEY TO SURVIVING AND THRIVING IN CHALLENGING SITUATIONS.\"",
+        "image": "adaptable-alien-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "ADVENTEROUS ASTRONAUT",
+        "tier": "Tier 2",
+        "score": 70,
+        "aura": 23,
+        "skill": 24,
+        "stamina": 23,
+        "quote": "\"HOUSTON, WE HAVE AN OPPORTUNITY.\"",
+        "image": "adventurous-astronaut-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "ALERT APE",
+        "tier": "Tier 2",
+        "score": 71,
+        "aura": 24,
+        "skill": 23,
+        "stamina": 24,
+        "quote": "\"BEING ALERT GIVES YOU INSIGHT BEYOND SIGHT AND KEEPS YOU PREPARED TO ACT.\"",
+        "image": "alert-ape-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "ALPHA ALLIGATOR",
+        "tier": "Tier 3 - Rookie",
+        "score": 68,
+        "aura": 22,
+        "skill": 24,
+        "stamina": 22,
+        "quote": "\"THE INFORMATION CIRCULATOR\"",
+        "image": "alpha-alligator-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "AMBITIOUS ANGEL",
+        "tier": "Tier 4",
+        "score": 68,
+        "aura": 23,
+        "skill": 21,
+        "stamina": 24,
+        "quote": "\"WHEN YOU BELIEVE, YOU WILL ACHIEVE... ESPECIALLY WHEN YOU EXECUTE.\"",
+        "image": "ambitious-angel-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "AMIABLE ANCHOVY",
+        "tier": "Tier 3",
+        "score": 52,
+        "aura": 20,
+        "skill": 19,
+        "stamina": 13,
+        "quote": "\"LIFE IS EASIER WHEN YOU'RE NICE.\"",
+        "image": "amiable-anchovy-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "AMPED AYE AYE",
+        "tier": "Tier 3",
+        "score": 62,
+        "aura": 20,
+        "skill": 18,
+        "stamina": 24,
+        "quote": "\"WHEN YOU\u2019RE EXCITED BY THE RIGHT THINGS, THE RIGHT THINGS HAPPEN.\"",
+        "image": "amped-aye-aye-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "ARBITRAGING ADMIRAL",
+        "tier": "Tier 2",
+        "score": 73,
+        "aura": 24,
+        "skill": 25,
+        "stamina": 24,
+        "quote": "\"WHEN YOU FIND THE THING THAT OTHERS DON\u2019T SEE, THE OUTCOMES YOU DESIRE ARE ACHIEVED.\"",
+        "image": "arbitraging-admiral-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "ARTICULATE ARMADILLO",
+        "tier": "Tier 4",
+        "score": 58,
+        "aura": 18,
+        "skill": 21,
+        "stamina": 19,
+        "quote": "\"WORDS CAN BE WEAPONS OF DESTRUCTION OR TOOLS OF CREATION. CHOOSE CAREFULLY.\"",
+        "image": "articulate-armadillo-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "ASPRING ALPACA",
+        "tier": "Tier 4",
+        "score": 61,
+        "aura": 20,
+        "skill": 20,
+        "stamina": 21,
+        "quote": "\"YOUR DREAMS DON'T HAVE TO BE BIG, THEY JUST HAVE TO BE YOURS.\"",
+        "image": "aspiring-alpaca-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "AUTHENTIC ANACONDA",
+        "tier": "Tier 4",
+        "score": 63,
+        "aura": 23,
+        "skill": 21,
+        "stamina": 19,
+        "quote": "\"WHEN YOU'RE YOUR TRUE SSSSELF, OTHERS WILL FEEL IT. ESPECIALLY YOU.\"",
+        "image": "authentic-anaconda-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "AWESOME AFRICAN CIVET",
+        "tier": "Tier 4",
+        "score": 52,
+        "aura": 19,
+        "skill": 18,
+        "stamina": 15,
+        "quote": "\"EVERYBODY WANTS TO BE AWESOME, BUT ARE YOU WILLING TO PUT IN THE HARD WORK?\" ",
+        "image": "awesome-african-civet-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "BAD INTENTIONS",
+        "tier": "Tier 4",
+        "score": 58,
+        "aura": 17,
+        "skill": 22,
+        "stamina": 19,
+        "quote": "\"THE ROAD TO THE UNDERWORLD IS PAVED WITH GOOD INTENTIONS.\"",
+        "image": "bad-intentions-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "BAD-ASS BULLDOG",
+        "tier": "Tier 4",
+        "score": 53,
+        "aura": 17,
+        "skill": 15,
+        "stamina": 21,
+        "quote": "\"LET'S UNLEASH SOME ACTION.\"",
+        "image": "bad-ass-bulldog-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "BALANCED BEETLE",
+        "tier": "Tier 4",
+        "score": 60,
+        "aura": 20,
+        "skill": 20,
+        "stamina": 20,
+        "quote": "\"BEING CENTERED MEANS YOU'RE ALWAYS READY TO GO IN ANY DIRECTION.\"",
+        "image": "balanced-beetle-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "BASHFUL BLOBFISH",
+        "tier": "Tier 4",
+        "score": 60,
+        "aura": 20,
+        "skill": 23,
+        "stamina": 17,
+        "quote": "\"TRY NEW THINGS \u2014 EVEN WHEN IT'S REALLY UNCOMFY.\"",
+        "image": "bashful-blobfish-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "BE THE BIGGER PERSON",
+        "tier": "Tier 4",
+        "score": 67,
+        "aura": 24,
+        "skill": 21,
+        "stamina": 22,
+        "quote": "\"When times are most challenging - be the bigger person.\"",
+        "image": "be-the-bigger-person-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "BEFUDDLED BURGULAR",
+        "tier": "Tier 4",
+        "score": 73,
+        "aura": 24,
+        "skill": 25,
+        "stamina": 24,
+        "quote": "\"WHEN YOU\u2019RE CONFUSED AND DON\u2019T HAVE CLARITY, IT OFTEN LEADS TO MISSTEPS.\"",
+        "image": "befuddled-burglar-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "BENEVOLENT BARN OWL",
+        "tier": "Tier 4",
+        "score": 55,
+        "aura": 16,
+        "skill": 17,
+        "stamina": 22,
+        "quote": "\"GIVE WAY MORE THAN JUST ONE HOOT.\"",
+        "image": "benevolent-barn-owl-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "BIG GAME BANDICOOT",
+        "tier": "Tier 4",
+        "score": 63,
+        "aura": 20,
+        "skill": 22,
+        "stamina": 21,
+        "quote": "\"WHEN THE GAME IS ON THE LINE, I COME THROUGH.\"",
+        "image": "big-game-bandicoot-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "BOISTEROUS BEAVER",
+        "tier": "Tier 4",
+        "score": 57,
+        "aura": 20,
+        "skill": 16,
+        "stamina": 21,
+        "quote": "\"HARD WORK AND SUCCESS COME WITH BRAGGING RIGHTS!\"",
+        "image": "boisterous-beaver-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "BOLD AS FUCK BAT",
+        "tier": "Tier 4",
+        "score": 59,
+        "aura": 21,
+        "skill": 20,
+        "stamina": 18,
+        "quote": "\"DON'T BE AFRAID... TO BOLDLY MAKE YOUR PRESENCE KNOWN.\"",
+        "image": "bold-af-bat-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "BOMBASTIC BABOON",
+        "tier": "Tier 4",
+        "score": 58,
+        "aura": 19,
+        "skill": 21,
+        "stamina": 18,
+        "quote": "\"BANANAS FOR EVERYBODY!\"",
+        "image": "bombastic-baboon-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "BOSS BOBCAT",
+        "tier": "Tier 4",
+        "score": 68,
+        "aura": 22,
+        "skill": 24,
+        "stamina": 22,
+        "quote": "\"THE BEST BOSSES LEAD WITH KINDNESS.\"",
+        "image": "boss-bobcat-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "BRAVE BISON",
+        "tier": "Tier 4",
+        "score": 57,
+        "aura": 22,
+        "skill": 16,
+        "stamina": 19,
+        "quote": "\"WE'RE NOT BORN BRAVE. IT'S A CHOICE, EVERY DAY.\"",
+        "image": "brave-bison-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "BRILLIANT BARB",
+        "tier": "Tier 3",
+        "score": 54,
+        "aura": 18,
+        "skill": 17,
+        "stamina": 19,
+        "quote": "\"ALL YOU NEED IS A BRILLIANT PLAN.\"",
+        "image": "brilliant-barb-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "BRILLIANT BARRACUDA",
+        "tier": "Tier 4",
+        "score": 50,
+        "aura": 14,
+        "skill": 18,
+        "stamina": 18,
+        "quote": "\"SHARP TEETH, EVEN SHARPER MIND\"",
+        "image": "brilliant-barracuda-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "BUBBLY BUZZARD",
+        "tier": "Tier 4",
+        "score": 51,
+        "aura": 18,
+        "skill": 16,
+        "stamina": 17,
+        "quote": "\"OVERFLOWING! WITH! OPTIMISM!!!\"",
+        "image": "bubbly-buzzard-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "BULLISH BULL",
+        "tier": "Tier 3",
+        "score": 69,
+        "aura": 24,
+        "skill": 21,
+        "stamina": 24,
+        "quote": "\"IN OPPORTUNITY, YOU GOTTA BE HORNS FIRST \u2014 ALL IN.\"",
+        "image": "bullish-bull-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "CALM CLAM",
+        "tier": "Tier 4",
+        "score": 52,
+        "aura": 18,
+        "skill": 16,
+        "stamina": 18,
+        "quote": "\"BEAUTIFUL THINGS COME FROM BEING CALM. YOU CAN CREATE A REAL PEARL IF YOU'RE AT PEACE WITH YOURSELF.\"",
+        "image": "calm-clam-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "CANDID CLOWNFISH",
+        "tier": "Tier 4",
+        "score": 53,
+        "aura": 17,
+        "skill": 18,
+        "stamina": 18,
+        "quote": "\"NEVER SEPARATE THE KINDNESS FROM THE CANDOR.\"",
+        "image": "candid-clownfish-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "CAPABLE CATERPILLAR",
+        "tier": "Tier 4",
+        "score": 55,
+        "aura": 18,
+        "skill": 18,
+        "stamina": 19,
+        "quote": "\"DON'T YOU JUST LARVA GETTING THINGS DONE?",
+        "image": "capable-caterpillar-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "CARING CAMEL",
+        "tier": "Tier 4",
+        "score": 56,
+        "aura": 19,
+        "skill": 16,
+        "stamina": 21,
+        "quote": "\"IT'S COOL TO CARE.\"",
+        "image": "caring-camel-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "CHARISMATIC CHAMELEON",
+        "tier": "Tier 4",
+        "score": 56,
+        "aura": 19,
+        "skill": 19,
+        "stamina": 18,
+        "quote": "\"CAN'T WAIT TO SPEND SOME TIME WITH YOU.\"",
+        "image": "charismatic-chameleon-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "CHARMING CHEETAH",
+        "tier": "Tier 4",
+        "score": 59,
+        "aura": 18,
+        "skill": 19,
+        "stamina": 22,
+        "quote": "\"ALWAYS ON A CHARM OFFENSIVE\"",
+        "image": "charming-cheetah-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "CHEERFUL CHIPMUNK",
+        "tier": "Tier 3",
+        "score": 63,
+        "aura": 22,
+        "skill": 20,
+        "stamina": 21,
+        "quote": "\"NEVER TOO BUSY TO SPREAD SOME CHEER.\"",
+        "image": "cheerful-chipmunk-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "CHILL CHINCHILLA",
+        "tier": "Tier 4",
+        "score": 60,
+        "aura": 19,
+        "skill": 20,
+        "stamina": 21,
+        "quote": "\"A MASTER PRACTITIONER OF THE ART OF RELAXATION\"",
+        "image": "chill-chinchilla-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "CLEVER CROCODILE",
+        "tier": "Tier 4",
+        "score": 60,
+        "aura": 19,
+        "skill": 20,
+        "stamina": 21,
+        "quote": "\"CLEVER ENOUGH TO SURVIVE EXTINCTION.\"",
+        "image": "clever-crocodile-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "COMMON SENSE COW",
+        "tier": "Tier 4",
+        "score": 62,
+        "aura": 20,
+        "skill": 22,
+        "stamina": 20,
+        "quote": "\"Don't overthink it. This cow is made of common sense.\"",
+        "image": "common-sense-cow-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "COMPASSIONATE CATFISH",
+        "tier": "Tier 4",
+        "score": 63,
+        "aura": 20,
+        "skill": 22,
+        "stamina": 21,
+        "quote": "\"HOW YOU TREAT TOLERANT TUNA AND SHREWD SHARK IS HOW YOU TREAT YOURSELF.\"",
+        "image": "compassionate-catfish-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "COMPETITIVE CLOWN",
+        "tier": "Tier 4 - Rookie",
+        "score": 65,
+        "aura": 19,
+        "skill": 23,
+        "stamina": 23,
+        "quote": "\"THE BEST JUGGLER THERE IS. NO CONTEST.\"",
+        "image": "competitive-clown-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "CONFIDENT COBRA",
+        "tier": "Tier 4",
+        "score": 67,
+        "aura": 23,
+        "skill": 21,
+        "stamina": 23,
+        "quote": "\"YOU CAN'T BECOME A KING WITHOUT CONFIDENCE.\"",
+        "image": "confident-cobra-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "CONSIDERATE COWBOY",
+        "tier": "Tier 4",
+        "score": 69,
+        "aura": 23,
+        "skill": 23,
+        "stamina": 23,
+        "quote": "\"MIND YOUR MANNERS. THINK OF OTHERS. RIDE WITH INTEGRITY.\"",
+        "image": "considerate-cowboy-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "CONSISTENT COUGAR",
+        "tier": "Tier 4",
+        "score": 58,
+        "aura": 17,
+        "skill": 17,
+        "stamina": 24,
+        "quote": "\"THE JOURNEY IS THE REWARD. KEEP SHOWING UP.\"",
+        "image": "consistent-cougar-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "CONTENT CONDOR",
+        "tier": "Tier 4",
+        "score": 64,
+        "aura": 20,
+        "skill": 22,
+        "stamina": 22,
+        "quote": "\"EVERYBODY STARTS WITH ZERO FOLLOWERS. STOP JUDGING, MAKE CONTENT.\"",
+        "image": "content-condor-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "CONVICTION COCKROACH",
+        "tier": "Tier 4",
+        "score": 67,
+        "aura": 21,
+        "skill": 23,
+        "stamina": 23,
+        "quote": "\"DON'T CONVINCE, HAVE CONVICTION.\"",
+        "image": "conviction-cockroach-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "COURAGEOUS COCKATOO",
+        "tier": "Tier 4",
+        "score": 53,
+        "aura": 17,
+        "skill": 20,
+        "stamina": 16,
+        "quote": "\"NEVER LET FEAR RUFFLE YOUR FEATHERS.\"",
+        "image": "courageous-cockatoo-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "COURTEOUS COYOTE",
+        "tier": "Tier 4",
+        "score": 52,
+        "aura": 18,
+        "skill": 17,
+        "stamina": 17,
+        "quote": "\"ONE COURTEOUS GESTURE CAN MAKE SOMEONE'S ENTIRE DAY.\"",
+        "image": "courteous-coyote-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "CREATIVE CRAB",
+        "tier": "Tier 4",
+        "score": 62,
+        "aura": 21,
+        "skill": 20,
+        "stamina": 21,
+        "quote": "\"THERE ARE NO MISTAKES IN ART, ONLY INTERESTING ACCIDENTS.\"",
+        "image": "creative-crab-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "CURIOUS CRANE",
+        "tier": "Tier 4",
+        "score": 66,
+        "aura": 23,
+        "skill": 21,
+        "stamina": 22,
+        "quote": "\"HAVING THE HUMILITY TO BE CURIOUS AND ASK QUESTIONS IS HOW YOU GROW.\"",
+        "image": "curious-crane-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "CYNICAL CAT",
+        "tier": "Tier 4",
+        "score": 50,
+        "aura": 18,
+        "skill": 14,
+        "stamina": 18,
+        "quote": "\"IF YOU THINK CYNICISM IS BAD, ISN'T THAT... CYNICAL?\"\n",
+        "image": "cynical-cat-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "DAPPER DACHSHUND",
+        "tier": "Tier 4",
+        "score": 55,
+        "aura": 16,
+        "skill": 19,
+        "stamina": 20,
+        "quote": "\"THERE'S SOMETHING TO BE SAID FOR ALWAYS LOOKING SNAZZY.\"",
+        "image": "dapper-dachshund-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "DARING DRAGONFLY",
+        "tier": "Tier 4",
+        "score": 55,
+        "aura": 18,
+        "skill": 17,
+        "stamina": 19,
+        "quote": "\"DO THE UNCOMFORTABLE THING. I DARE YOU.\"",
+        "image": "daring-dragonfly-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "DECISIVE DUCK",
+        "tier": "Tier 4",
+        "score": 53,
+        "aura": 15,
+        "skill": 19,
+        "stamina": 19,
+        "quote": "\"MAKING DECISIONS FREES YOU TO MOVE FORWARD. ONWARD!\"\n",
+        "image": "decisive-duck-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "DEDICATED DRAGONFLY",
+        "tier": "Tier 4",
+        "score": 54,
+        "aura": 18,
+        "skill": 17,
+        "stamina": 19,
+        "quote": "\"IT'S NOT ABOUT HOW LONG YOU LIVE, IT'S ABOUT WHAT YOU DO WHILE YOUR WINGS ARE STILL FLUTTERING.\"\n",
+        "image": "dedicated-dragonfly-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "DETAIL-ORIENTED DUMBO OCTOPUS",
+        "tier": "Tier 4",
+        "score": 55,
+        "aura": 14,
+        "skill": 21,
+        "stamina": 20,
+        "quote": "\"IF YOU WANT THE JOB DONE RIGHT, CALL YOUR FRIEND D.O.D.O.\"",
+        "image": "detail-oriented-dumbo-octopus-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "DETERMINED DOLPHIN",
+        "tier": "Tier 3",
+        "score": 69,
+        "aura": 21,
+        "skill": 24,
+        "stamina": 24,
+        "quote": "\"KEEP ON SWIMMING, EVEN IF THE TIDES ARE TURNING.\"",
+        "image": "determined-dolphin-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "DIALED IN DOG",
+        "tier": "Tier 4",
+        "score": 63,
+        "aura": 20,
+        "skill": 23,
+        "stamina": 20,
+        "quote": "\"IF I WANT A BONE, I\u2019M GETTING A BONE. I\u2019M ALWAYS IN THE ZONE.\"",
+        "image": "dialed-in-dog-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "DIAMOND HANDS HEN",
+        "tier": "Tier 4",
+        "score": 64,
+        "aura": 20,
+        "skill": 24,
+        "stamina": 20,
+        "quote": "\"DIAMOND HANDS DON'T FREEZE IN THE WINTER.\"",
+        "image": "diamond-hands-hen-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "DOPE DODO",
+        "tier": "Tier 4",
+        "score": 50,
+        "aura": 20,
+        "skill": 17,
+        "stamina": 13,
+        "quote": "\"FROM MAKING BAD DECISIONS TO BEING BADASS\"",
+        "image": "dope-dodo-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "DRIVEN DRAGON",
+        "tier": "Tier 4",
+        "score": 65,
+        "aura": 21,
+        "skill": 23,
+        "stamina": 21,
+        "quote": "\"DREAMS CAN BE ACHIEVED WHEN YOU'VE GOT THE FIRE.\"",
+        "image": "driven-dragon-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "DYNAMIC DINOSAUR",
+        "tier": "Tier 4",
+        "score": 63,
+        "aura": 19,
+        "skill": 22,
+        "stamina": 22,
+        "quote": "\"THE BEST WAY TO NOT BECOME A FOSSIL IS TO STAY DYNAMIC.\"",
+        "image": "dynamic-dinosaur-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "EAGER EAGLE",
+        "tier": "Tier 4",
+        "score": 62,
+        "aura": 21,
+        "skill": 19,
+        "stamina": 22,
+        "quote": "\"EAGER SPIRIT, EAGLE EYE, ELEVATED RESULTS.\"",
+        "image": "eager-eagle-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "EARNEST ERMINE",
+        "tier": "Tier 4",
+        "score": 52,
+        "aura": 16,
+        "skill": 20,
+        "stamina": 16,
+        "quote": "\"AN UNSTOPPABLE FORCE INSIDE OF A FURRY EXTERIOR\"",
+        "image": "earnest-ermine-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "EMPATHY ELEPHANT",
+        "tier": "Tier 4",
+        "score": 73,
+        "aura": 24,
+        "skill": 25,
+        "stamina": 24,
+        "quote": "\"HERE FOR YOU IN A BIIIIIG WAY.\"",
+        "image": "empathy-elephant-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "ENAMOURED EMU",
+        "tier": "Tier 4",
+        "score": 54,
+        "aura": 17,
+        "skill": 17,
+        "stamina": 20,
+        "quote": "\"TOTALLY IN LOVE WITH LOVE\"",
+        "image": "enamoured-emu-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "ENERGETIC ELECTRIC EEL",
+        "tier": "Tier 4",
+        "score": 63,
+        "aura": 18,
+        "skill": 20,
+        "stamina": 25,
+        "quote": "\"CAN YOU (F)EEL THE ELECTRICITY ALL AROUND US?!?\"",
+        "image": "energetic-electric-eel-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "ENTREPRENEUR ELF",
+        "tier": "Tier 4",
+        "score": 71,
+        "aura": 24,
+        "skill": 24,
+        "stamina": 23,
+        "quote": "\"SMALL IN STATURE, BIG IN DREAMS.\"",
+        "image": "entrepreneur-elf-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "FAITHFUL PHESANT",
+        "tier": "Tier 4",
+        "score": 53,
+        "aura": 19,
+        "skill": 16,
+        "stamina": 18,
+        "quote": "\"FAITHFULNESS, FAMILY, FEATHERS\"\n",
+        "image": "faithful-pheasant-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "FEARLESS FAIRY",
+        "tier": "Tier 3 - Rookie",
+        "score": 67,
+        "aura": 24,
+        "skill": 22,
+        "stamina": 21,
+        "quote": "\"FACING FEARS IS WHAT WILL MAKE YOU FLY.\"",
+        "image": "fearless-fairy-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "FLEX'N FOX",
+        "tier": "Tier 1",
+        "score": 70,
+        "aura": 24,
+        "skill": 23,
+        "stamina": 23,
+        "quote": "\"HASHTAG NOT-HUMBLE BRAG\"",
+        "image": "flexn-fox-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "FLY FIREFLY",
+        "tier": "Tier 4",
+        "score": 56,
+        "aura": 19,
+        "skill": 19,
+        "stamina": 18,
+        "quote": "\"HOW TO BE FLY: BE YOURSELF. DO THIS AND YOUR LIGHT WILL SHINE BRIGHT.\"",
+        "image": "fly-firefly-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "FOCUSED FALCON",
+        "tier": "Tier 2",
+        "score": 69,
+        "aura": 22,
+        "skill": 23,
+        "stamina": 24,
+        "quote": "\"THE SHARPER THE FOCUS, THE WIDER THE WINGSPAN.\"",
+        "image": "focused-falcon-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "FOREVER PHOENIX",
+        "tier": "Tier 4",
+        "score": 72,
+        "aura": 24,
+        "skill": 23,
+        "stamina": 25,
+        "quote": "\"DON'T STRESS \u2014 YOU'VE GOT DECADES LEFT TO RISE.\"",
+        "image": "forever-phoenix-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "FORGIVING HORNED FROG",
+        "tier": "Tier 4",
+        "score": 53,
+        "aura": 20,
+        "skill": 18,
+        "stamina": 15,
+        "quote": "\"FORGIVENESS IS A SUPERPOWER THAT EVERYONE POSSESSES.\"\n",
+        "image": "forgiving-horned-frog-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "FORTHRIGHT FLAMINGO",
+        "tier": "Tier 2",
+        "score": 72,
+        "aura": 24,
+        "skill": 24,
+        "stamina": 24,
+        "quote": "\"TELL 'EM HOW YOU REALLY FEEL.\"",
+        "image": "forthright-flamingo-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "FUCK YOU MONDAY MOLE",
+        "tier": "Tier 4",
+        "score": 62,
+        "aura": 20,
+        "skill": 20,
+        "stamina": 22,
+        "quote": "\"WHAT IF I TOLD YOU THIS WAS THE LAST MONDAY MORNING OF YOUR LIFE?\"",
+        "image": "fu-monday-mole-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "GARY BEE",
+        "tier": "Tier 3",
+        "score": 66,
+        "aura": 23,
+        "skill": 22,
+        "stamina": 21,
+        "quote": "\"THROW UP THE 5 TO THE HIVE!\"",
+        "image": "gary-bee-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "GENEROUS GERBIL",
+        "tier": "Tier 4",
+        "score": 60,
+        "aura": 19,
+        "skill": 20,
+        "stamina": 21,
+        "quote": "\"GENEROSITY IS A VIRTUE, BUT IT'S NOT RESERVED FOR THE VIRTUOUS.\"",
+        "image": "generous-gerbil-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "GENTLE GIANT",
+        "tier": "Tier 4",
+        "score": 61,
+        "aura": 20,
+        "skill": 20,
+        "stamina": 21,
+        "quote": "\"LOOMS LARGE, LIVES GENTLY.\"",
+        "image": "gentle-giant-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "GENUINE GIRAFFE",
+        "tier": "Tier 4",
+        "score": 69,
+        "aura": 24,
+        "skill": 22,
+        "stamina": 23,
+        "quote": "\"In a world where you can be anything, be Genuinely yourself.\"",
+        "image": "genuine-giraffe-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "GIFT GOAT",
+        "tier": "Tier 1",
+        "score": 74,
+        "aura": 25,
+        "skill": 24,
+        "stamina": 25,
+        "quote": "\"BEHIND EVERY GOAT IS A STORY\"",
+        "image": "gift-goat-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "GIFTED GOPHER",
+        "tier": "Tier 4",
+        "score": 56,
+        "aura": 16,
+        "skill": 21,
+        "stamina": 19,
+        "quote": "\"DISPLAY YOUR GIFTS AND YOUR HUMILITY IN EQUAL MEASURE.\"",
+        "image": "gifted-gopher-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "GLEEFUL SUGAR GLIDER",
+        "tier": "Tier 4",
+        "score": 54,
+        "aura": 18,
+        "skill": 20,
+        "stamina": 16,
+        "quote": "\"FLYING FREE, POWERED BY GLEE\"",
+        "image": "gleeful-sugar-glider-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "GLOWING GLOW WORM",
+        "tier": "Tier 4",
+        "score": 50,
+        "aura": 15,
+        "skill": 16,
+        "stamina": 19,
+        "quote": "\"DO GLOW ON...\"",
+        "image": "glowing-glow-worm-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "GRACEFUL GOLDFISH",
+        "tier": "Tier 4",
+        "score": 55,
+        "aura": 20,
+        "skill": 19,
+        "stamina": 16,
+        "quote": "\"ALWAYS DANCE WITH THE CURRENT.\"\n",
+        "image": "graceful-goldfish-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "GRACIOUS GOOSE",
+        "tier": "Tier 4",
+        "score": 55,
+        "aura": 17,
+        "skill": 18,
+        "stamina": 20,
+        "quote": "\"GOODNESS. GRACIOUS.\"\n",
+        "image": "gracious-goose-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "GRACIOUS GRASSHOPPER",
+        "tier": "Tier 4",
+        "score": 58,
+        "aura": 17,
+        "skill": 20,
+        "stamina": 21,
+        "quote": "\"WHEREVER YOU HOP, HOP GRACIOUSLY.\"",
+        "image": "gracious-grasshopper-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "GRACIOUS GRIZZLY BEAR",
+        "tier": "Tier 4",
+        "score": 64,
+        "aura": 23,
+        "skill": 19,
+        "stamina": 22,
+        "quote": "\"NEVER KNEW A GRIZZLY COULD BE GRACIOUS, DID YOU?\"",
+        "image": "gracious-grizzly-bear-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "GRATEFUL GAR",
+        "tier": "Tier 4",
+        "score": 61,
+        "aura": 20,
+        "skill": 20,
+        "stamina": 21,
+        "quote": "\"A FRESH STREAM OF GRATITUDE DILUTES THE SALTINESS OF SADNESS.\"",
+        "image": "grateful-gar-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "GRATITUDE GORILLA",
+        "tier": "Tier 4",
+        "score": 71,
+        "aura": 23,
+        "skill": 25,
+        "stamina": 23,
+        "quote": "\"Every day, there are endless things to be grateful for.\"",
+        "image": "gratitude-gorilla-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "GRITTY GHOST",
+        "tier": "Tier 4 - Rookie",
+        "score": 69,
+        "aura": 23,
+        "skill": 23,
+        "stamina": 23,
+        "quote": "\"HAVE THE GRIT OF A GHOST WHO DOESN'T KNOW HE HAS NO GUTS.\"",
+        "image": "gritty-ghost-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "GUTSY GECKO",
+        "tier": "Tier 4",
+        "score": 55,
+        "aura": 20,
+        "skill": 18,
+        "stamina": 17,
+        "quote": "\"YOUR FEAR OF FAILURE IS HOLDING YOU BACK. HAVE THE GUTS TO KEEP TRYING.\"",
+        "image": "gutsy-gecko-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "HAPPY HERMIT CRAB",
+        "tier": "Tier 4",
+        "score": 57,
+        "aura": 20,
+        "skill": 17,
+        "stamina": 20,
+        "quote": "\"HAPPINESS IS FEELING AT HOME IN YOUR OWN SHELL.\"",
+        "image": "happy-hermit-crab-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "HARD-WORKING WOMBAT",
+        "tier": "Tier 4",
+        "score": 66,
+        "aura": 20,
+        "skill": 22,
+        "stamina": 24,
+        "quote": "\"LOVE WHAT YOU DO, AND WORK SUPER HARD.\"",
+        "image": "hard-working-wombat-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "HEADSTRONG HONEY BADGER",
+        "tier": "Tier 4",
+        "score": 59,
+        "aura": 20,
+        "skill": 20,
+        "stamina": 19,
+        "quote": "\"MESS WITH ME, YOU GET THE CLAWS.\"",
+        "image": "headstrong-honey-badger-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "HEART-TROOPER",
+        "tier": "Tier 4",
+        "score": 72,
+        "aura": 23,
+        "skill": 25,
+        "stamina": 24,
+        "quote": "\"2-4-6-8, LOVE WILL ALWAYS CONQUER HATE!\"",
+        "image": "heart-trooper-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "HELPFUL HIPPO",
+        "tier": "Tier 4",
+        "score": 62,
+        "aura": 22,
+        "skill": 20,
+        "stamina": 20,
+        "quote": "\"HOW CAN I HELP?\"",
+        "image": "helpful-hippo-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "HODL HYENA",
+        "tier": "Tier 4",
+        "score": 62,
+        "aura": 21,
+        "skill": 21,
+        "stamina": 20,
+        "quote": "\"STAYING PATIENT IS NO LAUGHING MATTER.\"",
+        "image": "hodl-hyena-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "HONEST HONEY BEE",
+        "tier": "Tier 4",
+        "score": 52,
+        "aura": 17,
+        "skill": 14,
+        "stamina": 21,
+        "quote": "\"YOU ATTRACT MORE BEES WITH HONESTY.\"\n",
+        "image": "honest-honey-bee-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "HONORABLE OLM",
+        "tier": "Tier 4",
+        "score": 52,
+        "aura": 17,
+        "skill": 15,
+        "stamina": 20,
+        "quote": "\"LIVING A LONG LIFE IS ONLY WORTH IT IF DONE WITH HONOR.\"",
+        "image": "honorable-olm-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "HOT SHIT HORNET",
+        "tier": "Tier 4",
+        "score": 57,
+        "aura": 19,
+        "skill": 19,
+        "stamina": 19,
+        "quote": "\"LIVE FAST AND DO FIRE SH*T.\"",
+        "image": "hot-sht-hornet-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "HUMBLE HEDGEHOG",
+        "tier": "Tier 4",
+        "score": 61,
+        "aura": 21,
+        "skill": 18,
+        "stamina": 22,
+        "quote": "\"I DON'T LIKE TO (HEDGE)HOG THE SPOTLIGHT.\"",
+        "image": "humble-hedgehog-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "HUMBLE HUMMINGBIRD",
+        "tier": "Tier 4",
+        "score": 65,
+        "aura": 22,
+        "skill": 22,
+        "stamina": 21,
+        "quote": "\"NEVER BRAGGY \u2014 EVEN THOUGH THERE'S PLENTY OF REASON TO BRAG",
+        "image": "humble-hummingbird-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "HUNGRY HAMMERHEAD",
+        "tier": "Tier 2",
+        "score": 70,
+        "aura": 22,
+        "skill": 24,
+        "stamina": 24,
+        "quote": "\"NEVER BRAGGY \u2014 EVEN THOUGH THERE'S PLENTY OF REASON TO BRAG\"",
+        "image": "hungry-hammerhead-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "HUSTLING HAMSTER",
+        "tier": "Tier 4",
+        "score": 62,
+        "aura": 20,
+        "skill": 19,
+        "stamina": 23,
+        "quote": "\"THIS RODENT IS READY TO PUT IN THE WORK\"",
+        "image": "hustling-hamster-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "HYPE HORSE",
+        "tier": "Tier 3",
+        "score": 67,
+        "aura": 23,
+        "skill": 23,
+        "stamina": 21,
+        "quote": "\"LET'S GOOOOOOOO!\"",
+        "image": "hype-horse-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "IMPECCABLE INOSTRANET",
+        "tier": "Tier 4",
+        "score": 70,
+        "aura": 23,
+        "skill": 23,
+        "stamina": 24,
+        "quote": "\"THE EXTRATERRESTRIAL THAT CAN DO IT ALL\"",
+        "image": "impeccable-inostranet-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "INDEPENDENT INCH WORM",
+        "tier": "Tier 4",
+        "score": 56,
+        "aura": 20,
+        "skill": 20,
+        "stamina": 16,
+        "quote": "\"YOU DON'T WANT WHAT OTHERS WANT, SO WHY DO YOU CARE WHAT THEY HAVE?\"",
+        "image": "independent-inch-worm-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "INNOVATIVE IMPALA",
+        "tier": "Tier 4",
+        "score": 65,
+        "aura": 21,
+        "skill": 22,
+        "stamina": 22,
+        "quote": "\"THERE\u2019S ALWAYS OPPORTUNITY IF YOU PUT YOUR HORNS TO IT.\"",
+        "image": "innovative-impala-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "INSIGHTFUL IRISH TERRIER",
+        "tier": "Tier 4",
+        "score": 58,
+        "aura": 19,
+        "skill": 20,
+        "stamina": 19,
+        "quote": "\"ALL SMART, NO BITE\"",
+        "image": "insightful-irish-terrier-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "INTUITIVE IGUANA",
+        "tier": "Tier 4",
+        "score": 60,
+        "aura": 20,
+        "skill": 21,
+        "stamina": 19,
+        "quote": "\"GUIDED BY GUTS\"",
+        "image": "intuitive-iguana-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "JOLLY JACK-O",
+        "tier": "Tier 4",
+        "score": 50,
+        "aura": 18,
+        "skill": 16,
+        "stamina": 16,
+        "quote": "\"OPEN-MINDED IN THE MOST LITERAL SENSE\"\n",
+        "image": "jolly-jack-o-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "JOYOUS JELLYFISH",
+        "tier": "Tier 4",
+        "score": 58,
+        "aura": 21,
+        "skill": 19,
+        "stamina": 18,
+        "quote": "\"SPREADING JOY THROUGH THE OCEAN WITH SHIMMERY TENTACLE MOTION\"\n",
+        "image": "joyous-jellyfish-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "JUICY JAGUAR",
+        "tier": "Tier 4",
+        "score": 58,
+        "aura": 19,
+        "skill": 20,
+        "stamina": 19,
+        "quote": "\"THIS JUICE IS WORTH THE SQUEEZE \u2014 IF YOU CAN CATCH IT.\"",
+        "image": "juicy-jaguar-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "JUST JACKAL",
+        "tier": "Tier 4",
+        "score": 50,
+        "aura": 15,
+        "skill": 18,
+        "stamina": 17,
+        "quote": "\"FORGIVE THE GUILTY, PROTECT THE INNOCENT.\"",
+        "image": "just-jackal-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "KARMA KIWI",
+        "tier": "Tier 4",
+        "score": 68,
+        "aura": 22,
+        "skill": 22,
+        "stamina": 24,
+        "quote": "\"PLANTING SEEDS OF KINDNESS, SO THAT HAPPINESS CAN BLOOM.\"",
+        "image": "karma-kiwi-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "KEEN KINGFISHER",
+        "tier": "Tier 4",
+        "score": 52,
+        "aura": 17,
+        "skill": 20,
+        "stamina": 15,
+        "quote": "\"IT'S EASIER TO ACT WHEN YOU HAVE THE RIGHT PERSPECTIVES.\"\n",
+        "image": "keen-kingfisher-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "KIND KUDU",
+        "tier": "Tier 4",
+        "score": 67,
+        "aura": 22,
+        "skill": 23,
+        "stamina": 22,
+        "quote": "\"KINDNESS IS THE ULTIMATE STRENGTH.\"\n",
+        "image": "kind-kudu-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "KIND-WARRIOR",
+        "tier": "Tier 4",
+        "score": 71,
+        "aura": 24,
+        "skill": 24,
+        "stamina": 23,
+        "quote": "\"YOU CAN BE STRONG AND KIND AT THE SAME TIME.\"",
+        "image": "kind-warrior-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "KINDERED KANGAROO",
+        "tier": "Tier 4",
+        "score": 50,
+        "aura": 17,
+        "skill": 18,
+        "stamina": 15,
+        "quote": "\"HOP YOUR WAY TO HAPPINESS WITH THOSE CLOSEST TO YOU.\"",
+        "image": "kindred-kangaroo-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "KNOWING GNOME",
+        "tier": "Tier 2",
+        "score": 67,
+        "aura": 21,
+        "skill": 22,
+        "stamina": 24,
+        "quote": "\"A WISE MIND AND A PLAYFUL SPIRIT\"",
+        "image": "knowing-gnome-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "LAST GLASS STANDING",
+        "tier": "Tier 4",
+        "score": 57,
+        "aura": 16,
+        "skill": 18,
+        "stamina": 23,
+        "quote": "\"A GREAT GLASS OF WINE IS ALWAYS THE WAY TO END A GOOD DAY OF WORK.\"",
+        "image": "last-glass-standing-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "LEGENDARY LEMUR",
+        "tier": "Tier 1",
+        "score": 70,
+        "aura": 23,
+        "skill": 23,
+        "stamina": 24,
+        "quote": "\"LEAPING INTO LEGEND, ONE BRANCH AT A TIME\"",
+        "image": "legendary-lemur-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "LEGIT LLAMA",
+        "tier": "Tier 4",
+        "score": 67,
+        "aura": 23,
+        "skill": 24,
+        "stamina": 20,
+        "quote": "\"TOO LEGIT TO SPIT\"",
+        "image": "legit-llama-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "LEVELHEADED LIZARD",
+        "tier": "Tier 4",
+        "score": 57,
+        "aura": 18,
+        "skill": 19,
+        "stamina": 20,
+        "quote": "\"THE CHEERS? CAN'T HEAR 'EM. THE JEERS? CAN'T HEAR 'EM EITHER.\"",
+        "image": "level-headed-lizard-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "LIKABLE LEOPARD",
+        "tier": "Tier 4",
+        "score": 59,
+        "aura": 17,
+        "skill": 22,
+        "stamina": 20,
+        "quote": "\"WHAT'S NOT TO LIKE?\"",
+        "image": "likable-leopard-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "LIKE A SPONGE",
+        "tier": "Tier 4",
+        "score": 53,
+        "aura": 20,
+        "skill": 17,
+        "stamina": 16,
+        "quote": "\"THE MIND HAS NO SATURATION POINT.\"",
+        "image": "like-a-sponge-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "LIT LAMB",
+        "tier": "Tier 3",
+        "score": 65,
+        "aura": 24,
+        "skill": 20,
+        "stamina": 21,
+        "quote": "\"YOUR FAVORITE LAMB'S FAVORITE LAMB\"",
+        "image": "lit-lamb-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "LOGICAL LION",
+        "tier": "Tier 4",
+        "score": 69,
+        "aura": 23,
+        "skill": 23,
+        "stamina": 23,
+        "quote": "\"KING OF THE JUNGLE FROM MANE TO BRAIN\"",
+        "image": "logical-lion-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "LOYAL LOBSTER",
+        "tier": "Tier 4",
+        "score": 64,
+        "aura": 22,
+        "skill": 19,
+        "stamina": 23,
+        "quote": "\"MY LOYALTY IS LIKE MY SHELL: ROCK SOLID.\"",
+        "image": "loyal-lobster-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "MACHO MANTA RAY",
+        "tier": "Tier 4",
+        "score": 65,
+        "aura": 22,
+        "skill": 22,
+        "stamina": 21,
+        "quote": "\"THE SIZE OF MY MUSCLES AND BRAIN WILL BLOW YOU OUT OF THE WATER.\"",
+        "image": "macho-manta-ray-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "MACRO MICRO",
+        "tier": "Tier 4",
+        "score": 60,
+        "aura": 19,
+        "skill": 19,
+        "stamina": 22,
+        "quote": "\"MICRO SPEED, MACRO PATIENCE\"",
+        "image": "macro-micro-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "MAGNANIMOUS MALTESE",
+        "tier": "Tier 4",
+        "score": 50,
+        "aura": 18,
+        "skill": 14,
+        "stamina": 18,
+        "quote": "\"EVEN IN VICTORY, IT'S IMPORTANT TO BE KIND.\"\n",
+        "image": "magnanimous-maltese-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "MAJOR MOTH",
+        "tier": "Tier 2",
+        "score": 71,
+        "aura": 24,
+        "skill": 24,
+        "stamina": 23,
+        "quote": "\"FIND YOUR LIGHT AND FOLLOW IT... I DID.\"",
+        "image": "major-moth-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "MATURE MULE",
+        "tier": "Tier 4",
+        "score": 50,
+        "aura": 20,
+        "skill": 15,
+        "stamina": 15,
+        "quote": "\"IT'S NOT ABOUT YOUR YEARS OF LIFE, IT'S ABOUT THE LIFE IN YOUR YEARS.\"\n",
+        "image": "mature-mule-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "METHODICAL MAMMOTH",
+        "tier": "Tier 4",
+        "score": 67,
+        "aura": 21,
+        "skill": 22,
+        "stamina": 24,
+        "quote": "\"ALL METHOD, NO MADNESS.\"",
+        "image": "methodical-mammoth-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "METICULOUS MAGPIE",
+        "tier": "Tier 4",
+        "score": 59,
+        "aura": 19,
+        "skill": 19,
+        "stamina": 21,
+        "quote": "\"WHEN ASSEMBLED WITH METICULOUS DETAIL, A BUNCH OF TWIGS CAN MAKE A BEAUTIFUL NEST.\"",
+        "image": "meticulous-magpie-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "MINDFUL MINOKAWA",
+        "tier": "Tier 2 - Rookie",
+        "score": 67,
+        "aura": 24,
+        "skill": 23,
+        "stamina": 20,
+        "quote": "\"YOU CANNOT CONTROL THE OUTSIDE WORLD, BUT YOU CAN CONTROL YOUR MINDSET, YOUR FOCUS, AND YOUR PERSPECTIVE.\"",
+        "image": "mindful-minokawa-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "MINT MINK",
+        "tier": "Tier 4",
+        "score": 51,
+        "aura": 16,
+        "skill": 19,
+        "stamina": 16,
+        "quote": "\"DID YOU KNOW I GIVE ACCESS TO FREE MINTS AND ALLOW LISTS?\"\n",
+        "image": "mint-mink-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "MODEST MOOSE",
+        "tier": "Tier 4",
+        "score": 59,
+        "aura": 17,
+        "skill": 19,
+        "stamina": 23,
+        "quote": "\"I'M NOT THAT BIG.\"",
+        "image": "modest-moose-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "MOJO MOUSE",
+        "tier": "Tier 4",
+        "score": 50,
+        "aura": 16,
+        "skill": 21,
+        "stamina": 13,
+        "quote": "\"EVEN THE MINI CAN HAVE MAJOR MOJO!\"\n",
+        "image": "mojo-mouse-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "MORAL MONKEY",
+        "tier": "Tier 2",
+        "score": 68,
+        "aura": 23,
+        "skill": 21,
+        "stamina": 24,
+        "quote": "\"WHAT WOULD MORAL MONKEY DO?\"",
+        "image": "moral-monkey-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "MOTIVATED MONSTER",
+        "tier": "Tier 1",
+        "score": 69,
+        "aura": 24,
+        "skill": 23,
+        "stamina": 22,
+        "quote": "\"MONSTROUS MOTIVATION CAN MOVE MOUNTAINS\"",
+        "image": "motivated-monster-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "NIFTY NARWHAL",
+        "tier": "Tier 2",
+        "score": 72,
+        "aura": 24,
+        "skill": 24,
+        "stamina": 24,
+        "quote": "\"IT'S NIFTY!!!\"",
+        "image": "nifty-narwhal-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "NOBLE NUMBAT",
+        "tier": "Tier 3",
+        "score": 57,
+        "aura": 18,
+        "skill": 17,
+        "stamina": 22,
+        "quote": "\"NOBILITY IS A PRACTICE, NOT A GIVEN.\"",
+        "image": "noble-numbat-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "NOTORIOUS NINJA",
+        "tier": "Tier 1 - Rookie",
+        "score": 71,
+        "aura": 24,
+        "skill": 25,
+        "stamina": 22,
+        "quote": "\"THE UNSEEN, THE UNHEARD, THE UNDEFEATED\"",
+        "image": "notorious-ninja-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "O.G. OX",
+        "tier": "Tier 4",
+        "score": 59,
+        "aura": 19,
+        "skill": 18,
+        "stamina": 22,
+        "quote": "\"BEEN HERE SINCE DAY 1.\"",
+        "image": "og-ox-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "OBSERVANT OYSTER",
+        "tier": "Tier 4",
+        "score": 53,
+        "aura": 18,
+        "skill": 17,
+        "stamina": 18,
+        "quote": "\"QUIET OBSERVATIONS TURN INTO PEARLS OF WISDOM.\"\n",
+        "image": "observant-oyster-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "OFFENSE ORIENTED ORANGUTAN",
+        "tier": "Tier 4",
+        "score": 65,
+        "aura": 21,
+        "skill": 21,
+        "stamina": 23,
+        "quote": "\"BE ON THE OFFENSE FOR THE THINGS THAT MATTER TO YOU.\"",
+        "image": "offense-oriented-orangutan-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "OPTIMISTIC OTTER",
+        "tier": "Tier 4",
+        "score": 62,
+        "aura": 20,
+        "skill": 21,
+        "stamina": 21,
+        "quote": "\"OPTIMISM IS A STRATEGY.",
+        "image": "optimistic-otter-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "ORGANIZED OSTRICH",
+        "tier": "Tier 4",
+        "score": 60,
+        "aura": 17,
+        "skill": 20,
+        "stamina": 23,
+        "quote": "\"PREPARATION AND ORGANIZATION LEAD TO SPEED\"",
+        "image": "organized-ostrich-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "OUTGOING OCTOPUS",
+        "tier": "Tier 4 - Rookie",
+        "score": 60,
+        "aura": 21,
+        "skill": 20,
+        "stamina": 19,
+        "quote": "\"CAN GIVE 8 HIGH-FIVES AT ONCE!\"",
+        "image": "outgoing-octopus-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "PASSIONATE PARROT",
+        "tier": "Tier 4",
+        "score": 68,
+        "aura": 22,
+        "skill": 23,
+        "stamina": 22,
+        "quote": "\"CAN I GET A... SQUAWK!?!\"",
+        "image": "passionate-parrot-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "PATIENT PANDA",
+        "tier": "Tier 4",
+        "score": 74,
+        "aura": 24,
+        "skill": 25,
+        "stamina": 25,
+        "quote": "\"GIVE THINGS TIME TO MANIFEST.\"",
+        "image": "patient-panda-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "PATIENT PIG",
+        "tier": "Tier 1",
+        "score": 70,
+        "aura": 22,
+        "skill": 24,
+        "stamina": 24,
+        "quote": "\"THE BIGGER THE GOAL, THE SLOWER THE ROLL.\"",
+        "image": "patient-pig-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "PEA SALAD",
+        "tier": "Tier 2",
+        "score": 51,
+        "aura": 17,
+        "skill": 17,
+        "stamina": 17,
+        "quote": "\"ALL I AM SAYING IS GIVE PEAS A CHANCE.\"",
+        "image": "pea-salad-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "PEACEFUL PELICAN",
+        "tier": "Tier 4",
+        "score": 58,
+        "aura": 20,
+        "skill": 17,
+        "stamina": 21,
+        "quote": "\"THE ULTIMATE PRIVILEGE IS PEACE OF MIND.\"",
+        "image": "peaceful-pelican-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "PERCEPTIVE PUMA",
+        "tier": "Tier 4",
+        "score": 51,
+        "aura": 16,
+        "skill": 20,
+        "stamina": 15,
+        "quote": "\"YOU GET WHAT YOU LOOK FOR.\"",
+        "image": "perceptive-puma-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "PERSISTENT PENGUIN",
+        "tier": "Tier 4 - Rookie",
+        "score": 67,
+        "aura": 22,
+        "skill": 21,
+        "stamina": 24,
+        "quote": "\"FALL DOWN. GET BACK UP. KEEP ON WADDLING.\"",
+        "image": "persistent-penguin-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "PERSPECTIVE PIGEON",
+        "tier": "Tier 4",
+        "score": 69,
+        "aura": 23,
+        "skill": 23,
+        "stamina": 23,
+        "quote": "\"I'D URGE YOU TO REFRAME YOUR THINKING.\"",
+        "image": "perspective-pigeon-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "PERSUASIVE PIGEON",
+        "tier": "Tier 4",
+        "score": 61,
+        "aura": 20,
+        "skill": 22,
+        "stamina": 19,
+        "quote": "\"NEED A 'YES'? I'M YOUR BIRD.\"",
+        "image": "persuasive-pigeon-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "PLEASANT PLATYPUS",
+        "tier": "Tier 4",
+        "score": 54,
+        "aura": 18,
+        "skill": 20,
+        "stamina": 16,
+        "quote": "\"WELL, ISN'T THAT NICE!\"\n",
+        "image": "pleasant-platypus-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "POISED PUG",
+        "tier": "Tier 3",
+        "score": 56,
+        "aura": 18,
+        "skill": 20,
+        "stamina": 18,
+        "quote": "\"LESS NOISE, MORE POISE.\"",
+        "image": "poised-pug-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "POLISHED POODLE",
+        "tier": "Tier 4",
+        "score": 55,
+        "aura": 18,
+        "skill": 20,
+        "stamina": 17,
+        "quote": "\"CULTIVATE ELEGANCE, ELEVATE YOUR GAME.",
+        "image": "polished-poodle-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "PONDER IT FROM ALL ANGLES",
+        "tier": "Tier 4",
+        "score": 60,
+        "aura": 20,
+        "skill": 20,
+        "stamina": 20,
+        "quote": "\"THINK IT THROUGH. WE ALL DO.\"",
+        "image": "ponder-it-from-all-angles-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "POSITIVE PORCUPINE",
+        "tier": "Tier 4",
+        "score": 61,
+        "aura": 21,
+        "skill": 19,
+        "stamina": 21,
+        "quote": "\"POSITIVITY IS CONTAGIOUS, SPREAD IT.\"",
+        "image": "positive-porcupine-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "PRACTICAL PEACOCK",
+        "tier": "Tier 3",
+        "score": 68,
+        "aura": 23,
+        "skill": 21,
+        "stamina": 24,
+        "quote": "\"If you're practical and you know it - don't be afraid to show it.\"",
+        "image": "practical-peacock-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "PRINCIPLED PRAYING MANTIS",
+        "tier": "Tier 4 - Rookie",
+        "score": 61,
+        "aura": 20,
+        "skill": 19,
+        "stamina": 22,
+        "quote": "\"GUIDED BY INTEGRITY\"",
+        "image": "principled-praying-mantis-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "PROACTIVE PIRANHA",
+        "tier": "Tier 4",
+        "score": 59,
+        "aura": 19,
+        "skill": 18,
+        "stamina": 22,
+        "quote": "\"THINGS ONLY CHANGE IF YOU MAKE THEM... PROACTIVELY.\"",
+        "image": "proactive-piranha-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "PRODUCTIVE PUFFIN",
+        "tier": "Tier 4",
+        "score": 56,
+        "aura": 18,
+        "skill": 20,
+        "stamina": 18,
+        "quote": "\"I MAY WADDLE BUT I NEVER DWADDLE.\"",
+        "image": "productive-puffin-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "PROFOUND POSSUM",
+        "tier": "Tier 4",
+        "score": 62,
+        "aura": 21,
+        "skill": 20,
+        "stamina": 21,
+        "quote": "\"THE SIMPLEST MESSAGES CAN HOLD THE MOST MEANING.\"",
+        "image": "profound-possum-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "PROTECTIVE PANTHER",
+        "tier": "Tier 4",
+        "score": 66,
+        "aura": 23,
+        "skill": 20,
+        "stamina": 23,
+        "quote": "\"PROTECT AND STALK.\"",
+        "image": "protective-panther-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "PRUDENT POLAR BEAR",
+        "tier": "Tier 4",
+        "score": 58,
+        "aura": 18,
+        "skill": 18,
+        "stamina": 22,
+        "quote": "\"WHERE I'M FROM, PLANNING WITH CAUTION MAKES ALL THE DIFFERENCE.\"",
+        "image": "prudent-polar-bear-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "QUICK QUAIL",
+        "tier": "Tier 4",
+        "score": 60,
+        "aura": 19,
+        "skill": 22,
+        "stamina": 19,
+        "quote": "\"SOME SAY SPEED KILLS. FOR ME, SPEED SURVIVES.\"",
+        "image": "quick-quail-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "RADICAL RABBIT",
+        "tier": "Tier 4",
+        "score": 55,
+        "aura": 18,
+        "skill": 18,
+        "stamina": 19,
+        "quote": "\"LOTS OF LITTLE HOPS ADD UP TO RADICAL CHANGE.\"",
+        "image": "radical-rabbit-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "RARE ROBOT",
+        "tier": "Tier 1",
+        "score": 69,
+        "aura": 23,
+        "skill": 22,
+        "stamina": 24,
+        "quote": "\"NOT EASY TO FIND, AND ONE OF A KIND, RARE ROBOT!\"",
+        "image": "rare-robot-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "RATIONAL RATTLESNAKE",
+        "tier": "Tier 4",
+        "score": 52,
+        "aura": 15,
+        "skill": 17,
+        "stamina": 20,
+        "quote": "\"RATIONAL ACTION HELPS YOU AVOID A VENOMOUS OUTCOME.\"\n",
+        "image": "rational-rattlesnake-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "REFLECTIVE RHINOCEROS",
+        "tier": "Tier 4",
+        "score": 64,
+        "aura": 19,
+        "skill": 22,
+        "stamina": 23,
+        "quote": "\"TAKE A MINUTE AND LET YOUR BRAIN BREATHE.\"",
+        "image": "reflective-rhinoceros-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "RELIABLE RAT",
+        "tier": "Tier 4",
+        "score": 55,
+        "aura": 19,
+        "skill": 18,
+        "stamina": 18,
+        "quote": "\"YOU CAN COUNT ON ME.",
+        "image": "reliable-rat-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "RESILIENT RED DEVIL",
+        "tier": "Tier 2 - Rookie",
+        "score": 72,
+        "aura": 24,
+        "skill": 24,
+        "stamina": 24,
+        "quote": "\"GET THE FORK BACK UP!\"",
+        "image": "resilient-red-devil-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "RESOURCEFUL ROBIN",
+        "tier": "Tier 4",
+        "score": 56,
+        "aura": 18,
+        "skill": 19,
+        "stamina": 19,
+        "quote": "\"USE WHAT'S RIGHT IN FRONT OF YOU.\"",
+        "image": "resourceful-robin-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "RESPECTFUL RACOON",
+        "tier": "Tier 4",
+        "score": 58,
+        "aura": 17,
+        "skill": 19,
+        "stamina": 22,
+        "quote": "\"RESPECT IS A HUMAN RIGHT. AND A RACOON RIGHT, ACTUALLY.\"",
+        "image": "respectful-racoon-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "RESPONSIVE RAM",
+        "tier": "Tier 3",
+        "score": 61,
+        "aura": 19,
+        "skill": 20,
+        "stamina": 22,
+        "quote": "\"READY TO RESPOND TO ANY CHALLENGE HEAD-ON\"",
+        "image": "responsive-ram-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "SECURE SPARROW",
+        "tier": "Tier 4",
+        "score": 61,
+        "aura": 19,
+        "skill": 22,
+        "stamina": 20,
+        "quote": "\"ALWAYS FEEL ROOTED, EVEN IN FLIGHT.\"",
+        "image": "secure-sparrow-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "SELF-AWARE HARE",
+        "tier": "Tier 2",
+        "score": 66,
+        "aura": 22,
+        "skill": 21,
+        "stamina": 23,
+        "quote": "\"KNOW THYSELF.\"",
+        "image": "self-aware-hare-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "SELFLESS SLOTH",
+        "tier": "Tier 4",
+        "score": 59,
+        "aura": 20,
+        "skill": 21,
+        "stamina": 18,
+        "quote": "\"BEST WAY TO HELP OTHERS? HELP YOURSELF FIRST.\"\n",
+        "image": "selfless-sloth-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "SENSIBLE SOMMELIER",
+        "tier": "Tier 4",
+        "score": 62,
+        "aura": 21,
+        "skill": 21,
+        "stamina": 20,
+        "quote": "\"WHAT DOES YOUR DRINK OF CHOICE SAY ABOUT YOU?\"",
+        "image": "sensible-sommelier-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "SENSITIVE CENTIPEDE",
+        "tier": "Tier 4",
+        "score": 57,
+        "aura": 18,
+        "skill": 18,
+        "stamina": 21,
+        "quote": "\"FEELIN' ALL THE FEELS.\"\n",
+        "image": "sensitive-centipede-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "SENTIMENTAL SALAMANDER",
+        "tier": "Tier 4",
+        "score": 53,
+        "aura": 18,
+        "skill": 18,
+        "stamina": 17,
+        "quote": "\"REMEMBER THE GOOD OL' DAYS?\"\n",
+        "image": "sentimental-salamander-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "SERIOUS SPERM WHALE",
+        "tier": "Tier 4",
+        "score": 56,
+        "aura": 20,
+        "skill": 16,
+        "stamina": 20,
+        "quote": "\"NAVIGATING DEEP WATERS WITH CLEAR INTENT.\"\n",
+        "image": "serious-sperm-whale-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "SHARING SQUIRREL",
+        "tier": "Tier 3",
+        "score": 62,
+        "aura": 20,
+        "skill": 20,
+        "stamina": 22,
+        "quote": "\"NEED AN ACORN? I'VE GOT PLENTY.\"",
+        "image": "sharing-squirrel-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "SHREWD SHARK",
+        "tier": "Tier 4",
+        "score": 61,
+        "aura": 20,
+        "skill": 21,
+        "stamina": 20,
+        "quote": "\"A DEEP THINKER IN DEEP WATERS\"",
+        "image": "shrewd-shark-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "SHREWD SHEEP",
+        "tier": "Tier 4",
+        "score": 54,
+        "aura": 18,
+        "skill": 18,
+        "stamina": 18,
+        "quote": "\"OUTSMARTING WOLVES, DAY AFTER DAY\"",
+        "image": "shrewd-sheep-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "SINCERE SKUNK",
+        "tier": "Tier 4",
+        "score": 55,
+        "aura": 19,
+        "skill": 16,
+        "stamina": 20,
+        "quote": "\"I DON'T WANT YOU TO HAVE A STINKY DAY... I MEAN IT.\"",
+        "image": "sincere-skunk-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "SKILLED SKELETON",
+        "tier": "Tier 2",
+        "score": 65,
+        "aura": 20,
+        "skill": 25,
+        "stamina": 20,
+        "quote": "\"YOU'RE NEVER TOO OLD TO LEARN SOMETHING NEW. KEEP BONING UP ON YOUR SKILLS!\"",
+        "image": "skilled-skeleton-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "SLAY'N SLUG",
+        "tier": "Tier 4",
+        "score": 54,
+        "aura": 18,
+        "skill": 20,
+        "stamina": 16,
+        "quote": "\"SLAY'N ISN'T ABOUT WHAT YOU LOOK LIKE ON THE OUTSIDE, IT'S ABOUT HOW YOU FEEL ON THE INSIDE!\"",
+        "image": "slayn-slug-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "SMOOTH SPIDER",
+        "tier": "Tier 4 - Rookie",
+        "score": 60,
+        "aura": 20,
+        "skill": 20,
+        "stamina": 20,
+        "quote": "\"NAVIGATING THE WORLD'S WEB EFFORTLESSLY.\"",
+        "image": "smooth-spider-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "SOPHISTICATED STINGRAY",
+        "tier": "Tier 4",
+        "score": 51,
+        "aura": 15,
+        "skill": 17,
+        "stamina": 19,
+        "quote": "\"DANGEROUSLY CHIC\"",
+        "image": "sophisticated-stingray-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "SPIFFY SALMON",
+        "tier": "Tier 4",
+        "score": 62,
+        "aura": 19,
+        "skill": 20,
+        "stamina": 23,
+        "quote": "LOOK GOOD, FEEL GOOD, SWIM GOOD",
+        "image": "spiffy-salmon-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "SPONTANEOUS SEAHORSE",
+        "tier": "Tier 4",
+        "score": 50,
+        "aura": 20,
+        "skill": 15,
+        "stamina": 15,
+        "quote": "\"EACH DAY HOLDS A THOUSAND OPTIONS. CHOOSE ONE AND SURPRISE YOURSELF.\"\n",
+        "image": "spontaneous-seahorse-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "STEADFAST SNAKE",
+        "tier": "Tier 4",
+        "score": 56,
+        "aura": 20,
+        "skill": 18,
+        "stamina": 18,
+        "quote": "\"ALWAYS STEADY. HOLDING FAST.\"",
+        "image": "steadfast-snake-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "STOIC SLIME",
+        "tier": "Tier 4",
+        "score": 53,
+        "aura": 16,
+        "skill": 17,
+        "stamina": 20,
+        "quote": "\"UNDISTURBED BY CHAOS\"\n",
+        "image": "stoic-slime-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "STUNNED SUN",
+        "tier": "Tier 4",
+        "score": 56,
+        "aura": 18,
+        "skill": 18,
+        "stamina": 20,
+        "quote": "\"AWED BY THE WARMTH AND ENERGY YOU BRING.\"",
+        "image": "stunned-sun-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "SUFFICENT SHRIMP",
+        "tier": "Tier 4",
+        "score": 60,
+        "aura": 21,
+        "skill": 21,
+        "stamina": 18,
+        "quote": "\"YOU ARE ENOUGH.\"",
+        "image": "sufficient-shrimp-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "SUFFOCATE HATE",
+        "tier": "Tier 4",
+        "score": 55,
+        "aura": 21,
+        "skill": 17,
+        "stamina": 17,
+        "quote": "\"FIGHT HATE WITH LOVE AND GO UNDEFEATED.\"",
+        "image": "suffocate-hate-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "SWAGGY SEA LION",
+        "tier": "Tier 4",
+        "score": 66,
+        "aura": 22,
+        "skill": 21,
+        "stamina": 23,
+        "quote": "\"CHECK. ME. OUT.\"",
+        "image": "swaggy-sea-lion-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "SWEET SWAN",
+        "tier": "Tier 2",
+        "score": 70,
+        "aura": 23,
+        "skill": 23,
+        "stamina": 24,
+        "quote": "\"YOU CAN ALWAYS SPARE A LITTLE SWEETNESS.\"",
+        "image": "sweet-swan-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "SYMPATHETIC SQUID",
+        "tier": "Tier 4",
+        "score": 50,
+        "aura": 15,
+        "skill": 16,
+        "stamina": 19,
+        "quote": "\"I REALLY FEEL FOR YOU!\"\n",
+        "image": "sympathetic-squid-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "TASTEFUL MALAYAN TAPIR",
+        "tier": "Tier 3",
+        "score": 65,
+        "aura": 22,
+        "skill": 23,
+        "stamina": 20,
+        "quote": "\"GOOD TASTE IS SUBJECTIVE, BUT I DEFINITELY HAVE IT.\"",
+        "image": "tasteful-malayan-tapir-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "TENACIOUS TERMITE",
+        "tier": "Tier 3",
+        "score": 64,
+        "aura": 20,
+        "skill": 24,
+        "stamina": 20,
+        "quote": "\"WITH ENOUGH TENACITY, THE SMALLEST BEINGS CAN TAKE DOWN THE BIGGEST BUILDINGS\"",
+        "image": "tenacious-termite-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "TENACIOUS TURKEY",
+        "tier": "Tier 4",
+        "score": 53,
+        "aura": 15,
+        "skill": 20,
+        "stamina": 18,
+        "quote": "\"YOU DON'T NEED TO FLY TO REACH NEW HEIGHTS, YOU JUST NEED TO BE TENACIOUS.\"\n",
+        "image": "tenacious-turkey-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "THE OAK MONSTER",
+        "tier": "Tier 2",
+        "score": 67,
+        "aura": 23,
+        "skill": 21,
+        "stamina": 21,
+        "quote": "\"THE MORE OAK, THE BETTER\"",
+        "image": "the-oak-monsterr-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "THE WORLD HAS PLENTY OF LOVE",
+        "tier": "Tier 4",
+        "score": 59,
+        "aura": 22,
+        "skill": 20,
+        "stamina": 17,
+        "quote": "\"IF YOU'RE SAD, CHANGE THE CHANNEL.\"",
+        "image": "the-world-has-plenty-of-love-start-listening-to-it-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "THOUGHTFUL THREE HORNED HARPIK",
+        "tier": "Tier 4",
+        "score": 73,
+        "aura": 24,
+        "skill": 25,
+        "stamina": 24,
+        "quote": "\"IT'S THE THOUGHT THAT COUNTS.\"",
+        "image": "thoughtful-three-horned-harpik-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "TIDY TROLL",
+        "tier": "Tier 4",
+        "score": 62,
+        "aura": 22,
+        "skill": 23,
+        "stamina": 17,
+        "quote": "\"KEEP YOUR CAVE CLEAN AND TROLL ON\"",
+        "image": "tidy-troll-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "TO THE MOON MEERKAT",
+        "tier": "Tier 2",
+        "score": 66,
+        "aura": 22,
+        "skill": 23,
+        "stamina": 21,
+        "quote": "\"GET IN THE SPACESHIP, WE'RE LEAVING THIS PLANET.\"",
+        "image": "to-the-moon-meerkat-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "TOLERANT TORTOISE",
+        "tier": "Tier 3",
+        "score": 63,
+        "aura": 21,
+        "skill": 20,
+        "stamina": 22,
+        "quote": "\"SELF-AWARE HARE MAY HAVE THE LEAD, BUT I'M PLAYING THE LONG GAME.\"",
+        "image": "tolerant-tortoise-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "TOLERANT TUNA",
+        "tier": "Tier 4",
+        "score": 58,
+        "aura": 19,
+        "skill": 17,
+        "stamina": 22,
+        "quote": "\"IT'S NOT RED OR BLUE, IT'S PURPLE.\"",
+        "image": "tolerant-tuna-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "TORONTO & ST. LOUIS",
+        "tier": "Tier 4",
+        "score": 50,
+        "aura": 15,
+        "skill": 14,
+        "stamina": 21,
+        "quote": "\"YOU THINK YOU KNOW. BUT YOU DON'T.\"",
+        "image": "toronto-st-louis-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "TOUGH TO BEAT A WORM FROM THE DIRT!",
+        "tier": "Tier 4",
+        "score": 57,
+        "aura": 17,
+        "skill": 20,
+        "stamina": 20,
+        "quote": "\"THOSE WHO ARE DEEPEST IN THE DIRT ARE MOST DANGEROUS\"\n",
+        "image": "tough-to-beat-a-worm-from-the-dirt-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "TRANQUIL TOAD",
+        "tier": "Tier 4 - Rookie",
+        "score": 63,
+        "aura": 23,
+        "skill": 20,
+        "stamina": 20,
+        "quote": "\"CAN WE ALL... RELAX?\"",
+        "image": "tranquil-toad-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "TREMENDOUS TIGER",
+        "tier": "Tier 2",
+        "score": 64,
+        "aura": 21,
+        "skill": 22,
+        "stamina": 21,
+        "quote": "\"SENDING TREMENDOUS LOVE YOUR WAY.\"",
+        "image": "tremendous-tiger-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "TRUCULENT T-REX",
+        "tier": "Tier 3",
+        "score": 56,
+        "aura": 16,
+        "skill": 17,
+        "stamina": 23,
+        "quote": "\"YOU WANNA GO, PAL?\"",
+        "image": "truculent-t-rex-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "TRUSTING TARANTULA",
+        "tier": "Tier 4",
+        "score": 50,
+        "aura": 17,
+        "skill": 17,
+        "stamina": 16,
+        "quote": "\"YOU MAY NOT TRUST ME, BUT I TRUST YOU COMPLETELY.\"\n",
+        "image": "trusting-tarantula-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "TURNT TICK",
+        "tier": "Tier 4",
+        "score": 59,
+        "aura": 20,
+        "skill": 20,
+        "stamina": 19,
+        "quote": "\"TURN IT UP\"",
+        "image": "turnt-tick-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "UNWAVERING URCHIN",
+        "tier": "Tier 3",
+        "score": 64,
+        "aura": 21,
+        "skill": 20,
+        "stamina": 23,
+        "quote": "\"ONCE I PLANT MY TUBE FEET, I AIN'T MOVIN'.\"/",
+        "image": "unwavering-urchin-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "VERSATILE VIKING",
+        "tier": "Tier 4 - Rookie",
+        "score": 73,
+        "aura": 25,
+        "skill": 24,
+        "stamina": 24,
+        "quote": "\"STRONG BODY, STRONG MIND, STRONG HELMET\"",
+        "image": "versatile-viking-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "VERY, VERY, VERY, VERY LUCKY BLACK CAT",
+        "tier": "Tier 1",
+        "score": 74,
+        "aura": 25,
+        "skill": 25,
+        "stamina": 24,
+        "quote": "\"I'M THE LOGO.\"",
+        "image": "very-very-very-very-lucky-black-cat-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "VIBE'N VAMPIRE",
+        "tier": "Tier 2",
+        "score": 63,
+        "aura": 24,
+        "skill": 21,
+        "stamina": 18,
+        "quote": "\"THIRSTING FOR THE VIBE.\"",
+        "image": "viben-vampire-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "WARM WOLVERINE",
+        "tier": "Tier 4",
+        "score": 55,
+        "aura": 18,
+        "skill": 20,
+        "stamina": 17,
+        "quote": "\"FIERCELY WARM-HEARTED\"",
+        "image": "warm-wolverine-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "WELL-CONNECTED WEREWOLF",
+        "tier": "Tier 2",
+        "score": 63,
+        "aura": 22,
+        "skill": 21,
+        "stamina": 20,
+        "quote": "\"EVERYBODY IS WORTH HOWLING 'HELLO' TO.\"",
+        "image": "well-connected-werewolf-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "WELL-ROUNDED WARTHOG",
+        "tier": "Tier 4",
+        "score": 60,
+        "aura": 20,
+        "skill": 20,
+        "stamina": 20,
+        "quote": "\"TALENTED FROM TUSK TO TOES\"",
+        "image": "well-rounded-warthog-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "WHEN YOU LIVE FOR THEIR VALIDATION",
+        "tier": "Tier 4",
+        "score": 56,
+        "aura": 16,
+        "skill": 20,
+        "stamina": 20,
+        "quote": "\"THE MOMENT YOU STOP CARING ABOUT OTHERS' OPINIONS IS THE MOMENT YOUR LIFE BEGINS.\"",
+        "image": "when-you-live-for-their-validation-you-arent-living-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "WHIMSICAL WOLF",
+        "tier": "Tier 2 - Rookie",
+        "score": 67,
+        "aura": 24,
+        "skill": 21,
+        "stamina": 22,
+        "quote": "\"FIND TIME TO PLAY.\"",
+        "image": "whimsical-wolf-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "WHO WAS BORN IN 1997",
+        "tier": "Tier 4",
+        "score": 57,
+        "aura": 19,
+        "skill": 19,
+        "stamina": 19,
+        "quote": "\"ONE OF LIFE'S GREAT MYSTERIES: WHO AM I?\"",
+        "image": "who-was-born-in-1997-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "WILD WALLABY",
+        "tier": "Tier 3",
+        "score": 52,
+        "aura": 19,
+        "skill": 18,
+        "stamina": 15,
+        "quote": "\"THIS FRIEND BELIEVES YOU ARE WILDLY UNDERRATED.\"",
+        "image": "wild-wallaby-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "WILLFUL WIZARD",
+        "tier": "Tier 1",
+        "score": 67,
+        "aura": 23,
+        "skill": 22,
+        "stamina": 22,
+        "quote": "\"Where's there's a will, there's a Wizard.\"",
+        "image": "willful-wizard-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "WILY WILD BOAR",
+        "tier": "Tier 3",
+        "score": 54,
+        "aura": 18,
+        "skill": 21,
+        "stamina": 15,
+        "quote": "\"FAKE LEFT, MOVE RIGHT, KEEP 'EM GUESSING AND KEEP MOVIN'.\"",
+        "image": "wily-wild-boar-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "WISE WASP",
+        "tier": "Tier 4",
+        "score": 60,
+        "aura": 20,
+        "skill": 20,
+        "stamina": 20,
+        "quote": "\"A WASP RARELY STINGS WITHOUT GOOD REASON\"\n",
+        "image": "wise-wasp-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "WITTY WEASEL",
+        "tier": "Tier 3",
+        "score": 63,
+        "aura": 23,
+        "skill": 19,
+        "stamina": 21,
+        "quote": "\"GET WITTY WITH IT\"",
+        "image": "witty-weasel-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "WOKE WALRUS",
+        "tier": "Tier 4",
+        "score": 56,
+        "aura": 18,
+        "skill": 18,
+        "stamina": 20,
+        "quote": "\"WAKE UP.\"",
+        "image": "woke-walrus-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "YOLO YAK",
+        "tier": "Tier 4",
+        "score": 62,
+        "aura": 21,
+        "skill": 20,
+        "stamina": 21,
+        "quote": "\"MAKE IT COUNT.\"",
+        "image": "yolo-yak-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "YOU'RE GONNA DIE FLY",
+        "tier": "Tier 4",
+        "score": 63,
+        "aura": 22,
+        "skill": 19,
+        "stamina": 22,
+        "quote": "\"LIFE IS PRECIOUS. FIGHT FOR IT.\"",
+        "image": "youre-gonna-die-fly-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "YOUR POOR RELATIONSHIP WITH TIME",
+        "tier": "Tier 4",
+        "score": 57,
+        "aura": 16,
+        "skill": 17,
+        "stamina": 24,
+        "quote": "\"READ MY NAME AGAIN. IT MATTERS.\"",
+        "image": "your-poor-relationship-with-time-is-your-biggest-vulnerability-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "ZEALOUS ZOMBIE",
+        "tier": "Tier 2",
+        "score": 69,
+        "aura": 22,
+        "skill": 23,
+        "stamina": 24,
+        "quote": "\"YOUR UNDEAD FRIEND\"",
+        "image": "zealous-zombie-classic-shrinkwrapped.png"
+    },
+    {
+        "character": "ZESTFUL ZEBRA",
+        "tier": "Tier 4",
+        "score": 57,
+        "aura": 20,
+        "skill": 19,
+        "stamina": 18,
+        "quote": "\"I MAY BE BLACK AND WHITE, BUT I SEE THE WORLD IN FULL COLOR.\"",
+        "image": "zestful-zebra-classic-shrinkwrapped.png"
+    }
+]
