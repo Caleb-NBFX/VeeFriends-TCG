@@ -10,7 +10,17 @@ const challengeRoutes = require('./routes/challenge');
 const respondTurnRoutes = require('./routes/respond-turn');
 
 const app = express();
-app.use(cors());
+
+// CORS configuration
+const allowedOrigins = [
+  'https://veefriends-tgc.onrender.com',
+  'http://localhost:3000'
+];
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true
+}));
+
 app.use(express.json());
 
 // Mount all API routes
@@ -19,7 +29,6 @@ app.use('/api/games', challengeRoutes);
 app.use('/api/decks', decksRouter);
 app.use('/api/cards', cardsRouter);
 app.use('/api/games', respondTurnRoutes);
-
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
