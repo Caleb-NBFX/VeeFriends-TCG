@@ -1,4 +1,4 @@
-import { QWebChannel } from './qwebchannel-wrapper.js';
+import { QWebChannel } from './qwebchannel.js';
 
 const DEFAULT_TITLER_WS_PORT = 9023;
 const DEFAULT_TITLER_HTTP_PORT = 8022;

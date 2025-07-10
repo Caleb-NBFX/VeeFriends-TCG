@@ -417,5 +417,4 @@ class QObject {
   }
 }
 
-// Remove the ESM export and use CommonJS instead
-module.exports = { QWebChannel };
+export { QWebChannel };
