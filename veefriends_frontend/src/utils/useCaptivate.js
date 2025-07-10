@@ -1,7 +1,8 @@
 // React Hooks for Captivate
 
 // When called as a module like this, the ServiceHandler module loads qwebchannel internally
-import { ServiceHandler } from 'https://newbluefx.com/api/v3/common/mjs/servicehandler.js';
+import { ServiceHandler } from './servicehandler.mjs';
+import { QWebChannel } from './qwebchannel.mjs';
 
 let scheduler = null;
 
