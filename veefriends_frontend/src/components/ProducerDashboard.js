@@ -16,6 +16,7 @@ function ProducerDashboard() {
   const [loadGameId, setLoadGameId] = useState('');
   const [lastCaptivateData, setLastCaptivateData] = useState(null);
   const [gameState, setGameState] = useState(null);
+  const [hasLoaded, setHasLoaded] = useState(false);
 
   const lastRoundIdRef = useRef(null);
 
