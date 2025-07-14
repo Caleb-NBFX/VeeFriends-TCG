@@ -65,13 +65,13 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
     }
   };
 
-  const handleRespond = async (decision, useTTT = false) => {
+  const handleRespond = async (decision, useTTT = false, counterAttribute = null) => {
     try {
       setIsLoading(true);
-      // Fixed: Use the correct API endpoint
       const res = await axios.post(`${api}/api/games/${gameId}/respond-turn`, {
         decision,
         useTTT,
+        counterAttribute,
       });
 
       console.log('Response:', res.data);
@@ -91,6 +91,7 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
   const roundIndex = game?.currentRound ? game.currentRound - 1 : 0;
   const round = game?.rounds?.[roundIndex];
   const drawnCard = playerRole === 'P1' ? round?.C1 : round?.C2;
+  const opponentCard = playerRole === 'P1' ? round?.C2 : round?.C1;
 
   console.log('Current Round Index:', roundIndex);
   console.log('Round Object:', round);
@@ -98,23 +99,50 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
 
   const score = playerRole === 'P1' ? game?.player1Score : playerRole === 'P2' ? game?.player2Score : null;
   const isResolved = !!(round?.winner || round?.result === 'push');
-  const isAttacker = round?.attacker === playerRole;
+  const originalAttacker = round?.attacker;
   const hasChallenged = !!round?.attribute;
+  
   // Track which attributes have been challenged or rejected this round
   const challengedAttrs = round?.challengedAttributes || [];
   const rejectedAttrs = round?.rejections || {};
   const allRejected = Object.values(rejectedAttrs).filter(Boolean).length >= 3;
+  
   // Check if this player can use TTT
   const isAttackerCardCore = drawnCard?.rarity?.toLowerCase() === 'core';
   const canUseTTT = !isResolved && !game?.usedTTT?.[playerRole] && !allRejected && !isAttackerCardCore;
 
+  // Determine who should be responding to the current challenge
+  // If there's a counterChallenger, they are now the challenger
+  const currentChallenger = round?.counterChallenger || originalAttacker;
+  const currentDefender = currentChallenger === 'P1' ? 'P2' : 'P1';
+  const isCurrentDefender = playerRole === currentDefender;
+  const isCurrentChallenger = playerRole === currentChallenger;
+
+  // Get available counter attributes (not yet challenged or rejected)
+  const getAvailableCounterAttributes = () => {
+    const allAttrs = ['Aura', 'Skill', 'Stamina'];
+    return allAttrs.filter(attr => 
+      !challengedAttrs.includes(attr) && !rejectedAttrs[attr]
+    );
+  };
+
+  const availableCounterAttrs = getAvailableCounterAttributes();
+  const canCounter = availableCounterAttrs.length > 0;
+
   console.log("⚠️ Game State Debug:");
   console.log("isResolved:", isResolved);
-  console.log("isAttacker:", isAttacker);
+  console.log("originalAttacker:", originalAttacker);
+  console.log("currentChallenger:", currentChallenger);
+  console.log("currentDefender:", currentDefender);
+  console.log("isCurrentDefender:", isCurrentDefender);
+  console.log("isCurrentChallenger:", isCurrentChallenger);
   console.log("hasChallenged:", hasChallenged);
   console.log("canUseTTT:", canUseTTT);
   console.log("rejectedAttrs:", rejectedAttrs);
   console.log("allRejected:", allRejected);
+  console.log("availableCounterAttrs:", availableCounterAttrs);
+  console.log("canCounter:", canCounter);
+  console.log("round.counterChallenger:", round?.counterChallenger);
 
   const getExpectedAttacker = () => {
     if (!game || !game.rounds || game.rounds.length === 0) return 'P1';
@@ -141,26 +169,79 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
 
   if (!gameId || !playerEmail) return <RedirectForm />;
 
+  // Check if game is over
+  if (game?.winner) {
+    return (
+      <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
+        <h1>🏆 Game Over!</h1>
+        <h2>{game.winner === 'Tie' ? 'It\'s a Tie!' : `${game.winner} Wins!`}</h2>
+        <p>The game has ended. No more rounds can be played.</p>
+        
+        {/* Final Scores */}
+        <div style={{ marginTop: '2rem', padding: '1rem', border: '1px solid #ddd', borderRadius: '8px', background: '#f9f9f9' }}>
+          <h4>📊 Final Scores</h4>
+          <div style={{ display: 'flex', gap: '2rem', justifyContent: 'center' }}>
+            <div>
+              <strong>Player 1</strong>
+              <p>Aura: {game.player1?.score?.aura ?? 0}</p>
+              <p>Skill: {game.player1?.score?.skill ?? 0}</p>
+              <p>Stamina: {game.player1?.score?.stamina ?? 0}</p>
+            </div>
+            <div>
+              <strong>Player 2</strong>
+              <p>Aura: {game.player2?.score?.aura ?? 0}</p>
+              <p>Skill: {game.player2?.score?.skill ?? 0}</p>
+              <p>Stamina: {game.player2?.score?.stamina ?? 0}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
       <h1>Welcome, {playerEmail}</h1>
       <h2>
         You are <strong>{playerRole === 'P1' ? 'Player 1' : playerRole === 'P2' ? 'Player 2' : 'Unknown'}</strong>
         {game && (
-          <span> - {isAttacker ? 'Attacking' : 'Defending'}</span>
+          <span> - {isCurrentChallenger ? 'Challenging' : 'Defending'}</span>
         )}
       </h2>
+
+      {/* Next Round Button - moved to top */}
+      {canStartNextRound && (
+        <div style={{ marginBottom: '2rem', textAlign: 'center' }}>
+          <button 
+            onClick={handleStartNextRound} 
+            style={{ 
+              backgroundColor: '#007bff',
+              color: 'white',
+              padding: '1rem 2rem',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '1.1em',
+              fontWeight: 'bold'
+            }}
+          >
+            ▶️ Start Next Round
+          </button>
+        </div>
+      )}
 
       {/* Debug Info */}
       <div style={{ background: '#f0f0f0', padding: '1rem', marginBottom: '1rem', fontSize: '0.8em' }}>
         <strong>Debug Info:</strong><br/>
         Round: {roundIndex + 1} | Resolved: {isResolved ? 'Yes' : 'No'} | 
-        Attacker: {round?.attacker} | Challenged: {hasChallenged ? round?.attribute : 'No'}
+        Original Attacker: {originalAttacker} | Current Challenger: {currentChallenger} | 
+        Challenged: {hasChallenged ? round?.attribute : 'No'}
         {round?.rejections && <><br/>Rejections: {JSON.stringify(round.rejections)}</>}
+        {round?.counterChallenger && <><br/>Counter Challenger: {round.counterChallenger}</>}
       </div>
 
-      {/* Attacker Controls */}
-      {!isResolved && isAttacker && (
+      {/* Original Attacker Controls - only show if no challenge has been made yet */}
+      {!isResolved && originalAttacker === playerRole && !hasChallenged && (
         <div style={{ marginBottom: '2rem', padding: '1rem', border: '2px solid #007bff', borderRadius: '8px' }}>
           <h3>🗡️ Choose an attribute to challenge:</h3>
           <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
@@ -227,11 +308,11 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
         </div>
       )}
 
-      {/* Defender Controls */}
-      {!isResolved && !isAttacker && hasChallenged && !allRejected && (
+      {/* Defender Controls - show when a challenge has been made and this player is the current defender */}
+      {!isResolved && isCurrentDefender && hasChallenged && !allRejected && (
         <div style={{ marginBottom: '2rem', padding: '1rem', border: '2px solid #dc3545', borderRadius: '8px' }}>
           <h3>🛡️ You've been challenged on: <strong>{round.attribute}</strong></h3>
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginBottom: '1rem' }}>
             <button 
               onClick={() => handleRespond('accept')}
               disabled={isLoading}
@@ -247,25 +328,52 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
             >
               ✅ Accept Challenge
             </button>
-            <button 
-              onClick={() => handleRespond('reject')}
-              disabled={isLoading}
-              style={{ 
-                backgroundColor: '#dc3545',
-                color: 'white',
-                padding: '1rem 2rem',
-                border: 'none',
-                borderRadius: '50px',
-                cursor: 'pointer',
-                fontSize: '1.1em'
-              }}
-            >
-              ❌ Reject Challenge
-            </button>
+            
+            {canCounter && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <span style={{ fontSize: '0.9em', fontWeight: 'bold' }}>Or Counter with:</span>
+                {availableCounterAttrs.map(attr => (
+                  <button
+                    key={attr}
+                    onClick={() => handleRespond('reject', false, attr)}
+                    disabled={isLoading}
+                    style={{ 
+                      backgroundColor: '#ffc107',
+                      color: 'black',
+                      padding: '0.5rem 1rem',
+                      border: 'none',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      fontSize: '0.9em'
+                    }}
+                  >
+                    🔄 Counter with {attr}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {!canCounter && (
+              <button 
+                onClick={() => handleRespond('reject')}
+                disabled={isLoading}
+                style={{ 
+                  backgroundColor: '#dc3545',
+                  color: 'white',
+                  padding: '1rem 2rem',
+                  border: 'none',
+                  borderRadius: '50px',
+                  cursor: 'pointer',
+                  fontSize: '1.1em'
+                }}
+              >
+                ❌ Reject Challenge
+              </button>
+            )}
           </div>
           
           {canUseTTT && (
-            <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+            <div style={{ textAlign: 'center' }}>
               <button 
                 onClick={() => handleRespond('accept', true)}
                 disabled={isLoading}
@@ -285,13 +393,48 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
         </div>
       )}
 
+      {/* Waiting message for current challenger when they're waiting for a response */}
+      {!isResolved && isCurrentChallenger && hasChallenged && (
+        <div style={{ marginBottom: '2rem', padding: '1rem', border: '2px solid #ffc107', borderRadius: '8px', background: '#fff9c4' }}>
+          <h3>⏳ Waiting for opponent to respond to challenge on: <strong>{round.attribute}</strong></h3>
+          <p>The other player needs to accept or counter your challenge.</p>
+        </div>
+      )}
+
       {/* Round Result */}
       {isResolved && (
         <div style={{ marginBottom: '2rem', padding: '1rem', border: '2px solid #28a745', borderRadius: '8px' }}>
           <h3>🏆 Round Complete!</h3>
           {round.winner && <p><strong>Winner: {round.winner}</strong></p>}
           {round.result === 'push' && <p><strong>Result: Push (Tie)</strong></p>}
-          <p>Attribute: {round.attribute}</p>
+          <p><strong>Attribute:</strong> {round.attribute}</p>
+          
+          {/* Show opponent's card when round is resolved */}
+          {opponentCard && (
+            <div style={{ marginTop: '1rem', padding: '1rem', border: '1px solid #ddd', borderRadius: '8px', background: '#f8f9fa' }}>
+              <h4>🃏 {playerRole === 'P1' ? 'P2' : 'P1'} Card This Round</h4>
+              <div style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start' }}>
+                <div>
+                  <h5>{opponentCard.character}</h5>
+                  <p><strong>Rarity:</strong> {opponentCard.rarity}</p>
+                  <p><strong>Aura:</strong> {opponentCard.Aura}</p>
+                  <p><strong>Skill:</strong> {opponentCard.Skill}</p>
+                  <p><strong>Stamina:</strong> {opponentCard.Stamina}</p>
+                  <p><strong>Total Score:</strong> {Math.round(opponentCard.Score)}</p>
+                </div>
+                {opponentCard.card && (
+                  <img
+                    src={`/textures/${opponentCard.card}`}
+                    alt={`${opponentCard.character} card`}
+                    style={{ maxWidth: '150px', height: 'auto' }}
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                )}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -343,25 +486,6 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
             </div>
           </div>
         </div>
-      )}
-
-      {/* Next Round Button */}
-      {canStartNextRound && (
-        <button 
-          onClick={handleStartNextRound} 
-          style={{ 
-            marginTop: '2rem',
-            backgroundColor: '#007bff',
-            color: 'white',
-            padding: '1rem 2rem',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            fontSize: '1.1em'
-          }}
-        >
-          ▶️ Start Next Round
-        </button>
       )}
     </div>
   );

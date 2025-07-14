@@ -24,7 +24,8 @@ const RoundSchema = new mongoose.Schema({
   winner: String,
   result: String,
   round: Number,
-  attacker: String, // <-- Add this line
+  attacker: String,
+  counterChallenger: String,
   challengedAttributes: { type: [String], default: [] },
   rejections: {
     type: Object,
@@ -45,6 +46,11 @@ const GameSchema = new mongoose.Schema({
     skill: { type: Number, default: 0 },
     stamina: { type: Number, default: 0 }
   },
+  usedTTT: {
+    P1: { type: Boolean, default: false },
+    P2: { type: Boolean, default: false }
+  },
+  winner: String, // Add this field to track game winner
   createdAt: {
     type: Date,
     default: Date.now
