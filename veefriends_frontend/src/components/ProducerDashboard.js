@@ -80,12 +80,13 @@ function ProducerDashboard() {
       setGameId(res.data._id);
       alert(`Game started! Game ID: ${res.data._id}`);
 
-      // Send current round data to Captivate
+      // Send initial round data to Captivate (since game auto-starts first round)
       const game = res.data;
       const currentRound = game.currentRound;
       const rounds = game.rounds || [];
       const roundObj = rounds[currentRound - 1];
       if (roundObj) {
+        lastRoundIdRef.current = roundObj._id;
         await sendRoundDataToCaptivate(roundObj);
         setLastCaptivateData(mapRoundDataForCaptivate(roundObj));
       }
@@ -164,6 +165,7 @@ function ProducerDashboard() {
         const rounds = game.rounds || [];
         const roundObj = rounds[currentRound - 1];
         if (roundObj) {
+          lastRoundIdRef.current = roundObj._id;
           await sendRoundDataToCaptivate(roundObj);
           setLastCaptivateData(mapRoundDataForCaptivate(roundObj));
         }
@@ -218,10 +220,17 @@ function ProducerDashboard() {
 
       <button onClick={handleStartGame}>Start Game</button>
 
-      {gameId && (
+      {gameId && gameState && !gameState.winner && (
         <div>
           <p><strong>Game ID:</strong> {gameId}</p>
           <button onClick={handleStartRound}>Start Round</button>
+        </div>
+      )}
+
+      {gameId && gameState?.winner && (
+        <div>
+          <p><strong>Game ID:</strong> {gameId}</p>
+          <p><strong>Game Status:</strong> FINISHED - {gameState.winner} Wins!</p>
         </div>
       )}
 

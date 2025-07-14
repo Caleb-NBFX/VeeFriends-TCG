@@ -32,138 +32,202 @@ router.post('/', async (req, res) => {
       createdAt: new Date()
     });
 
-    await newGame.save();
-    res.status(201).json(newGame);
+    const savedGame = await newGame.save();
+    
+    // Auto-start first round
+    const gameWithFirstRound = await startRoundForGame(savedGame._id);
+    
+    res.status(201).json(gameWithFirstRound);
   } catch (error) {
     console.error('Error creating game:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
+// Helper function to start a round
+async function startRoundForGame(gameId) {
+  console.log(`⚡ Starting round for game ${gameId}`);
+  const game = await Game.findById(gameId);
+  if (!game) throw new Error('Game not found');
+
+  const getRarityMultiplier = (rarity) => {
+    switch (rarity) {
+      case 'Rare': return 1.25;
+      case 'Very Rare': return 1.5;
+      case 'Epic': return 2;
+      case 'Spectacular': return 3;
+      default: return 1;
+    }
+  };
+
+  console.log("🧪 ROUND START: currentRound =", game.currentRound);
+  console.log("🔁 game.attacker BEFORE:", game.attacker);
+
+  const drawCard = async (deck) => {
+    const [next, ...rest] = deck;
+    const cardMeta = await Card.findOne({
+      character: new RegExp(`^${next.character.trim()}$`, 'i')
+    });
+
+    if (!cardMeta) throw new Error(`Card not found in metadata: ${next.character}`);
+
+    const rarity = next.rarity;
+    const multiplier = getRarityMultiplier(rarity);
+    const baseScore = parseFloat((cardMeta.score * multiplier).toFixed(2));
+    const characterSlug = cardMeta.character.toLowerCase().replace(/\s+/g, '-');
+    const raritySlug = rarity.toLowerCase().replace(/\s+/g, '');
+
+    const rarityMeta = {
+      Core:        { color: '#E4CE13', icon: 'core.png' },
+      Rare:        { color: '#783F22', icon: 'rare.png' },
+      'Very Rare': { color: '#C05316', icon: 'veryrare.png' },
+      Epic:        { color: '#2DAD7C', icon: 'epic.png' },
+      Spectacular: { color: '#B1A5D0', icon: 'spectacular.png' }
+    };
+
+    // Add all extra fields for Captivate
+    return {
+      card: {
+        character: cardMeta.character,
+        Aura: cardMeta.aura,
+        Skill: cardMeta.skill,
+        Stamina: cardMeta.stamina,
+        Score: baseScore,
+        rarity,
+        card: `${characterSlug}-${raritySlug}.png`,
+        rarityImage: rarityMeta[rarity]?.icon || 'core.png',
+        color: rarityMeta[rarity]?.color || '#d3d3d3',
+        tier: cardMeta.tier || '',
+        quote: cardMeta.quote || '',
+        image: cardMeta.image || '',
+        vfc: `https://veefriends.com/${characterSlug}`,
+        // Add more fields as needed, e.g. socialImage, etc.
+      },
+      remaining: rest
+    };
+  };
+
+  const p1 = await drawCard(game.player1.deck);
+  const p2 = await drawCard(game.player2.deck);
+
+  game.player1.drawnCard = p1.card;
+  game.player2.drawnCard = p2.card;
+  game.player1.deck = p1.remaining;
+  game.player2.deck = p2.remaining;
+  game.currentRound += 1;
+  game.turn = [];
+
+  // Only set attacker if not set (first round)
+  if (!game.attacker) {
+    game.attacker = Math.random() < 0.5 ? 'P1' : 'P2';
+  }
+  console.log('DEBUG: Setting round.attacker to', game.attacker);
+
+  game.rounds.push({
+    round: game.currentRound,
+    C1: p1.card,
+    C2: p2.card,
+    winner: null,
+    result: null,
+    attribute: null,
+    attacker: game.attacker // Store attacker for this round
+  });
+  console.log('DEBUG: Round created with attacker', game.rounds[game.rounds.length - 1].attacker);
+
+  // Check if game should end due to no more cards
+  if (game.player1.deck.length === 0 && game.player2.deck.length === 0) {
+    const p1Score = game.player1.score.aura + game.player1.score.skill + game.player1.score.stamina;
+    const p2Score = game.player2.score.aura + game.player2.score.skill + game.player2.score.stamina;
+    if (p1Score > p2Score) game.winner = 'P1';
+    else if (p2Score > p1Score) game.winner = 'P2';
+    else game.winner = 'Tie';
+  }
+
+  // If both decks are empty and no win, reshuffle and continue
+  if (game.player1.deck.length === 0 && game.player2.deck.length === 0 && !game.winner) {
+    const shuffle = require('../utils/shuffle');
+    game.player1.deck = shuffle(game.player1.deck.concat(game.rounds.map(r => r.C1)));
+    game.player2.deck = shuffle(game.player2.deck.concat(game.rounds.map(r => r.C2)));
+    game.rounds = [];
+    game.currentRound = 0;
+    game.player1.drawnCard = null;
+    game.player2.drawnCard = null;
+    console.log('🔄 Decks reshuffled for both players.');
+  }
+
+  await game.save();
+  console.log(`✅ Round ${game.currentRound} saved with drawn cards.`);
+  return game;
+}
+
 // POST /api/games/:id/start-round
 router.post('/:id/start-round', async (req, res) => {
   try {
-    console.log(`⚡ Starting round for game ${req.params.id}`);
-    const game = await Game.findById(req.params.id);
+    const gameId = req.params.id;
+    console.log('⚡ Starting round for game', gameId);
+    
+    const game = await Game.findById(gameId);
     if (!game) return res.status(404).json({ error: 'Game not found' });
 
-    const getRarityMultiplier = (rarity) => {
-      switch (rarity) {
-        case 'Rare': return 1.25;
-        case 'Very Rare': return 1.5;
-        case 'Epic': return 2;
-        case 'Spectacular': return 3;
-        default: return 1;
-      }
-    };
-
-    console.log("🧪 ROUND START: currentRound =", game.currentRound);
-    console.log("🔁 game.attacker BEFORE:", game.attacker);
-
-    const drawCard = async (deck) => {
-      const [next, ...rest] = deck;
-      const cardMeta = await Card.findOne({
-        character: new RegExp(`^${next.character.trim()}$`, 'i')
-      });
-
-      if (!cardMeta) throw new Error(`Card not found in metadata: ${next.character}`);
-
-      const rarity = next.rarity;
-      const multiplier = getRarityMultiplier(rarity);
-      const baseScore = parseFloat((cardMeta.score * multiplier).toFixed(2));
-      const characterSlug = cardMeta.character.toLowerCase().replace(/\s+/g, '-');
-      const raritySlug = rarity.toLowerCase().replace(/\s+/g, '');
-
-      const rarityMeta = {
-        Core:        { color: '#E4CE13', icon: 'core.png' },
-        Rare:        { color: '#783F22', icon: 'rare.png' },
-        'Very Rare': { color: '#C05316', icon: 'veryrare.png' },
-        Epic:        { color: '#2DAD7C', icon: 'epic.png' },
-        Spectacular: { color: '#B1A5D0', icon: 'spectacular.png' }
-      };
-
-      // Add all extra fields for Captivate
-      return {
-        card: {
-          character: cardMeta.character,
-          Aura: cardMeta.aura,
-          Skill: cardMeta.skill,
-          Stamina: cardMeta.stamina,
-          Score: baseScore,
-          rarity,
-          card: `${characterSlug}-${raritySlug}.png`,
-          rarityImage: rarityMeta[rarity]?.icon || 'core.png',
-          color: rarityMeta[rarity]?.color || '#d3d3d3',
-          tier: cardMeta.tier || '',
-          quote: cardMeta.quote || '',
-          image: cardMeta.image || '',
-          vfc: `https://veefriends.com/${characterSlug}`,
-          // Add more fields as needed, e.g. socialImage, etc.
-        },
-        remaining: rest
-      };
-    };
-
-    const p1 = await drawCard(game.player1.deck);
-    const p2 = await drawCard(game.player2.deck);
-
-    game.player1.drawnCard = p1.card;
-    game.player2.drawnCard = p2.card;
-    game.player1.deck = p1.remaining;
-    game.player2.deck = p2.remaining;
-    game.currentRound += 1;
-    game.turn = [];
-
-    // Only set attacker if not set (first round)
-    if (!game.attacker) {
-      game.attacker = Math.random() < 0.5 ? 'P1' : 'P2';
+    // Check if game is over
+    if (game.winner) {
+      return res.status(400).json({ error: 'Game is already over' });
     }
-    console.log('DEBUG: Setting round.attacker to', game.attacker);
 
-    game.rounds.push({
+    // Increment round counter
+    game.currentRound += 1;
+    console.log('🧪 ROUND START: currentRound =', game.currentRound);
+
+    // FIXED: Use the game's attacker (which should have been set correctly in respond-turn)
+    const roundAttacker = game.attacker || 'P1';
+    console.log('🔁 game.attacker BEFORE:', game.attacker);
+    console.log('DEBUG: Using attacker for new round:', roundAttacker);
+
+    // Draw cards for both players
+    const p1Card = drawRandomCard();
+    const p2Card = drawRandomCard();
+
+    // Create new round
+    const newRound = {
       round: game.currentRound,
-      C1: p1.card,
-      C2: p2.card,
+      C1: p1Card,
+      C2: p2Card,
+      attacker: roundAttacker,
+      attribute: null,
       winner: null,
       result: null,
-      attribute: null,
-      attacker: game.attacker // Store attacker for this round
-    });
-    console.log('DEBUG: Round created with attacker', game.rounds[game.rounds.length - 1].attacker);
+      challengedAttributes: [],
+      rejections: { Aura: false, Skill: false, Stamina: false }
+    };
 
-    // If both decks are empty and no win, reshuffle and continue
-    if (game.player1.deck.length === 0 && game.player2.deck.length === 0 && !game.winner) {
-      const shuffle = require('../utils/shuffle');
-      game.player1.deck = shuffle(game.player1.deck.concat(game.rounds.map(r => r.C1)));
-      game.player2.deck = shuffle(game.player2.deck.concat(game.rounds.map(r => r.C2)));
-      game.rounds = [];
-      game.currentRound = 0;
-      game.player1.drawnCard = null;
-      game.player2.drawnCard = null;
-      console.log('🔄 Decks reshuffled for both players.');
-    }
+    console.log('DEBUG: Round created with attacker', roundAttacker);
+    game.rounds.push(newRound);
 
     await game.save();
-    console.log(`✅ Round ${game.currentRound} saved with drawn cards.`);
-    res.json(game);
-  } catch (err) {
-    console.error('❌ Error starting round:', err);
-    res.status(500).json({ error: err.message });
+    console.log('✅ Round', game.currentRound, 'saved with drawn cards.');
+
+    res.json({ 
+      success: true, 
+      round: newRound,
+      attacker: roundAttacker,
+      gameAttacker: game.attacker 
+    });
+
+  } catch (error) {
+    console.error('Error starting round:', error);
+    res.status(500).json({ error: 'Failed to start round' });
   }
 });
 
 // GET /api/games/:id
 router.get('/:id', async (req, res) => {
   try {
-    const game = await Game.findById(req.params.id)
-
-    if (!game) {
-      return res.status(404).json({ error: 'Game not found' });
-    }
+    const game = await Game.findById(req.params.id);
+    if (!game) return res.status(404).json({ error: 'Game not found' });
     res.json(game);
-  } catch (error) {
-    console.error('Error fetching game:', error);
-    res.status(500).json({ error: 'Failed to fetch game' });
+  } catch (err) {
+    console.error('❌ Error fetching game:', err);
+    res.status(500).json({ error: err.message });
   }
 });
 
