@@ -3,6 +3,10 @@ import axios from 'axios';
 import API_BASE from '../config';
 
 function DeckBuilder() {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [handle, setHandle] = useState('');
+  const [platform, setPlatform] = useState('Whatnot');
   const [email, setEmail] = useState('');
   const [deckName, setDeckName] = useState('');
   const [character, setCharacter] = useState('');
@@ -19,6 +23,16 @@ function DeckBuilder() {
     "Epic": 4,
     "Spectacular": 5
   };
+
+  const platforms = [
+    'Whatnot',
+    'X',
+    'LinkedIn',
+    'YouTube',
+    'Instagram',
+    'TikTok',
+    'Other'
+  ];
 
   useEffect(() => {
     const fetchCharacters = async () => {
@@ -53,14 +67,22 @@ function DeckBuilder() {
   };
 
   const submitDeck = async () => {
-    if (!email || !deckName || deck.length !== 20) {
-      alert('Please fill email, deck name, and build a full deck.');
+    // Validate required fields
+    if (!firstName.trim() || !handle.trim() || !email.trim() || !deckName.trim() || deck.length !== 20) {
+      alert('Please fill all required fields (First Name, Handle, Email, Deck Name) and build a full deck.');
       return;
     }
 
+    // Normalize email
+    const normalizedEmail = email.trim().toLowerCase();
+
     const payload = {
-      name: deckName,
-      email: email,
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+      handle: handle.trim(),
+      platform,
+      email: normalizedEmail,
+      name: deckName.trim(),
       cards: deck
     };
 
@@ -74,8 +96,14 @@ function DeckBuilder() {
   };
 
   const loadDecks = async () => {
+    if (!email.trim()) {
+      alert('Please enter your email to load saved decks.');
+      return;
+    }
+
     try {
-      const res = await axios.get(`${API_BASE}/api/decks?email=${email}`);
+      const normalizedEmail = email.trim().toLowerCase();
+      const res = await axios.get(`${API_BASE}/api/decks?email=${normalizedEmail}`);
       setSavedDecks(res.data);
     } catch (err) {
       console.error(err);
@@ -102,19 +130,66 @@ function DeckBuilder() {
   return (
     <div>
       <h2>Build Your Deck</h2>
-      <input
-        type="text"
-        placeholder="Your email"
-        value={email}
-        onChange={e => setEmail(e.target.value)}
-      />
-      <input
-        type="text"
-        placeholder="Deck name"
-        value={deckName}
-        onChange={e => setDeckName(e.target.value)}
-      />
+      
+      {/* User Information Section */}
+      <div style={{ marginBottom: '20px', padding: '10px', border: '1px solid #ccc' }}>
+        <h3>User Information</h3>
+        <div style={{ marginBottom: '10px' }}>
+          <input
+            type="text"
+            placeholder="First Name *"
+            value={firstName}
+            onChange={e => setFirstName(e.target.value)}
+            style={{ marginRight: '10px', width: '200px' }}
+          />
+          <input
+            type="text"
+            placeholder="Last Name"
+            value={lastName}
+            onChange={e => setLastName(e.target.value)}
+            style={{ width: '200px' }}
+          />
+        </div>
+        <div style={{ marginBottom: '10px' }}>
+          <input
+            type="text"
+            placeholder="Handle (Display Name) *"
+            value={handle}
+            onChange={e => setHandle(e.target.value)}
+            style={{ marginRight: '10px', width: '200px' }}
+          />
+          <select 
+            value={platform} 
+            onChange={e => setPlatform(e.target.value)}
+            style={{ padding: '5px', width: '120px' }}
+          >
+            {platforms.map(p => (
+              <option key={p} value={p}>{p}</option>
+            ))}
+          </select>
+        </div>
+        <input
+          type="email"
+          placeholder="Email *"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          style={{ width: '300px', marginBottom: '10px' }}
+        />
+        <br />
+        <input
+          type="text"
+          placeholder="Deck Name *"
+          value={deckName}
+          onChange={e => setDeckName(e.target.value)}
+          style={{ width: '300px' }}
+        />
+        <br />
+        <small style={{ color: '#666' }}>* Required fields</small>
+      </div>
+
+      {/* Deck Building Section */}
       <div>
+        <h3>Add Cards to Deck</h3>
         <input
           type="text"
           placeholder="Character name"
@@ -140,6 +215,7 @@ function DeckBuilder() {
         </select>
         <button onClick={addCard}>Add Card</button>
       </div>
+      
       <p>Deck Size: {deck.length} / 20</p>
       <p>Rarity Points: {totalRarityPoints} / 15</p>
       <ul>
@@ -150,6 +226,7 @@ function DeckBuilder() {
           </li>
         ))}
       </ul>
+      
       <button onClick={submitDeck}>Submit Deck</button>
       <hr />
       <button onClick={loadDecks}>Load Saved Decks</button>
