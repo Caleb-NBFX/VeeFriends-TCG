@@ -1640,6 +1640,16 @@
         "image": "perspective-pigeon-classic-shrinkwrapped.png"
     },
     {
+        "character": "PERFECT PERSIAN CAT",
+        "tier": "Tier 1",
+        "score": 75,
+        "aura": 25,
+        "skill": 25,
+        "stamina": 25,
+        "quote": "\"ALL OF YOU CAN BE PERFECT LIKE ME. BE YOU!\"",
+        "image": "perfect-persian-cat-shrinkwrapped.png"
+    },
+    {
         "character": "PERSUASIVE PIGEON",
         "tier": "Tier 4",
         "score": 61,
@@ -1767,7 +1777,7 @@
         "skill": 18,
         "stamina": 22,
         "quote": "\"WHERE I'M FROM, PLANNING WITH CAUTION MAKES ALL THE DIFFERENCE.\"",
-        "image": "prudent-polar-bear-classic-shrinkwrapped.png"
+ "image": "prudent-polar-bear-classic-shrinkwrapped.png"
     },
     {
         "character": "QUICK QUAIL",
