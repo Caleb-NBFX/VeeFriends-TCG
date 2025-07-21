@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import API_BASE from '../config';
+import CardDisplay from './CardDisplay';
 
 const PlayerPortal = ({ gameId, playerEmail }) => {
   const [game, setGame] = useState(null);
@@ -15,6 +16,14 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
       setIsLoading(true);
       const response = await axios.get(`${api}/api/games/${gameId}`);
       const gameData = response.data;
+      
+      // Debug: Let's see what we're actually getting
+      console.log('Full Game Data:', gameData);
+      console.log('Player1 object:', gameData.player1);
+      console.log('Player2 object:', gameData.player2);
+      console.log('Player1 handle:', gameData.player1?.handle);
+      console.log('Player2 handle:', gameData.player2?.handle);
+      
       setGame(gameData);
 
       const normalizedEmail = playerEmail?.toLowerCase();
@@ -27,7 +36,6 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
       setPlayerRole(role);
 
       console.log('Player Role:', role);
-      console.log('Game Data:', gameData);
     } catch (error) {
       console.error('Error loading game:', error);
     } finally {
@@ -199,15 +207,22 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
     );
   }
 
+  // Player info for welcome message
+  const playerInfo = playerRole === 'P1' ? game?.player1 : game?.player2;
+  const handle = playerInfo?.handle;
+
+  // Remove leading @ if present
+  const cleanHandle = handle ? handle.replace(/^@+/, '') : 'Unknown';
+
   return (
     <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
-      <h1>Welcome, {playerEmail}</h1>
-      <h2>
-        You are <strong>{playerRole === 'P1' ? 'Player 1' : playerRole === 'P2' ? 'Player 2' : 'Unknown'}</strong>
+      <h2 style={{ fontWeight: '500', fontSize: '1.5em', marginBottom: '0.5rem' }}>Welcome @{cleanHandle}</h2>
+      <h3 style={{ fontWeight: 'normal', fontSize: '1.2em', marginTop: '0', marginBottom: '1.5rem', color: '#666' }}>
+        {playerRole === 'P1' ? 'Player 1' : playerRole === 'P2' ? 'Player 2' : 'Unknown'}
         {game && (
           <span> - {isCurrentChallenger ? 'Challenging' : 'Defending'}</span>
         )}
-      </h2>
+      </h3>
 
       {/* Next Round Button - moved to top */}
       {canStartNextRound && (
@@ -413,26 +428,7 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
           {opponentCard && (
             <div style={{ marginTop: '1rem', padding: '1rem', border: '1px solid #ddd', borderRadius: '8px', background: '#f8f9fa' }}>
               <h4>🃏 {playerRole === 'P1' ? 'P2' : 'P1'} Card This Round</h4>
-              <div style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start' }}>
-                <div>
-                  <h5>{opponentCard.character}</h5>
-                  <p><strong>Rarity:</strong> {opponentCard.rarity}</p>
-                  <p><strong>Aura:</strong> {opponentCard.Aura}</p>
-                  <p><strong>Skill:</strong> {opponentCard.Skill}</p>
-                  <p><strong>Stamina:</strong> {opponentCard.Stamina}</p>
-                  <p><strong>Total Score:</strong> {Math.round(opponentCard.Score)}</p>
-                </div>
-                {opponentCard.card && (
-                  <img
-                    src={`/textures/${opponentCard.card}`}
-                    alt={`${opponentCard.character} card`}
-                    style={{ maxWidth: '150px', height: 'auto' }}
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                    }}
-                  />
-                )}
-              </div>
+              <CardDisplay card={opponentCard} size="medium" />
             </div>
           )}
         </div>
@@ -442,26 +438,7 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
       {drawnCard ? (
         <div style={{ marginBottom: '2rem', padding: '1rem', border: '1px solid #ddd', borderRadius: '8px' }}>
           <h3>🃏 Your Card This Round</h3>
-          <div style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start' }}>
-            <div>
-              <h4>{drawnCard.character}</h4>
-              <p><strong>Rarity:</strong> {drawnCard.rarity}</p>
-              <p><strong>Aura:</strong> {drawnCard.Aura}</p>
-              <p><strong>Skill:</strong> {drawnCard.Skill}</p>
-              <p><strong>Stamina:</strong> {drawnCard.Stamina}</p>
-              <p><strong>Total Score:</strong> {Math.round(drawnCard.Score)}</p>
-            </div>
-            {drawnCard.card && (
-              <img
-                src={`/textures/${drawnCard.card}`}
-                alt={`${drawnCard.character} card`}
-                style={{ maxWidth: '200px', height: 'auto' }}
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                }}
-              />
-            )}
-          </div>
+          <CardDisplay card={drawnCard} size="large" />
         </div>
       ) : (
         <p>No card drawn yet this round.</p>

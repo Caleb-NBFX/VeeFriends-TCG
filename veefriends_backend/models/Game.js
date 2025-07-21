@@ -7,6 +7,10 @@ const CardSchema = new mongoose.Schema({
 
 const PlayerSchema = new mongoose.Schema({
   name: String,
+  firstName: String,  // Add this
+  lastName: String,   // Add this
+  handle: String,     // Add this
+  platform: String,   // Add this
   email: String,
   deck: [CardSchema],
   score: {

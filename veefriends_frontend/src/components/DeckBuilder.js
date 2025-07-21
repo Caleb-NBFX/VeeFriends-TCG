@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import API_BASE from '../config';
+import CardDisplay from './CardDisplay';
 
 function DeckBuilder() {
   const [firstName, setFirstName] = useState('');
@@ -15,6 +16,7 @@ function DeckBuilder() {
   const [savedDecks, setSavedDecks] = useState([]);
   const [allCharacters, setAllCharacters] = useState([]);
   const [filteredCharacters, setFilteredCharacters] = useState([]);
+  const [previewCard, setPreviewCard] = useState(null);
 
   const rarityPoints = {
     "Core": 0,
@@ -49,15 +51,31 @@ function DeckBuilder() {
 
   const totalRarityPoints = deck.reduce((sum, card) => sum + rarityPoints[card.rarity], 0);
 
-  const addCard = () => {
+  const addCard = async () => {
     if (deck.length >= 20) return alert('Deck is full');
     if (deck.some(c => c.character === character)) return alert('Character already in deck');
     if (totalRarityPoints + rarityPoints[rarity] > 15) return alert('Not enough rarity points');
     if (!allCharacters.includes(character)) return alert('Invalid character name');
 
-    setDeck([...deck, { character, rarity }]);
-    setCharacter('');
-    setFilteredCharacters([]);
+    // Fetch card details for preview
+    try {
+      const res = await axios.get(`${API_BASE}/api/cards`);
+      const cardData = res.data.find(c => c.character.toUpperCase() === character);
+      const newCard = { character, rarity, ...cardData };
+      
+      setDeck([...deck, newCard]);
+      setPreviewCard(newCard); // Show the added card
+      setCharacter('');
+      setFilteredCharacters([]);
+      
+      // Clear preview after 3 seconds
+      setTimeout(() => setPreviewCard(null), 3000);
+    } catch (err) {
+      // Fallback if API fails
+      setDeck([...deck, { character, rarity }]);
+      setCharacter('');
+      setFilteredCharacters([]);
+    }
   };
 
   const removeCard = (index) => {
@@ -187,6 +205,20 @@ function DeckBuilder() {
         <small style={{ color: '#666' }}>* Required fields</small>
       </div>
 
+      {/* Preview Card - Show recently added card */}
+      {previewCard && (
+        <div style={{ 
+          marginBottom: '20px', 
+          padding: '15px', 
+          border: '2px solid #28a745', 
+          borderRadius: '8px', 
+          background: '#f8fff8' 
+        }}>
+          <h3>✅ Card Added to Deck!</h3>
+          <CardDisplay card={previewCard} size="medium" />
+        </div>
+      )}
+
       {/* Deck Building Section */}
       <div>
         <h3>Add Cards to Deck</h3>
@@ -216,16 +248,54 @@ function DeckBuilder() {
         <button onClick={addCard}>Add Card</button>
       </div>
       
-      <p>Deck Size: {deck.length} / 20</p>
-      <p>Rarity Points: {totalRarityPoints} / 15</p>
-      <ul>
-        {deck.map((card, idx) => (
-          <li key={idx}>
-            {card.character} ({card.rarity})
-            <button onClick={() => removeCard(idx)}>Remove</button>
-          </li>
-        ))}
-      </ul>
+      {/* Enhanced Deck Display */}
+      <div style={{ marginTop: '20px' }}>
+        <h3>Current Deck ({deck.length}/20)</h3>
+        <p>Rarity Points: {totalRarityPoints} / 15</p>
+        
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', 
+          gap: '1rem',
+          marginTop: '1rem'
+        }}>
+          {deck.map((card, idx) => (
+            <div key={idx} style={{ 
+              border: '1px solid #ddd', 
+              borderRadius: '8px', 
+              padding: '1rem',
+              background: '#f9f9f9'
+            }}>
+              <CardDisplay 
+                card={card} 
+                size="small" 
+                showStats={false}
+                style={{ flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}
+              />
+              <div style={{ marginTop: '0.5rem' }}>
+                <strong>{card.character}</strong>
+                <br />
+                <span style={{ fontSize: '0.9em', color: '#666' }}>({card.rarity})</span>
+                <br />
+                <button 
+                  onClick={() => removeCard(idx)}
+                  style={{ 
+                    marginTop: '0.5rem',
+                    backgroundColor: '#dc3545',
+                    color: 'white',
+                    border: 'none',
+                    padding: '0.25rem 0.5rem',
+                    borderRadius: '4px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
       
       <button onClick={submitDeck}>Submit Deck</button>
       <hr />
