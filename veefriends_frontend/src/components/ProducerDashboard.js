@@ -72,11 +72,50 @@ function ProducerDashboard() {
       return;
     }
 
+    // Detailed debugging
+    console.log('=== DECK DEBUGGING ===');
+    console.log('selectedDeck1 full object:', selectedDeck1);
+    console.log('selectedDeck1.handle:', selectedDeck1.handle);
+    console.log('selectedDeck1.firstName:', selectedDeck1.firstName);
+    console.log('selectedDeck1.lastName:', selectedDeck1.lastName);
+    console.log('selectedDeck2 full object:', selectedDeck2);
+    console.log('selectedDeck2.handle:', selectedDeck2.handle);
+    console.log('selectedDeck2.firstName:', selectedDeck2.firstName);
+    console.log('selectedDeck2.lastName:', selectedDeck2.lastName);
+
+    const player1Data = { 
+      name: `${selectedDeck1.firstName} ${selectedDeck1.lastName}`.trim(),
+      firstName: selectedDeck1.firstName,
+      lastName: selectedDeck1.lastName,
+      handle: selectedDeck1.handle,
+      platform: selectedDeck1.platform,
+      email: selectedDeck1.email || player1Email,
+      deck: selectedDeck1.cards 
+    };
+
+    const player2Data = { 
+      name: `${selectedDeck2.firstName} ${selectedDeck2.lastName}`.trim(),
+      firstName: selectedDeck2.firstName,
+      lastName: selectedDeck2.lastName,
+      handle: selectedDeck2.handle,
+      platform: selectedDeck2.platform,
+      email: selectedDeck2.email || player2Email,
+      deck: selectedDeck2.cards 
+    };
+
+    console.log('player1Data being sent:', player1Data);
+    console.log('player2Data being sent:', player2Data);
+
     try {
       const res = await axios.post(`${API_BASE}/api/games`, {
-        player1: { email: player1Email, deck: selectedDeck1.cards },
-        player2: { email: player2Email, deck: selectedDeck2.cards }
+        player1: player1Data,
+        player2: player2Data
       });
+      
+      console.log('Game created response:', res.data);
+      console.log('Game player1 handle:', res.data.player1?.handle);
+      console.log('Game player2 handle:', res.data.player2?.handle);
+      
       setGameId(res.data._id);
       alert(`Game started! Game ID: ${res.data._id}`);
 

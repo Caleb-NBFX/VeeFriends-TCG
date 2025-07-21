@@ -18,26 +18,41 @@ router.post('/', async (req, res) => {
 
     const newGame = new Game({
       player1: {
-        ...player1,
+        name: player1.name,
+        firstName: player1.firstName,
+        lastName: player1.lastName,
+        handle: player1.handle,
+        platform: player1.platform,
+        email: player1.email,
         deck: shuffledP1,
         score: { aura: 0, skill: 0, stamina: 0 }
       },
       player2: {
-        ...player2,
+        name: player2.name,
+        firstName: player2.firstName,
+        lastName: player2.lastName,
+        handle: player2.handle,
+        platform: player2.platform,
+        email: player2.email,
         deck: shuffledP2,
         score: { aura: 0, skill: 0, stamina: 0 }
       },
       rounds: [],
       currentRound: 0,
+      attacker: 'P1', // Set initial attacker
+      pendingPoints: { aura: 0, skill: 0, stamina: 0 },
+      usedTTT: { P1: false, P2: false },
       createdAt: new Date()
     });
 
     const savedGame = await newGame.save();
     
     // Auto-start first round
-    const gameWithFirstRound = await startRoundForGame(savedGame._id);
+    await startRoundForGame(savedGame._id);
     
-    res.status(201).json(gameWithFirstRound);
+    // Return the fresh game data
+    const finalGame = await Game.findById(savedGame._id);
+    res.status(201).json(finalGame);
   } catch (error) {
     console.error('Error creating game:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -64,11 +79,15 @@ async function startRoundForGame(gameId) {
   console.log("🔁 game.attacker BEFORE:", game.attacker);
 
   const drawCard = async (deck) => {
+    if (!deck || deck.length === 0) {
+      throw new Error('No cards available to draw');
+    }
+    
     const [next, ...rest] = deck;
     const cardMeta = await Card.findOne({
       character: new RegExp(`^${next.character.trim()}$`, 'i')
     });
-
+    
     if (!cardMeta) throw new Error(`Card not found in metadata: ${next.character}`);
 
     const rarity = next.rarity;
@@ -85,7 +104,7 @@ async function startRoundForGame(gameId) {
       Spectacular: { color: '#B1A5D0', icon: 'spectacular.png' }
     };
 
-    // Add all extra fields for Captivate
+    // Return properly structured card data
     return {
       card: {
         character: cardMeta.character,
@@ -101,62 +120,55 @@ async function startRoundForGame(gameId) {
         quote: cardMeta.quote || '',
         image: cardMeta.image || '',
         vfc: `https://veefriends.com/${characterSlug}`,
-        // Add more fields as needed, e.g. socialImage, etc.
       },
       remaining: rest
     };
   };
 
+  // Check if both players have cards
+  if (game.player1.deck.length === 0 || game.player2.deck.length === 0) {
+    // Handle deck reshuffling if needed
+    if (game.player1.deck.length === 0 && game.player2.deck.length === 0) {
+      const p1Score = game.player1.score.aura + game.player1.score.skill + game.player1.score.stamina;
+      const p2Score = game.player2.score.aura + game.player2.score.skill + game.player2.score.stamina;
+      if (p1Score > p2Score) game.winner = 'P1';
+      else if (p2Score > p1Score) game.winner = 'P2';
+      else game.winner = 'Tie';
+      await game.save();
+      return game;
+    }
+  }
+
   const p1 = await drawCard(game.player1.deck);
   const p2 = await drawCard(game.player2.deck);
 
-  game.player1.drawnCard = p1.card;
-  game.player2.drawnCard = p2.card;
+  // Update game state
   game.player1.deck = p1.remaining;
   game.player2.deck = p2.remaining;
   game.currentRound += 1;
-  game.turn = [];
 
-  // Only set attacker if not set (first round)
+  // Set attacker if not already set
   if (!game.attacker) {
-    game.attacker = Math.random() < 0.5 ? 'P1' : 'P2';
+    game.attacker = 'P1';
   }
-  console.log('DEBUG: Setting round.attacker to', game.attacker);
 
-  game.rounds.push({
+  // Create new round with proper structure
+  const newRound = {
     round: game.currentRound,
     C1: p1.card,
     C2: p2.card,
+    attacker: game.attacker,
+    attribute: null,
     winner: null,
     result: null,
-    attribute: null,
-    attacker: game.attacker // Store attacker for this round
-  });
-  console.log('DEBUG: Round created with attacker', game.rounds[game.rounds.length - 1].attacker);
+    challengedAttributes: [],
+    rejections: { Aura: false, Skill: false, Stamina: false }
+  };
 
-  // Check if game should end due to no more cards
-  if (game.player1.deck.length === 0 && game.player2.deck.length === 0) {
-    const p1Score = game.player1.score.aura + game.player1.score.skill + game.player1.score.stamina;
-    const p2Score = game.player2.score.aura + game.player2.score.skill + game.player2.score.stamina;
-    if (p1Score > p2Score) game.winner = 'P1';
-    else if (p2Score > p1Score) game.winner = 'P2';
-    else game.winner = 'Tie';
-  }
-
-  // If both decks are empty and no win, reshuffle and continue
-  if (game.player1.deck.length === 0 && game.player2.deck.length === 0 && !game.winner) {
-    const shuffle = require('../utils/shuffle');
-    game.player1.deck = shuffle(game.player1.deck.concat(game.rounds.map(r => r.C1)));
-    game.player2.deck = shuffle(game.player2.deck.concat(game.rounds.map(r => r.C2)));
-    game.rounds = [];
-    game.currentRound = 0;
-    game.player1.drawnCard = null;
-    game.player2.drawnCard = null;
-    console.log('🔄 Decks reshuffled for both players.');
-  }
-
+  game.rounds.push(newRound);
   await game.save();
-  console.log(`✅ Round ${game.currentRound} saved with drawn cards.`);
+  
+  console.log('✅ Round', game.currentRound, 'saved with drawn cards.');
   return game;
 }
 
@@ -174,44 +186,11 @@ router.post('/:id/start-round', async (req, res) => {
       return res.status(400).json({ error: 'Game is already over' });
     }
 
-    // Increment round counter
-    game.currentRound += 1;
-    console.log('🧪 ROUND START: currentRound =', game.currentRound);
-
-    // FIXED: Use the game's attacker (which should have been set correctly in respond-turn)
-    const roundAttacker = game.attacker || 'P1';
-    console.log('🔁 game.attacker BEFORE:', game.attacker);
-    console.log('DEBUG: Using attacker for new round:', roundAttacker);
-
-    // Draw cards for both players
-    const p1Card = drawRandomCard();
-    const p2Card = drawRandomCard();
-
-    // Create new round
-    const newRound = {
-      round: game.currentRound,
-      C1: p1Card,
-      C2: p2Card,
-      attacker: roundAttacker,
-      attribute: null,
-      winner: null,
-      result: null,
-      challengedAttributes: [],
-      rejections: { Aura: false, Skill: false, Stamina: false }
-    };
-
-    console.log('DEBUG: Round created with attacker', roundAttacker);
-    game.rounds.push(newRound);
-
-    await game.save();
-    console.log('✅ Round', game.currentRound, 'saved with drawn cards.');
-
-    res.json({ 
-      success: true, 
-      round: newRound,
-      attacker: roundAttacker,
-      gameAttacker: game.attacker 
-    });
+    // Start the round
+    const updatedGame = await startRoundForGame(gameId);
+    
+    // Return the updated game
+    res.json(updatedGame);
 
   } catch (error) {
     console.error('Error starting round:', error);
