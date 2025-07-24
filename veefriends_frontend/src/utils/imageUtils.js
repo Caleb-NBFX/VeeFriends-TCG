@@ -74,10 +74,66 @@ export function getOptimizedCardImageUrl(card, options = {}) {
   return `https://res.cloudinary.com/${cloudName}/image/upload/${transformString}veefriends/cards/${characterSlug}-${raritySlug}`;
 }
 
+// Helper function to get VeeFriends logo with various sizes and optimizations
+export function getVeeFriendsLogo(options = {}) {
+  const cloudName = process.env.REACT_APP_CLOUDINARY_CLOUD_NAME || 'dfecvzwvg';
+  const publicId = 'VeeFriends/assets/veefriends-logo';
+  
+  const transformations = [];
+  if (options.width) transformations.push(`w_${options.width}`);
+  if (options.height) transformations.push(`h_${options.height}`);
+  if (options.fit) transformations.push(`c_${options.fit}`);
+  
+  // Default optimizations
+  transformations.push('q_auto', 'f_auto');
+  
+  const transformString = transformations.length > 0 ? `${transformations.join(',')}/` : '';
+  
+  return `https://res.cloudinary.com/${cloudName}/image/upload/${transformString}${publicId}`;
+}
+
+// Predefined logo sizes for common use cases
+export const LOGO_SIZES = {
+  small: { width: 150 },
+  medium: { width: 300 },
+  large: { width: 500 },
+  header: { width: 200, height: 60, fit: 'fit' },
+  mobile: { width: 250 }
+};
+
+// Convenience functions for common logo sizes
+export function getVeeFriendsLogoSmall() {
+  return getVeeFriendsLogo(LOGO_SIZES.small);
+}
+
+export function getVeeFriendsLogoMedium() {
+  return getVeeFriendsLogo(LOGO_SIZES.medium);
+}
+
+export function getVeeFriendsLogoLarge() {
+  return getVeeFriendsLogo(LOGO_SIZES.large);
+}
+
+export function getVeeFriendsLogoHeader() {
+  return getVeeFriendsLogo(LOGO_SIZES.header);
+}
+
+export function getVeeFriendsLogoMobile() {
+  return getVeeFriendsLogo(LOGO_SIZES.mobile);
+}
+
 // Debug function to test URL generation
 export function debugCardImageUrl(card) {
   console.log('Card:', card);
   const url = getOptimizedCardImageUrl(card, { width: 200, height: 280 });
   console.log('Generated URL:', url);
+  return url;
+}
+
+// Debug function to test logo URL generation
+export function debugLogoUrl(options) {
+  console.log('Logo options:', options);
+  const url = getVeeFriendsLogo(options);
+  console.log('Generated logo URL:', url);
   return url;
 }

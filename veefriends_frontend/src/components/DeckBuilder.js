@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import API_BASE from '../config';
 import CardDisplay from './CardDisplay';
+import { getOptimizedCardImageUrl, getCardFallbackImage, getVeeFriendsLogoHeader } from '../utils/imageUtils';
+import { useVeeFriendsTheme, createGridStyles, createHoverTransform, createFlexContainer } from '../theme/VeeFriendsTheme';
 
 function DeckBuilder() {
   const [firstName, setFirstName] = useState('');
@@ -17,6 +19,30 @@ function DeckBuilder() {
   const [allCharacters, setAllCharacters] = useState([]);
   const [filteredCharacters, setFilteredCharacters] = useState([]);
   const [previewCard, setPreviewCard] = useState(null);
+  const [hoveredCardIndex, setHoveredCardIndex] = useState(null);
+
+  // Use the centralized theme
+  const { theme, baseStyles } = useVeeFriendsTheme();
+
+  // Component-specific styles that extend the base styles
+  const styles = {
+    ...baseStyles,
+    deckGrid: createGridStyles('120px', '1rem'),
+    cardContainer: {
+      position: 'relative',
+      ...createHoverTransform(1),
+      borderRadius: theme.borderRadius.sm,
+      overflow: 'hidden'
+    },
+    cardContainerHovered: {
+      ...createHoverTransform(1.05)
+    },
+    addCardContainer: createFlexContainer('row', '10px', 'wrap'),
+    searchContainer: {
+      position: 'relative',
+      minWidth: '200px'
+    }
+  };
 
   const rarityPoints = {
     "Core": 0,
@@ -57,21 +83,26 @@ function DeckBuilder() {
     if (totalRarityPoints + rarityPoints[rarity] > 15) return alert('Not enough rarity points');
     if (!allCharacters.includes(character)) return alert('Invalid character name');
 
-    // Fetch card details for preview
     try {
+      console.log('Fetching cards from API...');
       const res = await axios.get(`${API_BASE}/api/cards`);
+      console.log('API Response:', res.data);
+      
       const cardData = res.data.find(c => c.character.toUpperCase() === character);
+      console.log('Found card data:', cardData);
+      console.log('Looking for character:', character);
+      
       const newCard = { character, rarity, ...cardData };
+      console.log('New card object:', newCard);
       
       setDeck([...deck, newCard]);
-      setPreviewCard(newCard); // Show the added card
+      setPreviewCard(newCard);
       setCharacter('');
       setFilteredCharacters([]);
       
-      // Clear preview after 3 seconds
-      setTimeout(() => setPreviewCard(null), 3000);
+      setTimeout(() => setPreviewCard(null), 5000);
     } catch (err) {
-      // Fallback if API fails
+      console.error('Failed to fetch card data:', err);
       setDeck([...deck, { character, rarity }]);
       setCharacter('');
       setFilteredCharacters([]);
@@ -85,13 +116,11 @@ function DeckBuilder() {
   };
 
   const submitDeck = async () => {
-    // Validate required fields
     if (!firstName.trim() || !handle.trim() || !email.trim() || !deckName.trim() || deck.length !== 20) {
       alert('Please fill all required fields (First Name, Handle, Email, Deck Name) and build a full deck.');
       return;
     }
 
-    // Normalize email
     const normalizedEmail = email.trim().toLowerCase();
 
     const payload = {
@@ -146,168 +175,266 @@ function DeckBuilder() {
   };
 
   return (
-    <div>
-      <h2>Build Your Deck</h2>
-      
-      {/* User Information Section */}
-      <div style={{ marginBottom: '20px', padding: '10px', border: '1px solid #ccc' }}>
-        <h3>User Information</h3>
-        <div style={{ marginBottom: '10px' }}>
-          <input
-            type="text"
-            placeholder="First Name *"
-            value={firstName}
-            onChange={e => setFirstName(e.target.value)}
-            style={{ marginRight: '10px', width: '200px' }}
-          />
-          <input
-            type="text"
-            placeholder="Last Name"
-            value={lastName}
-            onChange={e => setLastName(e.target.value)}
-            style={{ width: '200px' }}
-          />
+    <div style={styles.container}>
+      <div style={styles.content}>
+        <div style={styles.header}>
+          <div style={styles.headerLine1}>
+            Build Your Official Unofficial
+          </div>
+          <div style={styles.headerLine2}>
+            <img 
+              src={getVeeFriendsLogoHeader()} 
+              alt="VeeFriends" 
+              style={styles.logo}
+              onError={(e) => {
+                console.error('Logo failed to load');
+                e.target.style.display = 'none';
+              }}
+            />
+            TCG Deck
+          </div>
         </div>
-        <div style={{ marginBottom: '10px' }}>
-          <input
-            type="text"
-            placeholder="Handle (Display Name) *"
-            value={handle}
-            onChange={e => setHandle(e.target.value)}
-            style={{ marginRight: '10px', width: '200px' }}
-          />
-          <select 
-            value={platform} 
-            onChange={e => setPlatform(e.target.value)}
-            style={{ padding: '5px', width: '120px' }}
-          >
-            {platforms.map(p => (
-              <option key={p} value={p}>{p}</option>
-            ))}
-          </select>
-        </div>
-        <input
-          type="email"
-          placeholder="Email *"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          style={{ width: '300px', marginBottom: '10px' }}
-        />
-        <br />
-        <input
-          type="text"
-          placeholder="Deck Name *"
-          value={deckName}
-          onChange={e => setDeckName(e.target.value)}
-          style={{ width: '300px' }}
-        />
-        <br />
-        <small style={{ color: '#666' }}>* Required fields</small>
-      </div>
-
-      {/* Preview Card - Show recently added card */}
-      {previewCard && (
-        <div style={{ 
-          marginBottom: '20px', 
-          padding: '15px', 
-          border: '2px solid #28a745', 
-          borderRadius: '8px', 
-          background: '#f8fff8' 
-        }}>
-          <h3>✅ Card Added to Deck!</h3>
-          <CardDisplay card={previewCard} size="medium" />
-        </div>
-      )}
-
-      {/* Deck Building Section */}
-      <div>
-        <h3>Add Cards to Deck</h3>
-        <input
-          type="text"
-          placeholder="Character name"
-          value={character}
-          onChange={handleCharacterInput}
-          autoComplete="off"
-        />
-        {filteredCharacters.length > 0 && (
-          <ul style={{ border: '1px solid #ccc', maxHeight: '100px', overflowY: 'scroll', paddingLeft: 10 }}>
-            {filteredCharacters.map((name, idx) => (
-              <li key={idx} onClick={() => handleCharacterSelect(name)} style={{ cursor: 'pointer' }}>
-                {name}
-              </li>
-            ))}
-          </ul>
-        )}
-        <select value={rarity} onChange={e => setRarity(e.target.value)}>
-          <option>Core</option>
-          <option>Rare</option>
-          <option>Very Rare</option>
-          <option>Epic</option>
-          <option>Spectacular</option>
-        </select>
-        <button onClick={addCard}>Add Card</button>
-      </div>
-      
-      {/* Enhanced Deck Display */}
-      <div style={{ marginTop: '20px' }}>
-        <h3>Current Deck ({deck.length}/20)</h3>
-        <p>Rarity Points: {totalRarityPoints} / 15</p>
         
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', 
-          gap: '1rem',
-          marginTop: '1rem'
-        }}>
-          {deck.map((card, idx) => (
-            <div key={idx} style={{ 
-              border: '1px solid #ddd', 
-              borderRadius: '8px', 
-              padding: '1rem',
-              background: '#f9f9f9'
-            }}>
-              <CardDisplay 
-                card={card} 
-                size="small" 
-                showStats={false}
-                style={{ flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}
+        {/* User Information Section */}
+        <div style={styles.section}>
+          <h3 style={styles.sectionTitle}>👤 User Information</h3>
+          <div style={{ marginBottom: '10px' }}>
+            <input
+              type="text"
+              placeholder="First Name *"
+              value={firstName}
+              onChange={e => setFirstName(e.target.value)}
+              style={{ ...styles.input, width: '200px' }}
+            />
+            <input
+              type="text"
+              placeholder="Last Name"
+              value={lastName}
+              onChange={e => setLastName(e.target.value)}
+              style={{ ...styles.input, width: '200px' }}
+            />
+          </div>
+          <div style={{ marginBottom: '10px' }}>
+            <input
+              type="text"
+              placeholder="Handle (Display Name) *"
+              value={handle}
+              onChange={e => setHandle(e.target.value)}
+              style={{ ...styles.input, width: '200px' }}
+            />
+            <select 
+              value={platform} 
+              onChange={e => setPlatform(e.target.value)}
+              style={{ ...styles.select, width: '120px' }}
+            >
+              {platforms.map(p => (
+                <option key={p} value={p}>{p}</option>
+              ))}
+            </select>
+          </div>
+          <input
+            type="email"
+            placeholder="Email *"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            style={{ ...styles.input, width: '300px' }}
+          />
+          <br />
+          <input
+            type="text"
+            placeholder="Deck Name *"
+            value={deckName}
+            onChange={e => setDeckName(e.target.value)}
+            style={{ ...styles.input, width: '300px' }}
+          />
+          <br />
+          <small style={styles.requiredText}>* Required fields</small>
+        </div>
+
+        {/* Preview Card */}
+        {previewCard && (
+          <div style={styles.previewCard}>
+            <h3 style={styles.previewTitle}>
+              ✅ Card Added to Deck!
+            </h3>
+            <CardDisplay card={previewCard} size="medium" />
+          </div>
+        )}
+
+        {/* Deck Building Section */}
+        <div style={styles.section}>
+          <h3 style={styles.sectionTitle}>🃏 Add Cards to Deck</h3>
+          <div style={styles.addCardContainer}>
+            <div style={styles.searchContainer}>
+              <input
+                type="text"
+                placeholder="Character name"
+                value={character}
+                onChange={handleCharacterInput}
+                autoComplete="off"
+                style={{ ...styles.input, width: '200px', marginRight: 0, marginBottom: 0 }}
               />
-              <div style={{ marginTop: '0.5rem' }}>
-                <strong>{card.character}</strong>
-                <br />
-                <span style={{ fontSize: '0.9em', color: '#666' }}>({card.rarity})</span>
-                <br />
-                <button 
-                  onClick={() => removeCard(idx)}
-                  style={{ 
-                    marginTop: '0.5rem',
-                    backgroundColor: '#dc3545',
-                    color: 'white',
-                    border: 'none',
-                    padding: '0.25rem 0.5rem',
-                    borderRadius: '4px',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Remove
-                </button>
-              </div>
+              {filteredCharacters.length > 0 && (
+                <div style={styles.autocomplete}>
+                  {filteredCharacters.map((name, idx) => (
+                    <div 
+                      key={idx} 
+                      onClick={() => handleCharacterSelect(name)} 
+                      style={{
+                        ...styles.autocompleteItem,
+                        backgroundColor: idx % 2 === 0 ? '#F9FAFB' : '#FFFFFF'
+                      }}
+                      onMouseEnter={e => e.target.style.backgroundColor = theme.colors.gold}
+                      onMouseLeave={e => e.target.style.backgroundColor = idx % 2 === 0 ? '#F9FAFB' : '#FFFFFF'}
+                    >
+                      {name}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-          ))}
+            <select 
+              value={rarity} 
+              onChange={e => setRarity(e.target.value)}
+              style={styles.select}
+            >
+              <option>Core</option>
+              <option>Rare</option>
+              <option>Very Rare</option>
+              <option>Epic</option>
+              <option>Spectacular</option>
+            </select>
+            <button 
+              onClick={addCard}
+              style={styles.button}
+              onMouseEnter={e => Object.assign(e.target.style, styles.buttonHover)}
+              onMouseLeave={e => {
+                e.target.style.transform = 'none';
+                e.target.style.boxShadow = theme.shadows.button;
+              }}
+            >
+              Add Card
+            </button>
+          </div>
+        </div>
+        
+        {/* Deck Display */}
+        <div style={styles.section}>
+          <h3 style={styles.sectionTitle}>
+            🎯 Current Deck ({deck.length}/20) | Rarity Points: {totalRarityPoints}/15
+          </h3>
+          
+          <div style={styles.deckGrid}>
+            {deck.map((card, idx) => {
+              const imageUrl = getOptimizedCardImageUrl(card, { width: 200, height: 280 });
+              const fallbackUrl = getCardFallbackImage(card);
+              
+              return (
+                <div 
+                  key={idx} 
+                  style={{
+                    ...styles.cardContainer,
+                    ...(hoveredCardIndex === idx ? styles.cardContainerHovered : {})
+                  }}
+                  onMouseEnter={() => setHoveredCardIndex(idx)}
+                  onMouseLeave={() => setHoveredCardIndex(null)}
+                >
+                  {imageUrl ? (
+                    <img 
+                      src={imageUrl} 
+                      alt={card.character}
+                      style={styles.cardImage}
+                      onError={(e) => e.target.src = fallbackUrl}
+                    />
+                  ) : (
+                    <div style={{
+                      ...styles.cardImage,
+                      height: '150px',
+                      backgroundColor: '#E5E7EB',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '12px',
+                      fontWeight: 'bold',
+                      color: '#000'
+                    }}>
+                      No Image
+                    </div>
+                  )}
+                  
+                  <div style={styles.cardName}>
+                    {card.character}
+                  </div>
+                  
+                  <button 
+                    onClick={() => removeCard(idx)}
+                    style={{
+                      ...styles.trashIcon,
+                      opacity: hoveredCardIndex === idx ? 1 : 0
+                    }}
+                    title="Remove card"
+                  >
+                    🗑️
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        
+        <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+          <button 
+            onClick={submitDeck}
+            style={styles.submitButton}
+            onMouseEnter={e => Object.assign(e.target.style, styles.buttonHover)}
+            onMouseLeave={e => {
+              e.target.style.transform = 'none';
+              e.target.style.boxShadow = theme.shadows.button;
+            }}
+          >
+            🚀 Submit Deck
+          </button>
+        </div>
+        
+        <hr style={styles.hr} />
+        
+        <div style={styles.section}>
+          <h3 style={styles.sectionTitle}>💾 Load Saved Decks</h3>
+          <button 
+            onClick={loadDecks}
+            style={styles.button}
+            onMouseEnter={e => Object.assign(e.target.style, styles.buttonHover)}
+            onMouseLeave={e => {
+              e.target.style.transform = 'none';
+              e.target.style.boxShadow = theme.shadows.button;
+            }}
+          >
+            Load Saved Decks
+          </button>
+          {savedDecks.length > 0 && (
+            <ul style={{ marginTop: '1rem', listStyle: 'none', padding: 0 }}>
+              {savedDecks.map((d, i) => (
+                <li key={i} style={styles.savedDeckItem}>
+                  <span style={styles.savedDeckText}>
+                    {d.name} ({new Date(d.createdAt).toLocaleString()})
+                  </span>
+                  <button 
+                    onClick={() => loadSelectedDeck(d.cards)}
+                    style={{ ...styles.button, padding: '5px 10px', fontSize: '14px' }}
+                    onMouseEnter={e => Object.assign(e.target.style, styles.buttonHover)}
+                    onMouseLeave={e => {
+                      e.target.style.transform = 'none';
+                      e.target.style.boxShadow = theme.shadows.button;
+                    }}
+                  >
+                    Load
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
-      
-      <button onClick={submitDeck}>Submit Deck</button>
-      <hr />
-      <button onClick={loadDecks}>Load Saved Decks</button>
-      <ul>
-        {savedDecks.map((d, i) => (
-          <li key={i}>
-            {d.name} ({new Date(d.createdAt).toLocaleString()})
-            <button onClick={() => loadSelectedDeck(d.cards)}>Load</button>
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }

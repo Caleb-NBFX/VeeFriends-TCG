@@ -1,9 +1,21 @@
-body {
-  font-family: Arial, sans-serif;
-  background: #fafafa;
+* {
   margin: 0;
-  padding: 20px;
+  padding: 0;
+  box-sizing: border-box;
 }
+
+html {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #3e0754;
+  font-family: "TradeGothicNextLTProBoldCompressed", "Trade Gothic Next", "Trebuchet MS", sans-serif;
+}
+
 h1 {
-  color: #222;
+  color: #e8b343;
 }
