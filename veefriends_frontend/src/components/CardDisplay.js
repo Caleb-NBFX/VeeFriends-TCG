@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { getOptimizedCardImageUrl, getCardFallbackImage } from '../utils/imageUtils';
 
-const CardDisplay = ({ card, size = 'medium', showStats = true, style = {} }) => {
+const CardDisplay = ({ card, size = 'medium', showStats = true, layout = 'horizontal', style = {} }) => {
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
   
@@ -10,14 +10,16 @@ const CardDisplay = ({ card, size = 'medium', showStats = true, style = {} }) =>
   const sizeStyles = {
     small: { maxWidth: '100px', height: 'auto' },
     medium: { maxWidth: '200px', height: 'auto' },
-    large: { maxWidth: '300px', height: 'auto' }
+    large: { maxWidth: '300px', height: 'auto' },
+    xlarge: { maxWidth: '350px', height: 'auto' }
   };
 
   // Size configurations for Cloudinary optimization
   const sizeConfig = {
     small: { width: 100, height: 140 },
     medium: { width: 200, height: 280 },
-    large: { width: 300, height: 420 }
+    large: { width: 300, height: 420 },
+    xlarge: { width: 350, height: 490 }
   };
   
   const { width, height } = sizeConfig[size] || sizeConfig.medium;
@@ -49,9 +51,19 @@ const CardDisplay = ({ card, size = 'medium', showStats = true, style = {} }) =>
     // Add back single quotes around the cleaned quote
     return `"${cleaned}"`;
   };
+
+  // Container style based on layout
+  const containerStyle = layout === 'vertical' 
+    ? { display: 'flex', flexDirection: 'column', alignItems: 'flex-start', ...style }
+    : { display: 'flex', gap: '1rem', alignItems: 'flex-start', ...style };
+
+  // Stats style for vertical layout
+  const statsStyle = layout === 'vertical' 
+    ? { marginTop: '1rem', width: sizeStyles[size].maxWidth }
+    : {};
   
   return (
-    <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', ...style }}>
+    <div style={containerStyle}>
       {/* Card Image */}
       {imageUrl && (
         <div style={{ position: 'relative', ...sizeStyles[size] }}>
@@ -87,7 +99,7 @@ const CardDisplay = ({ card, size = 'medium', showStats = true, style = {} }) =>
       
       {/* Card Stats */}
       {showStats && (
-        <div>
+        <div style={statsStyle}>
           <h4 style={{ margin: '0 0 0.5rem 0' }}>{card.character}</h4>
           <p><strong>Rarity:</strong> {card.rarity}</p>
           <p><strong>Aura:</strong> {card.Aura || card.aura}</p>
