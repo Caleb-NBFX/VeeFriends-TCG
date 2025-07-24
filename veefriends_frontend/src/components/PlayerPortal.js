@@ -3,11 +3,287 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import API_BASE from '../config';
 import CardDisplay from './CardDisplay';
+import { useVeeFriendsTheme } from '../theme/VeeFriendsTheme';
 
 const PlayerPortal = ({ gameId, playerEmail }) => {
   const [game, setGame] = useState(null);
   const [playerRole, setPlayerRole] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Use the centralized theme
+  const { theme, baseStyles } = useVeeFriendsTheme();
+
+  // Component-specific styles that extend the base styles
+  const styles = {
+    ...baseStyles,
+    container: {
+      ...baseStyles.container,
+      padding: '2rem',
+      maxWidth: '800px',
+      margin: '0 auto'
+    },
+    mainHeader: {
+      ...baseStyles.sectionTitle,
+      fontSize: '2rem',
+      textAlign: 'left',
+      marginBottom: '0.5rem'
+    },
+    subHeader: {
+      color: theme.colors.lightGray,
+      fontSize: '1.2rem',
+      fontWeight: 'normal',
+      marginTop: '0',
+      marginBottom: '1.5rem',
+      textTransform: 'none'
+    },
+    debugBox: {
+      background: theme.colors.darkPurple,
+      padding: '1rem',
+      marginBottom: '1rem',
+      fontSize: '0.8rem',
+      borderRadius: theme.borderRadius.sm,
+      border: `1px solid ${theme.colors.subtleBorder}`,
+      color: theme.colors.lightGray,
+      textTransform: 'none'
+    },
+    actionSection: {
+      marginBottom: '2rem',
+      padding: '1rem',
+      border: `2px solid ${theme.colors.gold}`,
+      borderRadius: theme.borderRadius.lg,
+      backgroundColor: theme.colors.darkPurple
+    },
+    challengeSection: {
+      marginBottom: '2rem',
+      padding: '1rem',
+      border: `2px solid ${theme.colors.red}`,
+      borderRadius: theme.borderRadius.lg,
+      backgroundColor: theme.colors.darkPurple
+    },
+    waitingSection: {
+      marginBottom: '2rem',
+      padding: '1rem',
+      border: `2px solid ${theme.colors.gold}`,
+      borderRadius: theme.borderRadius.lg,
+      backgroundColor: '#fff9c4',
+      color: theme.colors.black
+    },
+    completedSection: {
+      marginBottom: '2rem',
+      padding: '1rem',
+      border: `2px solid ${theme.colors.green}`,
+      borderRadius: theme.borderRadius.lg,
+      backgroundColor: theme.colors.darkGreen
+    },
+    cardSection: {
+      marginBottom: '2rem',
+      padding: '1rem',
+      border: `2px solid ${theme.colors.subtleBorder}`,
+      borderRadius: theme.borderRadius.lg,
+      backgroundColor: theme.colors.darkPurple
+    },
+    cardsContainer: {
+      display: 'flex',
+      gap: '2rem',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+      flexWrap: 'nowrap',
+      minHeight: '600px'
+    },
+    cardWrapper: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+      flex: '1 1 50%',
+      maxWidth: '50%',
+      minWidth: '300px'
+    },
+    cardInfo: {
+      marginTop: '1rem',
+      width: '200px',
+      textAlign: 'left',
+      color: theme.colors.white
+    },
+    cardTitle: {
+      fontSize: '1.1rem',
+      fontWeight: 'bold',
+      color: theme.colors.gold,
+      textTransform: 'uppercase',
+      marginBottom: '0.5rem'
+    },
+    cardDetail: {
+      fontSize: '0.9rem',
+      margin: '0.2rem 0',
+      textTransform: 'none'
+    },
+    cardQuote: {
+      fontSize: '0.8rem',
+      fontStyle: 'italic',
+      color: theme.colors.lightGray,
+      marginTop: '0.5rem',
+      textTransform: 'none'
+    },
+    scoreSection: {
+      marginTop: '2rem',
+      padding: '1rem',
+      border: `2px solid ${theme.colors.subtleBorder}`,
+      borderRadius: theme.borderRadius.lg,
+      backgroundColor: theme.colors.darkPurple
+    },
+    uniformButtonRow: {
+      display: 'flex',
+      gap: '1rem',
+      justifyContent: 'center',
+      flexWrap: 'wrap',
+      marginBottom: '1rem'
+    },
+    uniformButton: {
+      ...baseStyles.button,
+      minWidth: '140px',
+      padding: '0.75rem 1rem',
+      fontSize: '0.9rem',
+      textAlign: 'center'
+    },
+    uniformButtonAccept: {
+      ...baseStyles.button,
+      minWidth: '140px',
+      padding: '0.75rem 1rem',
+      fontSize: '0.9rem',
+      textAlign: 'center',
+      backgroundColor: theme.colors.green,
+      color: theme.colors.white,
+      border: `3px solid ${theme.colors.black}`
+    },
+    uniformButtonReject: {
+      ...baseStyles.button,
+      minWidth: '140px',
+      padding: '0.75rem 1rem',
+      fontSize: '0.9rem',
+      textAlign: 'center',
+      backgroundColor: theme.colors.red,
+      color: theme.colors.white,
+      border: `3px solid ${theme.colors.black}`
+    },
+    buttonGroup: {
+      display: 'flex',
+      gap: '1rem',
+      marginBottom: '1rem',
+      flexWrap: 'wrap'
+    },
+    buttonGroupVertical: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '0.5rem',
+      alignItems: 'center'
+    },
+    acceptButton: {
+      ...baseStyles.button,
+      backgroundColor: theme.colors.green,
+      color: theme.colors.white,
+      padding: '1rem 2rem',
+      borderRadius: '50px',
+      fontSize: '1.1rem',
+      border: `3px solid ${theme.colors.black}`
+    },
+    rejectButton: {
+      ...baseStyles.button,
+      backgroundColor: theme.colors.red,
+      color: theme.colors.white,
+      padding: '1rem 2rem',
+      borderRadius: '50px',
+      fontSize: '1.1rem',
+      border: `3px solid ${theme.colors.black}`
+    },
+    counterButton: {
+      ...baseStyles.button,
+      backgroundColor: theme.colors.gold,
+      color: theme.colors.black,
+      padding: '0.5rem 1rem',
+      fontSize: '0.9rem'
+    },
+    tttButton: {
+      ...baseStyles.button,
+      backgroundColor: theme.colors.gold,
+      color: theme.colors.black,
+      padding: '0.5rem 1rem'
+    },
+    disabledButton: {
+      ...baseStyles.button,
+      backgroundColor: theme.colors.lightGray,
+      color: theme.colors.black,
+      cursor: 'not-allowed',
+      opacity: 0.6,
+      minWidth: '140px',
+      padding: '0.75rem 1rem',
+      fontSize: '0.9rem',
+      textAlign: 'center'
+    },
+    nextRoundButton: {
+      ...baseStyles.submitButton,
+      fontSize: '1.1rem',
+      padding: '1rem 2rem'
+    },
+    centerButton: {
+      textAlign: 'center',
+      marginBottom: '2rem'
+    },
+    scoreGrid: {
+      display: 'flex',
+      gap: '2rem',
+      justifyContent: 'center',
+      flexWrap: 'wrap'
+    },
+    scorePlayer: {
+      textAlign: 'center'
+    },
+    scoreLabel: {
+      fontWeight: 'bold',
+      marginBottom: '0.5rem',
+      color: theme.colors.gold,
+      textTransform: 'uppercase'
+    },
+    scoreStat: {
+      margin: '0.25rem 0',
+      color: theme.colors.white,
+      textTransform: 'none'
+    },
+    gameOverContainer: {
+      ...baseStyles.container,
+      padding: '2rem',
+      maxWidth: '800px',
+      margin: '0 auto',
+      textAlign: 'center'
+    },
+    gameOverHeader: {
+      ...baseStyles.sectionTitle,
+      fontSize: '2.5rem',
+      textAlign: 'center',
+      marginBottom: '1rem'
+    },
+    gameOverSubHeader: {
+      ...baseStyles.sectionTitle,
+      fontSize: '2rem',
+      textAlign: 'center',
+      marginBottom: '1rem'
+    },
+    cardPlaceholder: {
+      width: '350px',
+      height: '490px',
+      backgroundColor: theme.colors.darkGray,
+      border: `3px solid ${theme.colors.gold}`,
+      borderRadius: theme.borderRadius.lg,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      color: theme.colors.gold,
+      fontSize: '1.2rem',
+      fontWeight: 'bold',
+      textAlign: 'center',
+      padding: '1rem',
+      backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(232, 179, 67, 0.1) 10px, rgba(232, 179, 67, 0.1) 20px)'
+    },
+  };
 
   const api = API_BASE || 'http://localhost:5001';
 
@@ -17,7 +293,6 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
       const response = await axios.get(`${api}/api/games/${gameId}`);
       const gameData = response.data;
       
-      // Debug: Let's see what we're actually getting
       console.log('Full Game Data:', gameData);
       console.log('Player1 object:', gameData.player1);
       console.log('Player2 object:', gameData.player2);
@@ -46,7 +321,6 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
   useEffect(() => {
     if (gameId && playerEmail) {
       loadGame();
-      // Auto-refresh every 3 seconds
       const interval = setInterval(loadGame, 3000);
       return () => clearInterval(interval);
     }
@@ -83,8 +357,6 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
       });
 
       console.log('Response:', res.data);
-      
-      // Always reload after response
       await loadGame();
       
     } catch (error) {
@@ -95,7 +367,6 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
     }
   };
 
-  // Fixed: Use consistent round indexing
   const roundIndex = game?.currentRound ? game.currentRound - 1 : 0;
   const round = game?.rounds?.[roundIndex];
   const drawnCard = playerRole === 'P1' ? round?.C1 : round?.C2;
@@ -110,23 +381,18 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
   const originalAttacker = round?.attacker;
   const hasChallenged = !!round?.attribute;
   
-  // Track which attributes have been challenged or rejected this round
   const challengedAttrs = round?.challengedAttributes || [];
   const rejectedAttrs = round?.rejections || {};
   const allRejected = Object.values(rejectedAttrs).filter(Boolean).length >= 3;
   
-  // Check if this player can use TTT
   const isAttackerCardCore = drawnCard?.rarity?.toLowerCase() === 'core';
   const canUseTTT = !isResolved && !game?.usedTTT?.[playerRole] && !allRejected && !isAttackerCardCore;
 
-  // Determine who should be responding to the current challenge
-  // If there's a counterChallenger, they are now the challenger
   const currentChallenger = round?.counterChallenger || originalAttacker;
   const currentDefender = currentChallenger === 'P1' ? 'P2' : 'P1';
   const isCurrentDefender = playerRole === currentDefender;
   const isCurrentChallenger = playerRole === currentChallenger;
 
-  // Get available counter attributes (not yet challenged or rejected)
   const getAvailableCounterAttributes = () => {
     const allAttrs = ['Aura', 'Skill', 'Stamina'];
     return allAttrs.filter(attr => 
@@ -155,51 +421,61 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
   const getExpectedAttacker = () => {
     if (!game || !game.rounds || game.rounds.length === 0) return 'P1';
     
-    // Look for the last resolved round to determine next attacker
     for (let i = game.rounds.length - 1; i >= 0; i--) {
       const prevRound = game.rounds[i];
       if (prevRound?.winner || prevRound?.result === 'push') {
-        // If previous round had a winner, they become defender next
         if (prevRound.winner) {
           return prevRound.winner === 'P1' ? 'P2' : 'P1';
         }
-        // If it was a push, alternate based on round number
         return i % 2 === 0 ? 'P2' : 'P1';
       }
     }
     
-    // Default to P1 for first round
     return 'P1';
   };
 
   const expectedAttacker = getExpectedAttacker();
   const canStartNextRound = isResolved && playerRole === expectedAttacker;
 
-  if (!gameId || !playerEmail) return <RedirectForm />;
+  const CardBack = () => (
+    <div style={styles.cardPlaceholder}>
+      <div>🃏</div>
+      <div style={{ fontSize: '0.9rem', marginTop: '0.5rem' }}>VeeFriends</div>
+      <div style={{ fontSize: '0.8rem' }}>Card Back</div>
+    </div>
+  );
 
-  // Check if game is over
+  if (!gameId || !playerEmail) return <RedirectForm styles={styles} theme={theme} />;
+
   if (game?.winner) {
     return (
-      <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
-        <h1>🏆 Game Over!</h1>
-        <h2>{game.winner === 'Tie' ? 'It\'s a Tie!' : `${game.winner} Wins!`}</h2>
-        <p>The game has ended. No more rounds can be played.</p>
+      <div style={styles.gameOverContainer}>
+        <h1 style={styles.gameOverHeader}>🏆 Game Over!</h1>
+        <h2 style={styles.gameOverSubHeader}>
+          {game.winner === 'Tie' 
+            ? 'It\'s a Tie!' 
+            : `@${game.winner === 'P1' 
+                ? (game?.player1?.handle ? game.player1.handle.replace(/^@+/, '') : 'Player1')
+                : (game?.player2?.handle ? game.player2.handle.replace(/^@+/, '') : 'Player2')
+              } Wins!`
+          }
+        </h2>
+        <p style={{ color: theme.colors.white, textTransform: 'none' }}>The game has ended. No more rounds can be played.</p>
         
-        {/* Final Scores */}
-        <div style={{ marginTop: '2rem', padding: '1rem', border: '1px solid #ddd', borderRadius: '8px', background: '#f9f9f9' }}>
-          <h4>📊 Final Scores</h4>
-          <div style={{ display: 'flex', gap: '2rem', justifyContent: 'center' }}>
-            <div>
-              <strong>Player 1</strong>
-              <p>Aura: {game.player1?.score?.aura ?? 0}</p>
-              <p>Skill: {game.player1?.score?.skill ?? 0}</p>
-              <p>Stamina: {game.player1?.score?.stamina ?? 0}</p>
+        <div style={styles.scoreSection}>
+          <h4 style={styles.sectionTitle}>📊 Final Scores</h4>
+          <div style={styles.scoreGrid}>
+            <div style={styles.scorePlayer}>
+              <div style={styles.scoreLabel}>Player 1</div>
+              <p style={styles.scoreStat}>Aura: {game.player1?.score?.aura ?? 0}</p>
+              <p style={styles.scoreStat}>Skill: {game.player1?.score?.skill ?? 0}</p>
+              <p style={styles.scoreStat}>Stamina: {game.player1?.score?.stamina ?? 0}</p>
             </div>
-            <div>
-              <strong>Player 2</strong>
-              <p>Aura: {game.player2?.score?.aura ?? 0}</p>
-              <p>Skill: {game.player2?.score?.skill ?? 0}</p>
-              <p>Stamina: {game.player2?.score?.stamina ?? 0}</p>
+            <div style={styles.scorePlayer}>
+              <div style={styles.scoreLabel}>Player 2</div>
+              <p style={styles.scoreStat}>Aura: {game.player2?.score?.aura ?? 0}</p>
+              <p style={styles.scoreStat}>Skill: {game.player2?.score?.skill ?? 0}</p>
+              <p style={styles.scoreStat}>Stamina: {game.player2?.score?.stamina ?? 0}</p>
             </div>
           </div>
         </div>
@@ -215,9 +491,9 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
   const cleanHandle = handle ? handle.replace(/^@+/, '') : 'Unknown';
 
   return (
-    <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
-      <h2 style={{ fontWeight: '500', fontSize: '1.5em', marginBottom: '0.5rem' }}>Welcome @{cleanHandle}</h2>
-      <h3 style={{ fontWeight: 'normal', fontSize: '1.2em', marginTop: '0', marginBottom: '1.5rem', color: '#666' }}>
+    <div style={styles.container}>
+      <h2 style={styles.mainHeader}>Welcome @{cleanHandle}</h2>
+      <h3 style={styles.subHeader}>
         {playerRole === 'P1' ? 'Player 1' : playerRole === 'P2' ? 'Player 2' : 'Unknown'}
         {game && (
           <span> - {isCurrentChallenger ? 'Challenging' : 'Defending'}</span>
@@ -226,18 +502,14 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
 
       {/* Next Round Button - moved to top */}
       {canStartNextRound && (
-        <div style={{ marginBottom: '2rem', textAlign: 'center' }}>
+        <div style={styles.centerButton}>
           <button 
             onClick={handleStartNextRound} 
-            style={{ 
-              backgroundColor: '#007bff',
-              color: 'white',
-              padding: '1rem 2rem',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontSize: '1.1em',
-              fontWeight: 'bold'
+            style={styles.nextRoundButton}
+            onMouseEnter={e => Object.assign(e.target.style, styles.buttonHover)}
+            onMouseLeave={e => {
+              e.target.style.transform = 'none';
+              e.target.style.boxShadow = theme.shadows.button;
             }}
           >
             ▶️ Start Next Round
@@ -245,8 +517,8 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
         </div>
       )}
 
-      {/* Debug Info */}
-      <div style={{ background: '#f0f0f0', padding: '1rem', marginBottom: '1rem', fontSize: '0.8em' }}>
+      {/* Debug Info - Commented out for production, uncomment for troubleshooting
+      <div style={styles.debugBox}>
         <strong>Debug Info:</strong><br/>
         Round: {roundIndex + 1} | Resolved: {isResolved ? 'Yes' : 'No'} | 
         Original Attacker: {originalAttacker} | Current Challenger: {currentChallenger} | 
@@ -254,22 +526,23 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
         {round?.rejections && <><br/>Rejections: {JSON.stringify(round.rejections)}</>}
         {round?.counterChallenger && <><br/>Counter Challenger: {round.counterChallenger}</>}
       </div>
+      */}
 
       {/* Original Attacker Controls - only show if no challenge has been made yet */}
       {!isResolved && originalAttacker === playerRole && !hasChallenged && (
-        <div style={{ marginBottom: '2rem', padding: '1rem', border: '2px solid #007bff', borderRadius: '8px' }}>
-          <h3>🗡️ Choose an attribute to challenge:</h3>
-          <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+        <div style={styles.actionSection}>
+          <h3 style={styles.sectionTitle}>🗡️ Choose your challenge:</h3>
+          <div style={styles.uniformButtonRow}>
             <button
               onClick={() => handleChallenge('Aura')}
               disabled={rejectedAttrs.Aura || challengedAttrs.includes('Aura') || isLoading}
-              style={{ 
-                backgroundColor: (rejectedAttrs.Aura || challengedAttrs.includes('Aura')) ? '#ccc' : '#007bff',
-                color: 'white',
-                padding: '0.5rem 1rem',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: (rejectedAttrs.Aura || challengedAttrs.includes('Aura')) ? 'not-allowed' : 'pointer'
+              style={rejectedAttrs.Aura || challengedAttrs.includes('Aura') ? styles.disabledButton : styles.uniformButton}
+              onMouseEnter={e => !e.target.disabled && Object.assign(e.target.style, styles.buttonHover)}
+              onMouseLeave={e => {
+                if (!e.target.disabled) {
+                  e.target.style.transform = 'none';
+                  e.target.style.boxShadow = theme.shadows.button;
+                }
               }}
             >
               Aura {(rejectedAttrs.Aura || challengedAttrs.includes('Aura')) && '(Used)'}
@@ -277,13 +550,13 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
             <button
               onClick={() => handleChallenge('Skill')}
               disabled={rejectedAttrs.Skill || challengedAttrs.includes('Skill') || isLoading}
-              style={{ 
-                backgroundColor: (rejectedAttrs.Skill || challengedAttrs.includes('Skill')) ? '#ccc' : '#007bff',
-                color: 'white',
-                padding: '0.5rem 1rem',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: (rejectedAttrs.Skill || challengedAttrs.includes('Skill')) ? 'not-allowed' : 'pointer'
+              style={rejectedAttrs.Skill || challengedAttrs.includes('Skill') ? styles.disabledButton : styles.uniformButton}
+              onMouseEnter={e => !e.target.disabled && Object.assign(e.target.style, styles.buttonHover)}
+              onMouseLeave={e => {
+                if (!e.target.disabled) {
+                  e.target.style.transform = 'none';
+                  e.target.style.boxShadow = theme.shadows.button;
+                }
               }}
             >
               Skill {(rejectedAttrs.Skill || challengedAttrs.includes('Skill')) && '(Used)'}
@@ -291,175 +564,204 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
             <button
               onClick={() => handleChallenge('Stamina')}
               disabled={rejectedAttrs.Stamina || challengedAttrs.includes('Stamina') || isLoading}
-              style={{ 
-                backgroundColor: (rejectedAttrs.Stamina || challengedAttrs.includes('Stamina')) ? '#ccc' : '#007bff',
-                color: 'white',
-                padding: '0.5rem 1rem',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: (rejectedAttrs.Stamina || challengedAttrs.includes('Stamina')) ? 'not-allowed' : 'pointer'
+              style={rejectedAttrs.Stamina || challengedAttrs.includes('Stamina') ? styles.disabledButton : styles.uniformButton}
+              onMouseEnter={e => !e.target.disabled && Object.assign(e.target.style, styles.buttonHover)}
+              onMouseLeave={e => {
+                if (!e.target.disabled) {
+                  e.target.style.transform = 'none';
+                  e.target.style.boxShadow = theme.shadows.button;
+                }
               }}
             >
               Stamina {(rejectedAttrs.Stamina || challengedAttrs.includes('Stamina')) && '(Used)'}
             </button>
+            
+            {canUseTTT && (
+              <button 
+                onClick={() => handleRespond('accept', true)}
+                disabled={isLoading}
+                style={styles.uniformButton}
+                onMouseEnter={e => Object.assign(e.target.style, styles.buttonHover)}
+                onMouseLeave={e => {
+                  e.target.style.transform = 'none';
+                  e.target.style.boxShadow = theme.shadows.button;
+                }}
+              >
+                🪙 Use TTT
+              </button>
+            )}
           </div>
-          
-          {canUseTTT && (
-            <button 
-              onClick={() => handleRespond('accept', true)}
-              disabled={isLoading}
-              style={{ 
-                backgroundColor: '#28a745',
-                color: 'white',
-                padding: '0.5rem 1rem',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer'
-              }}
-            >
-              🪙 Use TTT (Total Score)
-            </button>
-          )}
         </div>
       )}
 
       {/* Defender Controls - show when a challenge has been made and this player is the current defender */}
       {!isResolved && isCurrentDefender && hasChallenged && !allRejected && (
-        <div style={{ marginBottom: '2rem', padding: '1rem', border: '2px solid #dc3545', borderRadius: '8px' }}>
-          <h3>🛡️ You've been challenged on: <strong>{round.attribute}</strong></h3>
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginBottom: '1rem' }}>
+        <div style={styles.challengeSection}>
+          <h3 style={styles.sectionTitle}>🛡️ Accept/Reject Challenge</h3>
+          <p style={{ color: theme.colors.white, textTransform: 'none', marginBottom: '1rem' }}>
+            You've been challenged on: <strong>{round.attribute}</strong>
+          </p>
+          
+          <div style={styles.uniformButtonRow}>
             <button 
               onClick={() => handleRespond('accept')}
               disabled={isLoading}
-              style={{ 
-                backgroundColor: '#28a745',
-                color: 'white',
-                padding: '1rem 2rem',
-                border: 'none',
-                borderRadius: '50px',
-                cursor: 'pointer',
-                fontSize: '1.1em'
+              style={styles.uniformButtonAccept}
+              onMouseEnter={e => Object.assign(e.target.style, styles.buttonHover)}
+              onMouseLeave={e => {
+                e.target.style.transform = 'none';
+                e.target.style.boxShadow = theme.shadows.button;
               }}
             >
               ✅ Accept Challenge
             </button>
             
-            {canCounter && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <span style={{ fontSize: '0.9em', fontWeight: 'bold' }}>Or Counter with:</span>
-                {availableCounterAttrs.map(attr => (
-                  <button
-                    key={attr}
-                    onClick={() => handleRespond('reject', false, attr)}
-                    disabled={isLoading}
-                    style={{ 
-                      backgroundColor: '#ffc107',
-                      color: 'black',
-                      padding: '0.5rem 1rem',
-                      border: 'none',
-                      borderRadius: '4px',
-                      cursor: 'pointer',
-                      fontSize: '0.9em'
-                    }}
-                  >
-                    🔄 Counter with {attr}
-                  </button>
-                ))}
-              </div>
-            )}
-
-            {!canCounter && (
+            {canCounter ? (
+              availableCounterAttrs.map(attr => (
+                <button
+                  key={attr}
+                  onClick={() => handleRespond('reject', false, attr)}
+                  disabled={isLoading}
+                  style={styles.uniformButton}
+                  onMouseEnter={e => Object.assign(e.target.style, styles.buttonHover)}
+                  onMouseLeave={e => {
+                    e.target.style.transform = 'none';
+                    e.target.style.boxShadow = theme.shadows.button;
+                  }}
+                >
+                  🔄 Counter with {attr}
+                </button>
+              ))
+            ) : (
               <button 
                 onClick={() => handleRespond('reject')}
                 disabled={isLoading}
-                style={{ 
-                  backgroundColor: '#dc3545',
-                  color: 'white',
-                  padding: '1rem 2rem',
-                  border: 'none',
-                  borderRadius: '50px',
-                  cursor: 'pointer',
-                  fontSize: '1.1em'
+                style={styles.uniformButtonReject}
+                onMouseEnter={e => Object.assign(e.target.style, styles.buttonHover)}
+                onMouseLeave={e => {
+                  e.target.style.transform = 'none';
+                  e.target.style.boxShadow = theme.shadows.button;
                 }}
               >
                 ❌ Reject Challenge
               </button>
             )}
-          </div>
-          
-          {canUseTTT && (
-            <div style={{ textAlign: 'center' }}>
+            
+            {canUseTTT && (
               <button 
                 onClick={() => handleRespond('accept', true)}
                 disabled={isLoading}
-                style={{ 
-                  backgroundColor: '#ffc107',
-                  color: 'black',
-                  padding: '0.5rem 1rem',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer'
+                style={styles.uniformButton}
+                onMouseEnter={e => Object.assign(e.target.style, styles.buttonHover)}
+                onMouseLeave={e => {
+                  e.target.style.transform = 'none';
+                  e.target.style.boxShadow = theme.shadows.button;
                 }}
               >
-                🪙 Use TTT Instead
+                🪙 Use TTT
               </button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       )}
 
       {/* Waiting message for current challenger when they're waiting for a response */}
       {!isResolved && isCurrentChallenger && hasChallenged && (
-        <div style={{ marginBottom: '2rem', padding: '1rem', border: '2px solid #ffc107', borderRadius: '8px', background: '#fff9c4' }}>
-          <h3>⏳ Waiting for opponent to respond to challenge on: <strong>{round.attribute}</strong></h3>
-          <p>The other player needs to accept or counter your challenge.</p>
+        <div style={styles.waitingSection}>
+          <h3 style={{ color: theme.colors.black, textTransform: 'uppercase' }}>⏳ Waiting for opponent to respond to challenge on: <strong>{round.attribute}</strong></h3>
+          <p style={{ color: theme.colors.black, textTransform: 'none' }}>The other player needs to accept or counter your challenge.</p>
         </div>
       )}
 
       {/* Round Result */}
       {isResolved && (
-        <div style={{ marginBottom: '2rem', padding: '1rem', border: '2px solid #28a745', borderRadius: '8px' }}>
-          <h3>🏆 Round Complete!</h3>
-          {round.winner && <p><strong>Winner: {round.winner}</strong></p>}
-          {round.result === 'push' && <p><strong>Result: Push (Tie)</strong></p>}
-          <p><strong>Attribute:</strong> {round.attribute}</p>
-          
-          {/* Show opponent's card when round is resolved */}
-          {opponentCard && (
-            <div style={{ marginTop: '1rem', padding: '1rem', border: '1px solid #ddd', borderRadius: '8px', background: '#f8f9fa' }}>
-              <h4>🃏 {playerRole === 'P1' ? 'P2' : 'P1'} Card This Round</h4>
-              <CardDisplay card={opponentCard} size="medium" />
-            </div>
+        <div style={{
+          ...styles.completedSection,
+          backgroundColor: round.result === 'push' 
+            ? '#B8860B' // Dark goldenrod for push - readable and thematic
+            : round.winner === playerRole 
+              ? theme.colors.darkGreen // Green for winner  
+              : '#8B0000', // Dark red for loser
+          borderColor: round.result === 'push'
+            ? '#DAA520' // Lighter goldenrod border for contrast
+            : round.winner === playerRole
+              ? theme.colors.green
+              : theme.colors.red
+        }}>
+          <h3 style={styles.sectionTitle}>🏆 Round {roundIndex + 1} Complete!</h3>
+          {round.winner && (
+            <p style={{ color: theme.colors.white, textTransform: 'none' }}>
+              <strong>Winner: @{round.winner === 'P1' 
+                ? (game?.player1?.handle ? game.player1.handle.replace(/^@+/, '') : 'Player1')
+                : (game?.player2?.handle ? game.player2.handle.replace(/^@+/, '') : 'Player2')
+              }</strong>
+            </p>
           )}
+          {round.result === 'push' && (
+            <p style={{ color: theme.colors.white, textTransform: 'none' }}>
+              <strong>Result: Push (Tie)</strong>
+            </p>
+          )}
+          <p style={{ color: theme.colors.white, textTransform: 'none' }}>
+            <strong>Attribute:</strong> {round.attribute}
+          </p>
         </div>
       )}
 
-      {/* Card Display */}
-      {drawnCard ? (
-        <div style={{ marginBottom: '2rem', padding: '1rem', border: '1px solid #ddd', borderRadius: '8px' }}>
-          <h3>🃏 Your Card This Round</h3>
-          <CardDisplay card={drawnCard} size="large" />
+      {/* Card Display - Combined for both players */}
+      {(drawnCard || opponentCard) && (
+        <div style={styles.cardSection}>
+          <h3 style={styles.sectionTitle}>🃏 Cards This Round</h3>
+          <div style={styles.cardsContainer}>
+            {/* Player's Card */}
+            <div style={styles.cardWrapper}>
+              <div style={{ textAlign: 'left', marginBottom: '0.5rem', color: theme.colors.gold, fontWeight: 'bold', textTransform: 'uppercase' }}>
+                @{cleanHandle}
+              </div>
+              {drawnCard ? (
+                <CardDisplay card={drawnCard} size="xlarge" layout="vertical" />
+              ) : (
+                <div style={{ color: theme.colors.white, textTransform: 'none' }}>No card drawn yet</div>
+              )}
+            </div>
+
+            {/* Opponent's Card */}
+            <div style={styles.cardWrapper}>
+              <div style={{ textAlign: 'left', marginBottom: '0.5rem', color: theme.colors.gold, fontWeight: 'bold', textTransform: 'uppercase' }}>
+                @{playerRole === 'P1' ? (game?.player2?.handle ? game.player2.handle.replace(/^@+/, '') : 'Opponent') : (game?.player1?.handle ? game.player1.handle.replace(/^@+/, '') : 'Opponent')}
+              </div>
+              {opponentCard ? (
+                <>
+                  {isResolved ? (
+                    <CardDisplay card={opponentCard} size="xlarge" layout="vertical" />
+                  ) : (
+                    <CardBack />
+                  )}
+                </>
+              ) : (
+                <div style={{ color: theme.colors.white, textTransform: 'none' }}>No card drawn yet</div>
+              )}
+            </div>
+          </div>
         </div>
-      ) : (
-        <p>No card drawn yet this round.</p>
       )}
 
       {/* Score Display for Both Players */}
       {game && (
-        <div style={{ marginTop: '2rem', padding: '1rem', border: '1px solid #ddd', borderRadius: '8px', background: '#f9f9f9' }}>
-          <h4>📊 Current Scores</h4>
-          <div style={{ display: 'flex', gap: '2rem', justifyContent: 'center' }}>
-            <div>
-              <strong>Player 1</strong>
-              <p>Aura: {game.player1?.score?.aura ?? 0}</p>
-              <p>Skill: {game.player1?.score?.skill ?? 0}</p>
-              <p>Stamina: {game.player1?.score?.stamina ?? 0}</p>
+        <div style={styles.scoreSection}>
+          <h4 style={styles.sectionTitle}>📊 Current Scores</h4>
+          <div style={styles.scoreGrid}>
+            <div style={styles.scorePlayer}>
+              <div style={styles.scoreLabel}>Player 1</div>
+              <p style={styles.scoreStat}>Aura: {game.player1?.score?.aura ?? 0}</p>
+              <p style={styles.scoreStat}>Skill: {game.player1?.score?.skill ?? 0}</p>
+              <p style={styles.scoreStat}>Stamina: {game.player1?.score?.stamina ?? 0}</p>
             </div>
-            <div>
-              <strong>Player 2</strong>
-              <p>Aura: {game.player2?.score?.aura ?? 0}</p>
-              <p>Skill: {game.player2?.score?.skill ?? 0}</p>
-              <p>Stamina: {game.player2?.score?.stamina ?? 0}</p>
+            <div style={styles.scorePlayer}>
+              <div style={styles.scoreLabel}>Player 2</div>
+              <p style={styles.scoreStat}>Aura: {game.player2?.score?.aura ?? 0}</p>
+              <p style={styles.scoreStat}>Skill: {game.player2?.score?.skill ?? 0}</p>
+              <p style={styles.scoreStat}>Stamina: {game.player2?.score?.stamina ?? 0}</p>
             </div>
           </div>
         </div>
@@ -468,7 +770,7 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
   );
 };
 
-const RedirectForm = () => {
+const RedirectForm = ({ styles, theme }) => {
   const navigate = useNavigate();
   const [gameId, setGameId] = useState('');
   const [email, setEmail] = useState('');
@@ -480,52 +782,60 @@ const RedirectForm = () => {
     }
   };
 
+  const formStyles = {
+    container: {
+      ...styles.container,
+      maxWidth: '400px'
+    },
+    form: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '1rem'
+    },
+    input: {
+      ...styles.input,
+      width: '100%',
+      marginRight: 0,
+      marginBottom: 0
+    },
+    submitButton: {
+      ...styles.submitButton,
+      width: '100%',
+      padding: '0.75rem'
+    }
+  };
+
   return (
-    <form onSubmit={handleSubmit} style={{ padding: '2rem', maxWidth: '400px', margin: '0 auto' }}>
-      <h2>Enter Game Info</h2>
-      <input
-        type="text"
-        placeholder="Game ID"
-        value={gameId}
-        onChange={(e) => setGameId(e.target.value)}
-        style={{ 
-          display: 'block', 
-          width: '100%',
-          padding: '0.5rem',
-          marginBottom: '1rem',
-          border: '1px solid #ddd',
-          borderRadius: '4px'
-        }}
-      />
-      <input
-        type="email"
-        placeholder="Your Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        style={{ 
-          display: 'block', 
-          width: '100%',
-          padding: '0.5rem',
-          marginBottom: '1rem',
-          border: '1px solid #ddd',
-          borderRadius: '4px'
-        }}
-      />
-      <button 
-        type="submit"
-        style={{
-          width: '100%',
-          padding: '0.75rem',
-          backgroundColor: '#007bff',
-          color: 'white',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer'
-        }}
-      >
-        Enter Player Portal
-      </button>
-    </form>
+    <div style={formStyles.container}>
+      <h2 style={styles.mainHeader}>Enter Game Info</h2>
+      <form onSubmit={handleSubmit} style={formStyles.form}>
+        <input
+          type="text"
+          placeholder="Game ID"
+          value={gameId}
+          onChange={(e) => setGameId(e.target.value)}
+          style={formStyles.input}
+        />
+        <input
+          type="email"
+          placeholder="Your Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          style={formStyles.input}
+        />
+        <button 
+          type="submit"
+          style={formStyles.submitButton}
+          onMouseEnter={e => Object.assign(e.target.style, styles.buttonHover)}
+          onMouseLeave={e => {
+            e.target.style.transform = 'none';
+            e.target.style.boxShadow = theme.shadows.button;
+          }}
+        >
+          Enter Player Portal
+        </button>
+      </form>
+    </div>
   );
 };
 
