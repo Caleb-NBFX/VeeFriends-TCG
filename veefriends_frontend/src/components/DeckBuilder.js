@@ -47,9 +47,14 @@ function DeckBuilder() {
   const rarityPoints = {
     "Core": 0,
     "Rare": 2,
-    "Very Rare": 3,
+    "Very Rare": 3,  
     "Epic": 4,
-    "Spectacular": 5
+    "Hologram": 5,
+    "Lava": 5,
+    "Gold": 5,
+    "Emerald": 5,
+    "Diamond": 5,
+    "Bubblegum": 5
   };
 
   const platforms = [
@@ -302,7 +307,12 @@ function DeckBuilder() {
               <option>Rare</option>
               <option>Very Rare</option>
               <option>Epic</option>
-              <option>Spectacular</option>
+              <option>Bubblegum</option>
+              <option>Diamond</option>
+              <option>Emerald</option>
+              <option>Gold</option>
+              <option>Hologram</option>
+              <option>Lava</option>
             </select>
             <button 
               onClick={addCard}
