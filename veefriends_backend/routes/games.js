@@ -84,16 +84,16 @@ async function startRoundForGame(gameId) {
     const raritySlug = rarity.toLowerCase().replace(/\s+/g, '');
 
     const rarityMeta = {
-      Core:          { color: '#E4CE13', icon: 'core.png' },
-      Rare:          { color: '#783F22', icon: 'rare.png' },
-      'Very Rare':   { color: '#C05316', icon: 'veryrare.png' },
-      Epic:          { color: '#2DAD7C', icon: 'epic.png' },
-      Hologram:      { color: '#B1A5D0', icon: 'hologram.png' },
-      Lava:          { color: '#FF4500', icon: 'lava.png' },
-      Gold:          { color: '#FFD700', icon: 'gold.png' },
-      Emerald:       { color: '#50C878', icon: 'emerald.png' },
-      Diamond:       { color: '#B9F2FF', icon: 'diamond.png' },
-      Bubblegum:     { color: '#FF69B4', icon: 'bubblegum.png' }
+      Core:        { color: '#E4CE13', icon: 'core.png' },
+      Rare:        { color: '#783F22', icon: 'rare.png' },
+      Very Rare:   { color: '#C05316', icon: 'veryrare.png' },
+      Epic:        { color: '#2DAD7C', icon: 'epic.png' },
+      Hologram:    { color: '#B1A5D0', icon: 'hologram.png' },
+      Lava:        { color: '#FF4500', icon: 'lava.png' },
+      Gold:        { color: '#FFD700', icon: 'gold.png' },
+      Emerald:     { color: '#50C878', icon: 'emerald.png' },
+      Diamond:     { color: '#B9F2FF', icon: 'diamond.png' },
+      Bubblegum:   { color: '#FF69B4', icon: 'bubblegum.png' }
     };
 
     // Add all extra fields for Captivate
@@ -242,7 +242,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// PUT /api/games/:id/edit - Update game data
+// PUT /api/games/:id/edit - Update game data (ADMIN ONLY)
 router.put('/:id/edit', async (req, res) => {
   try {
     const gameId = req.params.id;
