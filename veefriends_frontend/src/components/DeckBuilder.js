@@ -97,6 +97,13 @@ function DeckBuilder() {
       console.log('Found card data:', cardData);
       console.log('Looking for character:', character);
       
+      // Add this debug line right before you create the card object:
+      console.log('Adding card with character:', character, 'rarity:', rarity);
+      
+      const card = { character, rarity };
+      console.log('Card object created:', card);
+      console.log('Generated URL:', getOptimizedCardImageUrl(card, { width: 200, height: 280 }));
+      
       const newCard = { character, rarity, ...cardData };
       console.log('New card object:', newCard);
       

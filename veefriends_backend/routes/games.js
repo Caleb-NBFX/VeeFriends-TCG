@@ -84,16 +84,16 @@ async function startRoundForGame(gameId) {
     const raritySlug = rarity.toLowerCase().replace(/\s+/g, '');
 
     const rarityMeta = {
-      Core:        { color: '#E4CE13', icon: 'core.png' },
-      Rare:        { color: '#783F22', icon: 'rare.png' },
-      Very Rare:   { color: '#C05316', icon: 'veryrare.png' },
-      Epic:        { color: '#2DAD7C', icon: 'epic.png' },
-      Hologram:    { color: '#B1A5D0', icon: 'hologram.png' },
-      Lava:        { color: '#FF4500', icon: 'lava.png' },
-      Gold:        { color: '#FFD700', icon: 'gold.png' },
-      Emerald:     { color: '#50C878', icon: 'emerald.png' },
-      Diamond:     { color: '#B9F2FF', icon: 'diamond.png' },
-      Bubblegum:   { color: '#FF69B4', icon: 'bubblegum.png' }
+      Core:          { color: '#E4CE13', icon: 'core.png' },
+      Rare:          { color: '#783F22', icon: 'rare.png' },
+      'Very Rare':   { color: '#C05316', icon: 'veryrare.png' },
+      Epic:          { color: '#2DAD7C', icon: 'epic.png' },
+      Hologram:      { color: '#B1A5D0', icon: 'hologram.png' },
+      Lava:          { color: '#FF4500', icon: 'lava.png' },
+      Gold:          { color: '#FFD700', icon: 'gold.png' },
+      Emerald:       { color: '#50C878', icon: 'emerald.png' },
+      Diamond:       { color: '#B9F2FF', icon: 'diamond.png' },
+      Bubblegum:     { color: '#FF69B4', icon: 'bubblegum.png' }
     };
 
     // Add all extra fields for Captivate
@@ -239,6 +239,103 @@ router.get('/:id', async (req, res) => {
   } catch (err) {
     console.error('❌ Error fetching game:', err);
     res.status(500).json({ error: err.message });
+  }
+});
+
+// PUT /api/games/:id/edit - Update game data
+router.put('/:id/edit', async (req, res) => {
+  try {
+    const gameId = req.params.id;
+    const { field, value, roundIndex, cardPlayer } = req.body;
+
+    const game = await Game.findById(gameId);
+    if (!game) return res.status(404).json({ error: 'Game not found' });
+
+    // Handle different types of updates
+    switch (field) {
+      case 'player1_handle':
+        game.player1.handle = value;
+        break;
+      case 'player2_handle':
+        game.player2.handle = value;
+        break;
+      case 'player1_score_aura':
+        game.player1.score.aura = parseInt(value);
+        break;
+      case 'player1_score_skill':
+        game.player1.score.skill = parseInt(value);
+        break;
+      case 'player1_score_stamina':
+        game.player1.score.stamina = parseInt(value);
+        break;
+      case 'player2_score_aura':
+        game.player2.score.aura = parseInt(value);
+        break;
+      case 'player2_score_skill':
+        game.player2.score.skill = parseInt(value);
+        break;
+      case 'player2_score_stamina':
+        game.player2.score.stamina = parseInt(value);
+        break;
+      case 'round_card_character':
+        if (roundIndex !== undefined && cardPlayer) {
+          const cardKey = cardPlayer === 'C1' ? 'C1' : 'C2';
+          if (game.rounds[roundIndex] && game.rounds[roundIndex][cardKey]) {
+            game.rounds[roundIndex][cardKey].character = value;
+          }
+        }
+        break;
+      case 'round_card_rarity':
+        if (roundIndex !== undefined && cardPlayer) {
+          const cardKey = cardPlayer === 'C1' ? 'C1' : 'C2';
+          if (game.rounds[roundIndex] && game.rounds[roundIndex][cardKey]) {
+            game.rounds[roundIndex][cardKey].rarity = value;
+          }
+        }
+        break;
+      case 'round_card_aura':
+        if (roundIndex !== undefined && cardPlayer) {
+          const cardKey = cardPlayer === 'C1' ? 'C1' : 'C2';
+          if (game.rounds[roundIndex] && game.rounds[roundIndex][cardKey]) {
+            game.rounds[roundIndex][cardKey].Aura = parseInt(value);
+          }
+        }
+        break;
+      case 'round_card_skill':
+        if (roundIndex !== undefined && cardPlayer) {
+          const cardKey = cardPlayer === 'C1' ? 'C1' : 'C2';
+          if (game.rounds[roundIndex] && game.rounds[roundIndex][cardKey]) {
+            game.rounds[roundIndex][cardKey].Skill = parseInt(value);
+          }
+        }
+        break;
+      case 'round_card_stamina':
+        if (roundIndex !== undefined && cardPlayer) {
+          const cardKey = cardPlayer === 'C1' ? 'C1' : 'C2';
+          if (game.rounds[roundIndex] && game.rounds[roundIndex][cardKey]) {
+            game.rounds[roundIndex][cardKey].Stamina = parseInt(value);
+          }
+        }
+        break;
+      case 'round_card_score':
+        if (roundIndex !== undefined && cardPlayer) {
+          const cardKey = cardPlayer === 'C1' ? 'C1' : 'C2';
+          if (game.rounds[roundIndex] && game.rounds[roundIndex][cardKey]) {
+            game.rounds[roundIndex][cardKey].Score = parseFloat(value);
+          }
+        }
+        break;
+      default:
+        return res.status(400).json({ error: 'Invalid field' });
+    }
+
+    await game.save();
+    console.log(`✅ Updated game ${gameId} - ${field}: ${value}`);
+    res.json({ success: true, game });
+
+  } catch (error) {
+    console.error('Error updating game:', error);
+    res.status(500).json({ error: 'Failed to update game' });
   }
 });
 
