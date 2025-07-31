@@ -41,8 +41,62 @@ function DeckBuilder() {
     searchContainer: {
       position: 'relative',
       minWidth: '200px'
+    },
+    // Responsive input styles for mobile
+    responsiveInput: {
+      ...baseStyles.input,
+      width: '300px',
+      '@media (max-width: 768px)': {
+        width: '100%',
+        maxWidth: '280px'
+      }
+    },
+    // Responsive deck title for mobile
+    deckTitle: {
+      ...baseStyles.sectionTitle,
+      '@media (max-width: 768px)': {
+        fontSize: '1rem',
+        lineHeight: '1.4',
+        textAlign: 'center'
+      }
+    },
+    // Responsive preview card for mobile
+    previewCardMobile: {
+      ...baseStyles.previewCard,
+      '@media (max-width: 768px)': {
+        flexDirection: 'column',
+        alignItems: 'center',
+        textAlign: 'center'
+      }
     }
   };
+
+  // Add CSS for media queries (since React inline styles don't support them)
+  const mobileCSS = `
+    @media (max-width: 768px) {
+      .responsive-input {
+        width: 100% !important;
+        max-width: 280px !important;
+      }
+      
+      .deck-title-mobile {
+        font-size: 1rem !important;
+        line-height: 1.4 !important;
+        text-align: center !important;
+        word-break: break-word !important;
+      }
+      
+      .preview-card-mobile {
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+      }
+      
+      .preview-card-mobile > div:first-child {
+        margin-bottom: 1rem !important;
+      }
+    }
+  `;
 
   const rarityPoints = {
     "Core": 0,
@@ -188,6 +242,7 @@ function DeckBuilder() {
 
   return (
     <div style={styles.container}>
+      <style>{mobileCSS}</style>
       <div style={styles.content}>
         <div style={styles.header}>
           <div style={styles.headerLine1}>
@@ -216,6 +271,7 @@ function DeckBuilder() {
               placeholder="First Name *"
               value={firstName}
               onChange={e => setFirstName(e.target.value)}
+              className="responsive-input"
               style={{ ...styles.input, width: '200px' }}
             />
             <input
@@ -223,6 +279,7 @@ function DeckBuilder() {
               placeholder="Last Name"
               value={lastName}
               onChange={e => setLastName(e.target.value)}
+              className="responsive-input"
               style={{ ...styles.input, width: '200px' }}
             />
           </div>
@@ -232,6 +289,7 @@ function DeckBuilder() {
               placeholder="Whatnot Username (Display Name) *"
               value={handle}
               onChange={e => setHandle(e.target.value)}
+              className="responsive-input"
               style={{ ...styles.input, width: '300px' }}
             />
             {/* Platform dropdown commented out - defaulted to Whatnot
@@ -251,6 +309,7 @@ function DeckBuilder() {
             placeholder="Email *"
             value={email}
             onChange={e => setEmail(e.target.value)}
+            className="responsive-input"
             style={{ ...styles.input, width: '300px' }}
           />
           <br />
@@ -259,6 +318,7 @@ function DeckBuilder() {
             placeholder="Deck Name *"
             value={deckName}
             onChange={e => setDeckName(e.target.value)}
+            className="responsive-input"
             style={{ ...styles.input, width: '300px' }}
           />
           <br />
@@ -267,7 +327,7 @@ function DeckBuilder() {
 
         {/* Preview Card */}
         {previewCard && (
-          <div style={styles.previewCard}>
+          <div className="preview-card-mobile" style={styles.previewCard}>
             <h3 style={styles.previewTitle}>
               ✅ Card Added to Deck!
             </h3>
@@ -339,7 +399,7 @@ function DeckBuilder() {
         
         {/* Deck Display */}
         <div style={styles.section}>
-          <h3 style={styles.sectionTitle}>
+          <h3 className="deck-title-mobile" style={styles.sectionTitle}>
             🎯 Current Deck ({deck.length}/20) | Rarity Points: {totalRarityPoints}/15
           </h3>
           
