@@ -92,8 +92,16 @@ function DeckBuilder() {
         text-align: center !important;
       }
       
-      .preview-card-mobile > div:first-child {
-        margin-bottom: 1rem !important;
+      /* Target the CardDisplay component inside preview card on mobile */
+      .preview-card-mobile > div > div {
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 1rem !important;
+      }
+      
+      .preview-card-mobile > div > div > div:last-child {
+        margin-left: 0 !important;
+        text-align: center !important;
       }
     }
   `;
@@ -242,7 +250,6 @@ function DeckBuilder() {
 
   return (
     <div style={styles.container}>
-      <style>{mobileCSS}</style>
       <div style={styles.content}>
         <div style={styles.header}>
           <div style={styles.headerLine1}>
@@ -271,7 +278,6 @@ function DeckBuilder() {
               placeholder="First Name *"
               value={firstName}
               onChange={e => setFirstName(e.target.value)}
-              className="responsive-input"
               style={{ ...styles.input, width: '200px' }}
             />
             <input
@@ -279,7 +285,6 @@ function DeckBuilder() {
               placeholder="Last Name"
               value={lastName}
               onChange={e => setLastName(e.target.value)}
-              className="responsive-input"
               style={{ ...styles.input, width: '200px' }}
             />
           </div>
@@ -289,7 +294,6 @@ function DeckBuilder() {
               placeholder="Whatnot Username (Display Name) *"
               value={handle}
               onChange={e => setHandle(e.target.value)}
-              className="responsive-input"
               style={{ ...styles.input, width: '300px' }}
             />
             {/* Platform dropdown commented out - defaulted to Whatnot
@@ -309,7 +313,6 @@ function DeckBuilder() {
             placeholder="Email *"
             value={email}
             onChange={e => setEmail(e.target.value)}
-            className="responsive-input"
             style={{ ...styles.input, width: '300px' }}
           />
           <br />
@@ -318,7 +321,6 @@ function DeckBuilder() {
             placeholder="Deck Name *"
             value={deckName}
             onChange={e => setDeckName(e.target.value)}
-            className="responsive-input"
             style={{ ...styles.input, width: '300px' }}
           />
           <br />
@@ -327,7 +329,7 @@ function DeckBuilder() {
 
         {/* Preview Card */}
         {previewCard && (
-          <div className="preview-card-mobile" style={styles.previewCard}>
+          <div style={styles.previewCard}>
             <h3 style={styles.previewTitle}>
               ✅ Card Added to Deck!
             </h3>
@@ -399,7 +401,7 @@ function DeckBuilder() {
         
         {/* Deck Display */}
         <div style={styles.section}>
-          <h3 className="deck-title-mobile" style={styles.sectionTitle}>
+          <h3 style={styles.sectionTitle}>
             🎯 Current Deck ({deck.length}/20) | Rarity Points: {totalRarityPoints}/15
           </h3>
           
