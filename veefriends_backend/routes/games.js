@@ -86,7 +86,7 @@ async function startRoundForGame(gameId) {
     const rarityMeta = {
       Core:        { color: '#E4CE13', icon: 'core.png' },
       Rare:        { color: '#783F22', icon: 'rare.png' },
-      Very Rare:   { color: '#C05316', icon: 'veryrare.png' },
+      'Very Rare': { color: '#C05316', icon: 'veryrare.png' },
       Epic:        { color: '#2DAD7C', icon: 'epic.png' },
       Hologram:    { color: '#B1A5D0', icon: 'hologram.png' },
       Lava:        { color: '#FF4500', icon: 'lava.png' },
@@ -284,7 +284,7 @@ router.put('/:id/edit', async (req, res) => {
             game.rounds[roundIndex][cardKey].character = value;
           }
         }
-        break;
+        break;s
       case 'round_card_rarity':
         if (roundIndex !== undefined && cardPlayer) {
           const cardKey = cardPlayer === 'C1' ? 'C1' : 'C2';
