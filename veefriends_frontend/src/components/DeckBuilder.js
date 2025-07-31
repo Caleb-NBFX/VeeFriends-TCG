@@ -229,11 +229,12 @@ function DeckBuilder() {
           <div style={{ marginBottom: '10px' }}>
             <input
               type="text"
-              placeholder="Handle (Display Name) *"
+              placeholder="Whatnot Username (Display Name) *"
               value={handle}
               onChange={e => setHandle(e.target.value)}
-              style={{ ...styles.input, width: '200px' }}
+              style={{ ...styles.input, width: '300px' }}
             />
+            {/* Platform dropdown commented out - defaulted to Whatnot
             <select 
               value={platform} 
               onChange={e => setPlatform(e.target.value)}
@@ -243,6 +244,7 @@ function DeckBuilder() {
                 <option key={p} value={p}>{p}</option>
               ))}
             </select>
+            */}
           </div>
           <input
             type="email"
