@@ -177,52 +177,9 @@ router.post('/:id/start-round', async (req, res) => {
     const gameId = req.params.id;
     console.log('⚡ Starting round for game', gameId);
     
-    const game = await Game.findById(gameId);
-    if (!game) return res.status(404).json({ error: 'Game not found' });
-
-    // Check if game is over
-    if (game.winner) {
-      return res.status(400).json({ error: 'Game is already over' });
-    }
-
-    // Increment round counter
-    game.currentRound += 1;
-    console.log('🧪 ROUND START: currentRound =', game.currentRound);
-
-    // FIXED: Use the game's attacker (which should have been set correctly in respond-turn)
-    const roundAttacker = game.attacker || 'P1';
-    console.log('🔁 game.attacker BEFORE:', game.attacker);
-    console.log('DEBUG: Using attacker for new round:', roundAttacker);
-
-    // Draw cards for both players
-    const p1Card = drawRandomCard();
-    const p2Card = drawRandomCard();
-
-    // Create new round
-    const newRound = {
-      round: game.currentRound,
-      C1: p1Card,
-      C2: p2Card,
-      attacker: roundAttacker,
-      attribute: null,
-      winner: null,
-      result: null,
-      challengedAttributes: [],
-      rejections: { Aura: false, Skill: false, Stamina: false }
-    };
-
-    console.log('DEBUG: Round created with attacker', roundAttacker);
-    game.rounds.push(newRound);
-
-    await game.save();
-    console.log('✅ Round', game.currentRound, 'saved with drawn cards.');
-
-    res.json({ 
-      success: true, 
-      round: newRound,
-      attacker: roundAttacker,
-      gameAttacker: game.attacker 
-    });
+    const updatedGame = await startRoundForGame(gameId);
+    
+    res.json(updatedGame);
 
   } catch (error) {
     console.error('Error starting round:', error);
@@ -284,7 +241,7 @@ router.put('/:id/edit', async (req, res) => {
             game.rounds[roundIndex][cardKey].character = value;
           }
         }
-        break;s
+        break;
       case 'round_card_rarity':
         if (roundIndex !== undefined && cardPlayer) {
           const cardKey = cardPlayer === 'C1' ? 'C1' : 'C2';
