@@ -71,41 +71,6 @@ function DeckBuilder() {
     }
   };
 
-  // Add CSS for media queries (since React inline styles don't support them)
-  const mobileCSS = `
-    @media (max-width: 768px) {
-      .responsive-input {
-        width: 100% !important;
-        max-width: 280px !important;
-      }
-      
-      .deck-title-mobile {
-        font-size: 1rem !important;
-        line-height: 1.4 !important;
-        text-align: center !important;
-        word-break: break-word !important;
-      }
-      
-      .preview-card-mobile {
-        flex-direction: column !important;
-        align-items: center !important;
-        text-align: center !important;
-      }
-      
-      /* Target the CardDisplay component inside preview card on mobile */
-      .preview-card-mobile > div > div {
-        flex-direction: column !important;
-        align-items: center !important;
-        gap: 1rem !important;
-      }
-      
-      .preview-card-mobile > div > div > div:last-child {
-        margin-left: 0 !important;
-        text-align: center !important;
-      }
-    }
-  `;
-
   const rarityPoints = {
     "Core": 0,
     "Rare": 2,
@@ -142,12 +107,16 @@ function DeckBuilder() {
     fetchCharacters();
   }, []);
 
-  const totalRarityPoints = deck.reduce((sum, card) => sum + rarityPoints[card.rarity], 0);
+  // Fixed: Calculate total rarity points with proper fallback
+  const totalRarityPoints = deck.reduce((sum, card) => {
+    const points = rarityPoints[card.rarity] || 0;
+    return sum + points;
+  }, 0);
 
   const addCard = async () => {
     if (deck.length >= 20) return alert('Deck is full');
     if (deck.some(c => c.character === character)) return alert('Character already in deck');
-    if (totalRarityPoints + rarityPoints[rarity] > 15) return alert('Not enough rarity points');
+    if (totalRarityPoints + (rarityPoints[rarity] || 0) > 15) return alert('Not enough rarity points');
     if (!allCharacters.includes(character)) return alert('Invalid character name');
 
     try {
@@ -189,10 +158,19 @@ function DeckBuilder() {
     setDeck(updatedDeck);
   };
 
-  const submitDeck = async () => {
-    if (!firstName.trim() || !handle.trim() || !email.trim() || !deckName.trim() || deck.length !== 20) {
-      alert('Please fill all required fields (First Name, Handle, Email, Deck Name) and build a full deck.');
+  const submitDeck = async (forceOverwrite = false) => {
+    if (!firstName.trim() || !handle.trim() || !email.trim() || !deckName.trim() || deck.length === 0) {
+      alert('Please fill all required fields (First Name, Handle, Email, Deck Name) and add at least one card.');
       return;
+    }
+
+    // Allow submission of incomplete decks, but warn the user
+    if (deck.length < 20 && !forceOverwrite) {
+      const confirmed = window.confirm(
+        `Your deck only has ${deck.length} cards. Incomplete decks cannot be used to start games. ` +
+        'Do you want to save this deck anyway?'
+      );
+      if (!confirmed) return;
     }
 
     const normalizedEmail = email.trim().toLowerCase();
@@ -204,15 +182,47 @@ function DeckBuilder() {
       platform,
       email: normalizedEmail,
       name: deckName.trim(),
-      cards: deck
+      cards: deck,
+      overwrite: forceOverwrite
     };
 
     try {
-      await axios.post(`${API_BASE}/api/decks`, payload);
-      alert('Deck submitted!');
+      const response = await axios.post(`${API_BASE}/api/decks`, payload);
+      
+      const action = response.data.action || 'saved';
+      const actionText = action === 'updated' ? 'updated' : 'saved';
+      
+      if (deck.length < 20) {
+        alert(`Incomplete deck ${actionText}! (${deck.length}/20 cards)\nNote: You'll need 20 cards to start a game.`);
+      } else {
+        alert(`Complete deck ${actionText} successfully!`);
+      }
+      
+      // Refresh the saved decks list if email is populated
+      if (email.trim()) {
+        await loadDecks();
+      }
     } catch (err) {
       console.error("Error saving deck:", err);
-      alert('Failed to submit deck');
+      
+      if (err.response && err.response.status === 409 && err.response.data.error === 'DECK_EXISTS') {
+        // Handle duplicate deck name
+        const existingDeck = err.response.data.existingDeck;
+        const confirmed = window.confirm(
+          `A deck named "${deckName.trim()}" already exists!\n\n` +
+          `Existing deck: ${existingDeck.cardCount}/20 cards (${existingDeck.isComplete ? 'Complete' : 'Incomplete'})\n` +
+          `Created: ${new Date(existingDeck.createdAt).toLocaleDateString()}\n\n` +
+          `Current deck: ${deck.length}/20 cards (${deck.length === 20 ? 'Complete' : 'Incomplete'})\n\n` +
+          'Do you want to overwrite the existing deck?'
+        );
+        
+        if (confirmed) {
+          // Retry with overwrite flag
+          await submitDeck(true);
+        }
+      } else {
+        alert('Failed to submit deck');
+      }
     }
   };
 
@@ -232,8 +242,20 @@ function DeckBuilder() {
     }
   };
 
-  const loadSelectedDeck = (cards) => {
-    setDeck(cards);
+  // Fixed: Auto-populate fields when loading a deck
+  const loadSelectedDeck = (deckData) => {
+    // Load the cards
+    setDeck(deckData.cards || []);
+    
+    // Auto-populate user fields from the selected deck
+    if (deckData.firstName) setFirstName(deckData.firstName);
+    if (deckData.lastName) setLastName(deckData.lastName);
+    if (deckData.handle) setHandle(deckData.handle);
+    if (deckData.platform) setPlatform(deckData.platform);
+    if (deckData.email) setEmail(deckData.email);
+    if (deckData.name) setDeckName(deckData.name);
+    
+    console.log('Loaded deck data:', deckData);
   };
 
   const handleCharacterInput = (e) => {
@@ -296,17 +318,6 @@ function DeckBuilder() {
               onChange={e => setHandle(e.target.value)}
               style={{ ...styles.input, width: '300px' }}
             />
-            {/* Platform dropdown commented out - defaulted to Whatnot
-            <select 
-              value={platform} 
-              onChange={e => setPlatform(e.target.value)}
-              style={{ ...styles.select, width: '120px' }}
-            >
-              {platforms.map(p => (
-                <option key={p} value={p}>{p}</option>
-              ))}
-            </select>
-            */}
           </div>
           <input
             type="email"
@@ -399,7 +410,7 @@ function DeckBuilder() {
           </div>
         </div>
         
-        {/* Deck Display */}
+        {/* Deck Display - Fixed: Removed redundant incomplete text */}
         <div style={styles.section}>
           <h3 style={styles.sectionTitle}>
             🎯 Current Deck ({deck.length}/20) | Rarity Points: {totalRarityPoints}/15
@@ -465,18 +476,27 @@ function DeckBuilder() {
         
         <div style={{ textAlign: 'center', marginTop: '2rem' }}>
           <button 
-            onClick={submitDeck}
-            style={styles.submitButton}
+            onClick={() => submitDeck(false)}
+            style={{
+              ...styles.submitButton,
+              backgroundColor: deck.length < 20 ? theme.colors.orange : styles.submitButton.backgroundColor
+            }}
             onMouseEnter={e => Object.assign(e.target.style, styles.buttonHover)}
             onMouseLeave={e => {
               e.target.style.transform = 'none';
               e.target.style.boxShadow = theme.shadows.button;
+              e.target.style.backgroundColor = deck.length < 20 ? theme.colors.orange : styles.submitButton.backgroundColor;
             }}
           >
-            🚀 Submit Deck
+            {deck.length < 20 ? '💾 Save Incomplete Deck' : '🚀 Submit Complete Deck'}
           </button>
+          {deck.length < 20 && (
+            <p style={{ color: theme.colors.orange, fontSize: '0.9rem', marginTop: '0.5rem' }}>
+              ⚠️ Incomplete decks can be saved but cannot be used to start games
+            </p>
+          )}
         </div>
-        
+
         <hr style={styles.hr} />
         
         <div style={styles.section}>
@@ -497,10 +517,20 @@ function DeckBuilder() {
               {savedDecks.map((d, i) => (
                 <li key={i} style={styles.savedDeckItem}>
                   <span style={styles.savedDeckText}>
-                    {d.name} ({new Date(d.createdAt).toLocaleString()})
+                    {d.name} ({d.cards.length}/20 cards) 
+                    {/* Fixed: Check isComplete properly and show correct status */}
+                    {d.cards.length === 20 ? (
+                      <span style={{ color: theme.colors.green }}> - Complete</span>
+                    ) : (
+                      <span style={{ color: theme.colors.orange }}> - Incomplete</span>
+                    )}
+                    <br />
+                    <small style={{ color: theme.colors.lightGray }}>
+                      {new Date(d.createdAt).toLocaleString()}
+                    </small>
                   </span>
                   <button 
-                    onClick={() => loadSelectedDeck(d.cards)}
+                    onClick={() => loadSelectedDeck(d)}
                     style={{ ...styles.button, padding: '5px 10px', fontSize: '14px' }}
                     onMouseEnter={e => Object.assign(e.target.style, styles.buttonHover)}
                     onMouseLeave={e => {
