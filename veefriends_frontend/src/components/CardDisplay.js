@@ -1,9 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getOptimizedCardImageUrl, getCardFallbackImage } from '../utils/imageUtils';
 
 const CardDisplay = ({ card, size = 'medium', showStats = true, layout = 'horizontal', style = {} }) => {
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   
   if (!card) return null;
   
@@ -111,6 +121,35 @@ const CardDisplay = ({ card, size = 'medium', showStats = true, layout = 'horizo
               {cleanQuote(card.quote || card.Quote)}
             </p>
           )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const DeckBuilder = () => {
+  const [previewCard, setPreviewCard] = useState(null);
+
+  const addCardToDeck = (card) => {
+    setPreviewCard(card);
+    // Logic to add card to the deck
+  };
+
+  return (
+    <div>
+      {/* Other components and logic for deck building */}
+      
+      {/* Preview Card */}
+      {previewCard && (
+        <div className="preview-card-mobile" style={styles.previewCard}>
+          <h3 style={styles.previewTitle}>
+            ✅ Card Added to Deck!
+          </h3>
+          <CardDisplay 
+            card={previewCard} 
+            size="medium" 
+            layout={isMobile ? "vertical" : "horizontal"} 
+          />
         </div>
       )}
     </div>
