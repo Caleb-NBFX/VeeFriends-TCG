@@ -323,6 +323,17 @@ function ProducerDashboard() {
       return;
     }
 
+    // Check if both decks have 20 cards
+    if (selectedDeck1.cards.length < 20) {
+      alert(`Cannot start game: Player 1's deck "${selectedDeck1.name}" only has ${selectedDeck1.cards.length} cards. A complete deck with 20 cards is required. Try another deck.`);
+      return;
+    }
+
+    if (selectedDeck2.cards.length < 20) {
+      alert(`Cannot start game: Player 2's deck "${selectedDeck2.name}" only has ${selectedDeck2.cards.length} cards. A complete deck with 20 cards is required. Try another deck.`);
+      return;
+    }
+
     // Detailed debugging
     console.log('=== DECK DEBUGGING ===');
     console.log('selectedDeck1 full object:', selectedDeck1);
@@ -626,10 +637,16 @@ function ProducerDashboard() {
               <option value="">Select Deck</option>
               {player1Decks.map((deck, index) => (
                 <option key={deck._id} value={index}>
-                  {deck.name}
+                  {deck.name} ({deck.cards.length}/20 cards)
+                  {deck.cards.length < 20 ? ' - INCOMPLETE' : ' - Complete'}
                 </option>
               ))}
             </select>
+            {selectedDeck1 && selectedDeck1.cards.length < 20 && (
+              <p style={{ color: theme.colors.red, fontSize: '0.8rem', marginTop: '0.25rem' }}>
+                ⚠️ This deck is incomplete and cannot be used to start a game
+              </p>
+            )}
           </div>
           
           {/* Player 1 Portal Link */}
@@ -697,10 +714,16 @@ function ProducerDashboard() {
               <option value="">Select Deck</option>
               {player2Decks.map((deck, index) => (
                 <option key={deck._id} value={index}>
-                  {deck.name}
+                  {deck.name} ({deck.cards.length}/20 cards)
+                  {deck.cards.length < 20 ? ' - INCOMPLETE' : ' - Complete'}
                 </option>
               ))}
             </select>
+            {selectedDeck2 && selectedDeck2.cards.length < 20 && (
+              <p style={{ color: theme.colors.red, fontSize: '0.8rem', marginTop: '0.25rem' }}>
+                ⚠️ This deck is incomplete and cannot be used to start a game
+              </p>
+            )}
           </div>
           
           {/* Player 2 Portal Link */}
@@ -737,15 +760,30 @@ function ProducerDashboard() {
             <h3 style={styles.sectionTitle}>🎮 Game Control</h3>
             <button 
               onClick={handleStartGame}
-              style={styles.startGameButton}
-              onMouseEnter={e => Object.assign(e.target.style, styles.buttonHover)}
+              style={{
+                ...styles.startGameButton,
+                opacity: (!selectedDeck1 || !selectedDeck2 || selectedDeck1.cards.length < 20 || selectedDeck2.cards.length < 20) ? 0.5 : 1,
+                cursor: (!selectedDeck1 || !selectedDeck2 || selectedDeck1.cards.length < 20 || selectedDeck2.cards.length < 20) ? 'not-allowed' : 'pointer'
+              }}
+              onMouseEnter={e => {
+                if (selectedDeck1 && selectedDeck2 && selectedDeck1.cards.length >= 20 && selectedDeck2.cards.length >= 20) {
+                  Object.assign(e.target.style, styles.buttonHover);
+                }
+              }}
               onMouseLeave={e => {
-                e.target.style.transform = 'none';
-                e.target.style.boxShadow = theme.shadows.button;
+                if (selectedDeck1 && selectedDeck2 && selectedDeck1.cards.length >= 20 && selectedDeck2.cards.length >= 20) {
+                  e.target.style.transform = 'none';
+                  e.target.style.boxShadow = theme.shadows.button;
+                }
               }}
             >
               🚀 Start Game
             </button>
+            {(!selectedDeck1 || !selectedDeck2 || selectedDeck1.cards.length < 20 || selectedDeck2.cards.length < 20) && (
+              <p style={{ color: theme.colors.orange, fontSize: '0.9rem', marginTop: '0.5rem' }}>
+                ⚠️ Both players need complete decks (20 cards) to start a game
+              </p>
+            )}
           </div>
         )}
 
