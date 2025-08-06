@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import API_BASE from '../config';
 import { sendRoundDataToCaptivate, sendPlayerAndWinnerDataToCaptivate, getColorForRarity } from '../utils/sendRoundDataToCaptivate';
@@ -22,6 +23,7 @@ function ProducerDashboard() {
   const [showAdminEdit, setShowAdminEdit] = useState(false);
 
   const lastRoundIdRef = useRef(null);
+  const navigate = useNavigate();
 
   // Use the centralized theme
   const { theme, baseStyles } = useVeeFriendsTheme();
@@ -236,7 +238,11 @@ function ProducerDashboard() {
   const copyToClipboard = async (text, playerNumber) => {
     try {
       await navigator.clipboard.writeText(text);
-      alert(`Player ${playerNumber} portal link copied to clipboard!`);
+      if (playerNumber === 'Producer') {
+        alert(`Producer dashboard link copied to clipboard!`);
+      } else {
+        alert(`Player ${playerNumber} portal link copied to clipboard!`);
+      }
     } catch (err) {
       console.error('Failed to copy: ', err);
       alert('Failed to copy link to clipboard');
@@ -361,8 +367,13 @@ function ProducerDashboard() {
       console.log('Game player1 handle:', res.data.player1?.handle);
       console.log('Game player2 handle:', res.data.player2?.handle);
       
-      setGameId(res.data._id);
-      alert(`Game started! Game ID: ${res.data._id}`);
+      const newGameId = res.data._id;
+      setGameId(newGameId);
+      
+      // Navigate to producer URL with gameId
+      navigate(`/producer?gameId=${newGameId}`);
+      
+      alert(`Game started! Game ID: ${newGameId}`);
 
       // Send initial round data to Captivate (since game auto-starts first round)
       const game = res.data;
@@ -442,8 +453,46 @@ function ProducerDashboard() {
       const res = await axios.get(`${API_BASE}/api/games/${loadGameId}`);
       setGameId(loadGameId);
       setGameState(res.data);
-      alert(`Game loaded! Game ID: ${loadGameId}`);
+      
+      // Auto-fill player data from loaded game
       const game = res.data;
+      if (game.player1) {
+        setPlayer1Email(game.player1.email || '');
+        // Create deck object for player 1
+        const player1Deck = {
+          _id: `loaded-p1-${loadGameId}`,
+          firstName: game.player1.firstName || '',
+          lastName: game.player1.lastName || '',
+          handle: game.player1.handle || '',
+          platform: game.player1.platform || '',
+          email: game.player1.email || '',
+          cards: game.player1.deck || []
+        };
+        setSelectedDeck1(player1Deck);
+        setPlayer1Decks([player1Deck]); // Add to decks list for display
+      }
+      
+      if (game.player2) {
+        setPlayer2Email(game.player2.email || '');
+        // Create deck object for player 2
+        const player2Deck = {
+          _id: `loaded-p2-${loadGameId}`,
+          firstName: game.player2.firstName || '',
+          lastName: game.player2.lastName || '',
+          handle: game.player2.handle || '',
+          platform: game.player2.platform || '',
+          email: game.player2.email || '',
+          cards: game.player2.deck || []
+        };
+        setSelectedDeck2(player2Deck);
+        setPlayer2Decks([player2Deck]); // Add to decks list for display
+      }
+      
+      // Navigate to producer URL with gameId
+      navigate(`/producer?gameId=${loadGameId}`);
+      
+      alert(`Game loaded! Game ID: ${loadGameId}`);
+      
       if (game.player1 && game.player2) {
         // Send current round data to Captivate
         const currentRound = game.currentRound;
@@ -458,6 +507,67 @@ function ProducerDashboard() {
     } catch (err) {
       console.error('Error loading game:', err);
       alert('Failed to load game. Please check the Game ID.');
+    }
+  };
+
+  // Function to handle loading game from URL
+  const handleLoadGameFromUrl = async (gameIdToLoad) => {
+    try {
+      const res = await axios.get(`${API_BASE}/api/games/${gameIdToLoad}`);
+      setGameId(gameIdToLoad);
+      setGameState(res.data);
+      
+      // Auto-fill player data from loaded game
+      const game = res.data;
+      if (game.player1) {
+        setPlayer1Email(game.player1.email || '');
+        // Create deck object for player 1
+        const player1Deck = {
+          _id: `loaded-p1-${gameIdToLoad}`,
+          firstName: game.player1.firstName || '',
+          lastName: game.player1.lastName || '',
+          handle: game.player1.handle || '',
+          platform: game.player1.platform || '',
+          email: game.player1.email || '',
+          cards: game.player1.deck || []
+        };
+        setSelectedDeck1(player1Deck);
+        setPlayer1Decks([player1Deck]); // Add to decks list for display
+      }
+      
+      if (game.player2) {
+        setPlayer2Email(game.player2.email || '');
+        // Create deck object for player 2
+        const player2Deck = {
+          _id: `loaded-p2-${gameIdToLoad}`,
+          firstName: game.player2.firstName || '',
+          lastName: game.player2.lastName || '',
+          handle: game.player2.handle || '',
+          platform: game.player2.platform || '',
+          email: game.player2.email || '',
+          cards: game.player2.deck || []
+        };
+        setSelectedDeck2(player2Deck);
+        setPlayer2Decks([player2Deck]); // Add to decks list for display
+      }
+      
+      // Navigate to producer URL with gameId (replace current URL)
+      navigate(`/producer?gameId=${gameIdToLoad}`, { replace: true });
+      
+      if (game.player1 && game.player2) {
+        // Send current round data to Captivate
+        const currentRound = game.currentRound;
+        const rounds = game.rounds || [];
+        const roundObj = rounds[currentRound - 1];
+        if (roundObj) {
+          lastRoundIdRef.current = roundObj._id;
+          await sendRoundDataToCaptivate(roundObj);
+          setLastCaptivateData(mapRoundDataForCaptivate(roundObj));
+        }
+      }
+    } catch (err) {
+      console.error('Error loading game from URL:', err);
+      alert('Failed to load game from URL. Please check the Game ID.');
     }
   };
 
@@ -646,6 +756,31 @@ function ProducerDashboard() {
             <p style={styles.gameIdDisplay}>
               <strong>Game ID:</strong> {gameId}
             </p>
+
+            {/* Producer Dashboard Game Link */}
+            <div style={styles.portalLinkSection}>
+              <label style={styles.label}>Producer Dashboard Game Link</label>
+              <div style={styles.portalLinkRow}>
+                <span style={styles.portalLink}>
+                  https://veefriends-tgc.onrender.com/producer?gameId={gameId}
+                </span>
+                <button 
+                  onClick={() => copyToClipboard(
+                    `https://veefriends-tgc.onrender.com/producer?gameId=${gameId}`,
+                    'Producer'
+                  )}
+                  style={styles.copyButton}
+                  onMouseEnter={e => {
+                    e.target.style.backgroundColor = theme.colors.subtleBorder;
+                  }}
+                  onMouseLeave={e => {
+                    e.target.style.backgroundColor = 'transparent';
+                  }}
+                >
+                  📋 Copy
+                </button>
+              </div>
+            </div>
             
             {gameState && !gameState.winner && (
               <div style={{ textAlign: 'center' }}>
@@ -792,13 +927,13 @@ function ProducerDashboard() {
             {/* Current Round Data */}
             {gameState.rounds && gameState.currentRound > 0 && (() => {
               const currentRoundIndex = gameState.currentRound - 1;
-              const round = gameState.rounds[currentRoundIndex];
+              const currentRound = gameState.rounds[currentRoundIndex];
               
-              if (!round) return null;
+              if (!currentRound) return null;
               
               return (
                 <div style={styles.roundCard}>
-                  <div style={styles.roundHeader}>Current Round {round.round} - Card Data</div>
+                  <div style={styles.roundHeader}>Current Round {currentRound.round} - Card Data</div>
                   
                   {/* Player 1 Card (C1) */}
                   <div style={{ marginBottom: '1rem' }}>
@@ -808,7 +943,7 @@ function ProducerDashboard() {
                       <span style={styles.editLabel}>Character:</span>
                       <input 
                         style={styles.editInput}
-                        defaultValue={round.C1?.character || ''}
+                        defaultValue={currentRound.C1?.character || ''}
                         onBlur={(e) => updateGameData('round_card_character', e.target.value, currentRoundIndex, 'C1')}
                       />
                     </div>
@@ -817,7 +952,7 @@ function ProducerDashboard() {
                       <span style={styles.editLabel}>Rarity:</span>
                       <input 
                         style={styles.editInput}
-                        defaultValue={round.C1?.rarity || ''}
+                        defaultValue={currentRound.C1?.rarity || ''}
                         onBlur={(e) => updateGameData('round_card_rarity', e.target.value, currentRoundIndex, 'C1')}
                       />
                     </div>
@@ -827,7 +962,7 @@ function ProducerDashboard() {
                       <input 
                         style={styles.editInput}
                         type="number"
-                        defaultValue={round.C1?.Aura || 0}
+                        defaultValue={currentRound.C1?.Aura || 0}
                         onBlur={(e) => updateGameData('round_card_aura', e.target.value, currentRoundIndex, 'C1')}
                       />
                     </div>
@@ -837,7 +972,7 @@ function ProducerDashboard() {
                       <input 
                         style={styles.editInput}
                         type="number"
-                        defaultValue={round.C1?.Skill || 0}
+                        defaultValue={currentRound.C1?.Skill || 0}
                         onBlur={(e) => updateGameData('round_card_skill', e.target.value, currentRoundIndex, 'C1')}
                       />
                     </div>
@@ -847,7 +982,7 @@ function ProducerDashboard() {
                       <input 
                         style={styles.editInput}
                         type="number"
-                        defaultValue={round.C1?.Stamina || 0}
+                        defaultValue={currentRound.C1?.Stamina || 0}
                         onBlur={(e) => updateGameData('round_card_stamina', e.target.value, currentRoundIndex, 'C1')}
                       />
                     </div>
@@ -858,7 +993,7 @@ function ProducerDashboard() {
                         style={styles.editInput}
                         type="number"
                         step="0.01"
-                        defaultValue={round.C1?.Score || 0}
+                        defaultValue={currentRound.C1?.Score || 0}
                         onBlur={(e) => updateGameData('round_card_score', e.target.value, currentRoundIndex, 'C1')}
                       />
                     </div>
@@ -872,7 +1007,7 @@ function ProducerDashboard() {
                       <span style={styles.editLabel}>Character:</span>
                       <input 
                         style={styles.editInput}
-                        defaultValue={round.C2?.character || ''}
+                        defaultValue={currentRound.C2?.character || ''}
                         onBlur={(e) => updateGameData('round_card_character', e.target.value, currentRoundIndex, 'C2')}
                       />
                     </div>
@@ -881,7 +1016,7 @@ function ProducerDashboard() {
                       <span style={styles.editLabel}>Rarity:</span>
                       <input 
                         style={styles.editInput}
-                        defaultValue={round.C2?.rarity || ''}
+                        defaultValue={currentRound.C2?.rarity || ''}
                         onBlur={(e) => updateGameData('round_card_rarity', e.target.value, currentRoundIndex, 'C2')}
                       />
                     </div>
@@ -891,7 +1026,7 @@ function ProducerDashboard() {
                       <input 
                         style={styles.editInput}
                         type="number"
-                        defaultValue={round.C2?.Aura || 0}
+                        defaultValue={currentRound.C2?.Aura || 0}
                         onBlur={(e) => updateGameData('round_card_aura', e.target.value, currentRoundIndex, 'C2')}
                       />
                     </div>
@@ -901,7 +1036,7 @@ function ProducerDashboard() {
                       <input 
                         style={styles.editInput}
                         type="number"
-                        defaultValue={round.C2?.Skill || 0}
+                        defaultValue={currentRound.C2?.Skill || 0}
                         onBlur={(e) => updateGameData('round_card_skill', e.target.value, currentRoundIndex, 'C2')}
                       />
                     </div>
@@ -911,7 +1046,7 @@ function ProducerDashboard() {
                       <input 
                         style={styles.editInput}
                         type="number"
-                        defaultValue={round.C2?.Stamina || 0}
+                        defaultValue={currentRound.C2?.Stamina || 0}
                         onBlur={(e) => updateGameData('round_card_stamina', e.target.value, currentRoundIndex, 'C2')}
                       />
                     </div>
@@ -922,8 +1057,150 @@ function ProducerDashboard() {
                         style={styles.editInput}
                         type="number"
                         step="0.01"
-                        defaultValue={round.C2?.Score || 0}
+                        defaultValue={currentRound.C2?.Score || 0}
                         onBlur={(e) => updateGameData('round_card_score', e.target.value, currentRoundIndex, 'C2')}
+                      />
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Next Round Data */}
+            {gameState.rounds && gameState.rounds.length > gameState.currentRound && (() => {
+              const nextRoundIndex = gameState.currentRound; // This is the index of the next round
+              const nextRound = gameState.rounds[nextRoundIndex];
+              
+              if (!nextRound) return null;
+              
+              return (
+                <div style={styles.roundCard}>
+                  <div style={styles.roundHeader}>Next Round {nextRound.round} - Card Data</div>
+                  
+                  {/* Player 1 Card (C1) */}
+                  <div style={{ marginBottom: '1rem' }}>
+                    <h4 style={{ color: theme.colors.lightBlue, margin: '0.5rem 0' }}>Player 1 Card:</h4>
+                    
+                    <div style={styles.editRow}>
+                      <span style={styles.editLabel}>Character:</span>
+                      <input 
+                        style={styles.editInput}
+                        defaultValue={nextRound.C1?.character || ''}
+                        onBlur={(e) => updateGameData('round_card_character', e.target.value, nextRoundIndex, 'C1')}
+                      />
+                    </div>
+                    
+                    <div style={styles.editRow}>
+                      <span style={styles.editLabel}>Rarity:</span>
+                      <input 
+                        style={styles.editInput}
+                        defaultValue={nextRound.C1?.rarity || ''}
+                        onBlur={(e) => updateGameData('round_card_rarity', e.target.value, nextRoundIndex, 'C1')}
+                      />
+                    </div>
+                    
+                    <div style={styles.editRow}>
+                      <span style={styles.editLabel}>Aura:</span>
+                      <input 
+                        style={styles.editInput}
+                        type="number"
+                        defaultValue={nextRound.C1?.Aura || 0}
+                        onBlur={(e) => updateGameData('round_card_aura', e.target.value, nextRoundIndex, 'C1')}
+                      />
+                    </div>
+                    
+                    <div style={styles.editRow}>
+                      <span style={styles.editLabel}>Skill:</span>
+                      <input 
+                        style={styles.editInput}
+                        type="number"
+                        defaultValue={nextRound.C1?.Skill || 0}
+                        onBlur={(e) => updateGameData('round_card_skill', e.target.value, nextRoundIndex, 'C1')}
+                      />
+                    </div>
+                    
+                    <div style={styles.editRow}>
+                      <span style={styles.editLabel}>Stamina:</span>
+                      <input 
+                        style={styles.editInput}
+                        type="number"
+                        defaultValue={nextRound.C1?.Stamina || 0}
+                        onBlur={(e) => updateGameData('round_card_stamina', e.target.value, nextRoundIndex, 'C1')}
+                      />
+                    </div>
+                    
+                    <div style={styles.editRow}>
+                      <span style={styles.editLabel}>Score:</span>
+                      <input 
+                        style={styles.editInput}
+                        type="number"
+                        step="0.01"
+                        defaultValue={nextRound.C1?.Score || 0}
+                        onBlur={(e) => updateGameData('round_card_score', e.target.value, nextRoundIndex, 'C1')}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Player 2 Card (C2) */}
+                  <div>
+                    <h4 style={{ color: theme.colors.lightBlue, margin: '0.5rem 0' }}>Player 2 Card:</h4>
+                    
+                    <div style={styles.editRow}>
+                      <span style={styles.editLabel}>Character:</span>
+                      <input 
+                        style={styles.editInput}
+                        defaultValue={nextRound.C2?.character || ''}
+                        onBlur={(e) => updateGameData('round_card_character', e.target.value, nextRoundIndex, 'C2')}
+                      />
+                    </div>
+                    
+                    <div style={styles.editRow}>
+                      <span style={styles.editLabel}>Rarity:</span>
+                      <input 
+                        style={styles.editInput}
+                        defaultValue={nextRound.C2?.rarity || ''}
+                        onBlur={(e) => updateGameData('round_card_rarity', e.target.value, nextRoundIndex, 'C2')}
+                      />
+                    </div>
+                    
+                    <div style={styles.editRow}>
+                      <span style={styles.editLabel}>Aura:</span>
+                      <input 
+                        style={styles.editInput}
+                        type="number"
+                        defaultValue={nextRound.C2?.Aura || 0}
+                        onBlur={(e) => updateGameData('round_card_aura', e.target.value, nextRoundIndex, 'C2')}
+                      />
+                    </div>
+                    
+                    <div style={styles.editRow}>
+                      <span style={styles.editLabel}>Skill:</span>
+                      <input 
+                        style={styles.editInput}
+                        type="number"
+                        defaultValue={nextRound.C2?.Skill || 0}
+                        onBlur={(e) => updateGameData('round_card_skill', e.target.value, nextRoundIndex, 'C2')}
+                      />
+                    </div>
+                    
+                    <div style={styles.editRow}>
+                      <span style={styles.editLabel}>Stamina:</span>
+                      <input 
+                        style={styles.editInput}
+                        type="number"
+                        defaultValue={nextRound.C2?.Stamina || 0}
+                        onBlur={(e) => updateGameData('round_card_stamina', e.target.value, nextRoundIndex, 'C2')}
+                      />
+                    </div>
+                    
+                    <div style={styles.editRow}>
+                      <span style={styles.editLabel}>Score:</span>
+                      <input 
+                        style={styles.editInput}
+                        type="number"
+                        step="0.01"
+                        defaultValue={nextRound.C2?.Score || 0}
+                        onBlur={(e) => updateGameData('round_card_score', e.target.value, nextRoundIndex, 'C2')}
                       />
                     </div>
                   </div>

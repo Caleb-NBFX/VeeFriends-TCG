@@ -18,6 +18,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<ProducerDashboard />} />
+        <Route path="/producer" element={<ProducerDashboard />} />
         <Route path="/player" element={<PlayerPortalWithParams />} />
         <Route path="/deck" element={<DeckBuilder />} />
         <Route path="/game" element={<GameDashboard />} />
