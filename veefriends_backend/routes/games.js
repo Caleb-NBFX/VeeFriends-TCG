@@ -71,11 +71,68 @@ async function startRoundForGame(gameId) {
 
   const drawCard = async (deck) => {
     const [next, ...rest] = deck;
-    const cardMeta = await Card.findOne({
+    
+    // First try exact match
+    let cardMeta = await Card.findOne({
       character: new RegExp(`^${next.character.trim()}$`, 'i')
     });
 
-    if (!cardMeta) throw new Error(`Card not found in metadata: ${next.character}`);
+    // If no exact match, try fuzzy matching
+    if (!cardMeta) {
+      console.log(`⚠️ Exact match failed for "${next.character}", trying fuzzy match...`);
+      
+      // Try without special characters and extra spaces
+      const cleanCharacter = next.character.replace(/[^\w\s]/g, '').replace(/\s+/g, ' ').trim();
+      cardMeta = await Card.findOne({
+        character: new RegExp(`^${cleanCharacter}$`, 'i')
+      });
+      
+      // Try partial match on first word
+      if (!cardMeta) {
+        const firstWord = cleanCharacter.split(' ')[0];
+        if (firstWord.length > 3) { // Only try if first word is substantial
+          cardMeta = await Card.findOne({
+            character: new RegExp(`^${firstWord}`, 'i')
+          });
+        }
+      }
+      
+      // Try removing common suffixes/prefixes that might have changed
+      if (!cardMeta) {
+        const variations = [
+          cleanCharacter.replace(/s$/, ''), // Remove trailing 's'
+          cleanCharacter + 's',            // Add trailing 's'
+          cleanCharacter.replace(/^The\s+/i, ''), // Remove 'The' prefix
+          'The ' + cleanCharacter          // Add 'The' prefix
+        ];
+        
+        for (const variation of variations) {
+          cardMeta = await Card.findOne({
+            character: new RegExp(`^${variation}$`, 'i')
+          });
+          if (cardMeta) break;
+        }
+      }
+      
+      if (cardMeta) {
+        console.log(`✅ Fuzzy match found: "${next.character}" -> "${cardMeta.character}"`);
+      }
+    }
+
+    // Fallback: create default card data if still no match
+    if (!cardMeta) {
+      console.log(`❌ No match found for "${next.character}", using fallback data`);
+      cardMeta = {
+        character: next.character, // Keep original name from deck
+        aura: 50,      // Default stats
+        skill: 50,
+        stamina: 50,
+        score: 1.0,
+        tier: 'Unknown',
+        quote: `Card data not found for ${next.character}`,
+        image: ''
+      };
+    }
 
     const rarity = next.rarity;
     const multiplier = getRarityMultiplier(rarity);
@@ -84,16 +141,16 @@ async function startRoundForGame(gameId) {
     const raritySlug = rarity.toLowerCase().replace(/\s+/g, '');
 
     const rarityMeta = {
-      Core:        { color: '#E4CE13', icon: 'core.png' },
-      Rare:        { color: '#783F22', icon: 'rare.png' },
-      'Very Rare': { color: '#C05316', icon: 'veryrare.png' },
-      Epic:        { color: '#2DAD7C', icon: 'epic.png' },
-      Hologram:    { color: '#B1A5D0', icon: 'hologram.png' },
-      Lava:        { color: '#FF4500', icon: 'lava.png' },
-      Gold:        { color: '#FFD700', icon: 'gold.png' },
-      Emerald:     { color: '#50C878', icon: 'emerald.png' },
-      Diamond:     { color: '#B9F2FF', icon: 'diamond.png' },
-      Bubblegum:   { color: '#FF69B4', icon: 'bubblegum.png' }
+      Core:          { color: '#E4CE13', icon: 'core.png' },
+      Rare:          { color: '#783F22', icon: 'rare.png' },
+      'Very Rare':   { color: '#C05316', icon: 'veryrare.png' },
+      Epic:          { color: '#2DAD7C', icon: 'epic.png' },
+      Hologram:      { color: '#B1A5D0', icon: 'hologram.png' },
+      Lava:          { color: '#FF4500', icon: 'lava.png' },
+      Gold:          { color: '#FFD700', icon: 'gold.png' },
+      Emerald:       { color: '#50C878', icon: 'emerald.png' },
+      Diamond:       { color: '#B9F2FF', icon: 'diamond.png' },
+      Bubblegum:     { color: '#FF69B4', icon: 'bubblegum.png' }
     };
 
     // Add all extra fields for Captivate
@@ -112,7 +169,6 @@ async function startRoundForGame(gameId) {
         quote: cardMeta.quote || '',
         image: cardMeta.image || '',
         vfc: `https://veefriends.com/${characterSlug}`,
-        // Add more fields as needed, e.g. socialImage, etc.
       },
       remaining: rest
     };
