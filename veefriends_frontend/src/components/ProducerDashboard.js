@@ -37,6 +37,30 @@ function ProducerDashboard() {
       maxWidth: '1000px',
       margin: '0 auto'
     },
+    header: {
+      ...baseStyles.header,
+      textAlign: 'center',
+      marginBottom: '2rem'
+    },
+    headerLine1: {
+      fontSize: '2.5rem',
+      color: theme.colors.gold,
+      fontWeight: 'bold',
+      marginBottom: '0.25rem'
+    },
+    headerLine2: {
+      fontSize: '2.5rem',
+      fontWeight: 'bold',
+      color: theme.colors.gold,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '1rem'
+    },
+    logo: {
+      height: '60px',
+      width: 'auto'
+    },
     playerSection: {
       ...baseStyles.section,
       display: 'flex',
@@ -586,6 +610,9 @@ function ProducerDashboard() {
     <div style={styles.container}>
       <div style={styles.content}>
         <div style={styles.header}>
+          <div style={styles.headerLine1}>
+            The Official Unofficial
+          </div>
           <div style={styles.headerLine2}>
             <img 
               src={getVeeFriendsLogoHeader()} 
