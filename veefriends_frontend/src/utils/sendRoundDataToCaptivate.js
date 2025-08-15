@@ -34,6 +34,8 @@ export function getColorForRarity(rarity) {
 
 // Send card1/card2 data (for new round)
 export async function sendRoundDataToCaptivate(roundData) {
+  console.log('🟡 sendRoundDataToCaptivate called with:', roundData);
+  
   const card1 = roundData.C1 || {};
   const card2 = roundData.C2 || {};
 
@@ -73,16 +75,23 @@ export async function sendRoundDataToCaptivate(roundData) {
     card2_vfc: card2.vfc ?? '',
   };
 
-  return sendVariablesToCaptivate(variables);
+  console.log('🟡 About to send round variables to Captivate:', variables);
+  const result = await sendVariablesToCaptivate(variables);
+  console.log('🟡 sendVariablesToCaptivate result:', result);
+  return result;
 }
 
 // Send player and winner data (after round winner is decided)
 export async function sendPlayerAndWinnerDataToCaptivate(gameState, roundObj) {
+  console.log('🔵 sendPlayerAndWinnerDataToCaptivate called with:', { gameState, roundObj });
+  
   // Player 1 and 2
   const player1 = gameState.player1 || {};
   const player2 = gameState.player2 || {};
 
-  // Winner card
+  console.log('🔵 Player data extracted:', { player1, player2 });
+
+  // Winner card - only if there's a round with a winner
   let winnerCard = null;
   if (roundObj?.winner === 'P1') winnerCard = roundObj.C1;
   if (roundObj?.winner === 'P2') winnerCard = roundObj.C2;
@@ -104,7 +113,7 @@ export async function sendPlayerAndWinnerDataToCaptivate(gameState, roundObj) {
     player2_aura: player2.score?.aura ?? 0,
     player2_skill: player2.score?.skill ?? 0,
     player2_stamina: player2.score?.stamina ?? 0,
-    // Winner card
+    // Winner card (empty if no winner yet)
     winner_character: winnerCard?.character ?? '',
     winner_imageUrl: winnerUrls.card_imageUrl,
     winner_socialImageUrl: winnerUrls.card_socialImageUrl,
@@ -121,5 +130,8 @@ export async function sendPlayerAndWinnerDataToCaptivate(gameState, roundObj) {
     winner_vfc: winnerCard?.vfc ?? '',
   };
 
-  return sendVariablesToCaptivate(variables);
+  console.log('🔵 About to send player variables to Captivate:', variables);
+  const result = await sendVariablesToCaptivate(variables);
+  console.log('🔵 sendVariablesToCaptivate result:', result);
+  return result;
 }

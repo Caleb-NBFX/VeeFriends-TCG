@@ -16,10 +16,10 @@ function ProducerDashboard() {
   const [selectedDeck1, setSelectedDeck1] = useState(null);
   const [selectedDeck2, setSelectedDeck2] = useState(null);
   const [gameId, setGameId] = useState('');
+  const [gameState, setGameState] = useState(null);
   const [loadGameId, setLoadGameId] = useState('');
   const [lastCaptivateData, setLastCaptivateData] = useState(null);
-  const [gameState, setGameState] = useState(null);
-  const [hasLoaded, setHasLoaded] = useState(false);
+  const [lastPlayerData, setLastPlayerData] = useState(null);
   const [showAdminEdit, setShowAdminEdit] = useState(false);
 
   const lastRoundIdRef = useRef(null);
@@ -218,43 +218,20 @@ function ProducerDashboard() {
     },
     editRow: {
       display: 'flex',
-      gap: '1rem',
       alignItems: 'center',
-      marginBottom: '1rem',
-      padding: '0.5rem',
-      backgroundColor: theme.colors.black,
-      borderRadius: theme.borderRadius.sm,
-      border: `1px solid ${theme.colors.subtleBorder}`
+      marginBottom: '0.5rem',
+      gap: '1rem'
     },
     editLabel: {
       color: theme.colors.white,
-      fontSize: '0.8rem',
-      minWidth: '120px',
-      fontWeight: 'bold'
+      fontSize: '0.9rem',
+      minWidth: '80px',
+      textAlign: 'right'
     },
     editInput: {
       ...baseStyles.input,
       flex: 1,
-      fontSize: '0.9rem',
-      padding: '0.5rem'
-    },
-    editButton: {
-      ...baseStyles.button,
-      fontSize: '0.8rem',
-      padding: '0.5rem 1rem'
-    },
-    roundCard: {
-      backgroundColor: theme.colors.black,
-      border: `1px solid ${theme.colors.subtleBorder}`,
-      borderRadius: theme.borderRadius.sm,
-      padding: '1rem',
-      margin: '0.5rem 0'
-    },
-    roundHeader: {
-      color: theme.colors.gold,
-      fontSize: '1rem',
-      fontWeight: 'bold',
-      marginBottom: '0.5rem'
+      minWidth: '150px'
     }
   };
 
@@ -273,64 +250,6 @@ function ProducerDashboard() {
     }
   };
 
-  // Update game data function
-  const updateGameData = async (field, value, roundIndex = undefined, cardPlayer = undefined) => {
-    try {
-      const response = await axios.put(`${API_BASE}/api/games/${gameId}/edit`, {
-        field,
-        value,
-        roundIndex,
-        cardPlayer
-      });
-      
-      if (response.data.success) {
-        // Refresh game data
-        const res = await axios.get(`${API_BASE}/api/games/${gameId}`);
-        setGameState(res.data);
-        alert('Game data updated successfully!');
-      }
-    } catch (error) {
-      console.error('Error updating game data:', error);
-      alert('Failed to update game data');
-    }
-  };
-
-  // Poll for game state changes and send data to Captivate on round change
-  useEffect(() => {
-    if (!gameId) return;
-
-    const fetchGameState = async () => {
-      try {
-        const res = await axios.get(`${API_BASE}/api/games/${gameId}`);
-        setGameState(res.data);
-
-        const currentRound = res.data.currentRound;
-        const rounds = res.data.rounds || [];
-        const roundObj = rounds[currentRound - 1];
-        const roundId = roundObj?._id;
-
-        // Detect round change (send card1/card2 data)
-        if (roundId && lastRoundIdRef.current !== roundId) {
-          lastRoundIdRef.current = roundId;
-          await sendRoundDataToCaptivate(roundObj);
-          setLastCaptivateData(mapRoundDataForCaptivate(roundObj));
-        }
-
-        // Detect round winner (send player/winner data)
-        if (roundObj?.winner && !roundObj._sentToCaptivate) {
-          await sendPlayerAndWinnerDataToCaptivate(res.data, roundObj);
-          roundObj._sentToCaptivate = true; // Prevent duplicate sends in polling
-        }
-      } catch (err) {
-        console.error('Error polling game state:', err);
-      }
-    };
-
-    fetchGameState();
-    const interval = setInterval(fetchGameState, 3000); // Poll every 3 seconds
-    return () => clearInterval(interval);
-  }, [gameId]);
-
   const fetchDecks = async (email, setDecks) => {
     try {
       const res = await axios.get(`${API_BASE}/api/decks?email=${email}`);
@@ -340,6 +259,109 @@ function ProducerDashboard() {
       alert('Failed to fetch decks');
     }
   };
+
+  // Admin function to update game data
+  const updateGameData = async (field, value, roundIndex, card) => {
+    try {
+      console.log('Updating game data:', { field, value, roundIndex, card });
+      
+      let updateData = {};
+      
+      if (field.startsWith('player') && field.includes('handle')) {
+        // Player handle updates
+        const playerNum = field.includes('player1') ? 1 : 2;
+        updateData = {
+          [`player${playerNum}_handle`]: value
+        };
+      } else if (field.startsWith('player')) {
+        // Player score updates
+        const playerNum = field.includes('player1') ? 1 : 2;
+        const statType = field.split('_')[2]; // aura, skill, or stamina
+        
+        updateData = {
+          [`player${playerNum}_${statType}`]: parseFloat(value) || 0
+        };
+      } else if (field.startsWith('round_card')) {
+        // Round card updates
+        const statType = field.split('_')[2]; // character, rarity, aura, skill, stamina, or score
+        
+        updateData = {
+          roundIndex,
+          card, // 'C1' or 'C2'
+          [`card_${statType}`]: statType === 'character' || statType === 'rarity' ? value : (parseFloat(value) || 0)
+        };
+      }
+      
+      console.log('Sending update data:', updateData);
+      
+      const res = await axios.put(`${API_BASE}/api/games/${gameId}/edit`, updateData);
+      
+      // Update local game state
+      setGameState(res.data);
+      
+      console.log('Game data updated successfully');
+    } catch (err) {
+      console.error('Error updating game data:', err);
+      alert('Failed to update game data');
+    }
+  };
+
+  // Helper to map round data for UI display (matches sendRoundDataToCaptivate)
+  function mapRoundDataForCaptivate(roundData) {
+    const card1 = roundData.C1 || {};
+    const card2 = roundData.C2 || {};
+    return {
+      card1_aura: card1.Aura ?? 0,
+      card1_skill: card1.Skill ?? 0,
+      card1_stamina: card1.Stamina ?? 0,
+      card1_character: card1.character ?? "",
+      card1_rarity: card1.rarity ?? "",
+      card1_score: card1.Score !== undefined ? Math.round(card1.Score) : 0,
+      card1_color: getColorForRarity(card1.rarity),
+      card2_aura: card2.Aura ?? 0,
+      card2_skill: card2.Skill ?? 0,
+      card2_stamina: card2.Stamina ?? 0,
+      card2_character: card2.character ?? "",
+      card2_rarity: card2.rarity ?? "",
+      card2_score: card2.Score !== undefined ? Math.round(card2.Score) : 0,
+      card2_color: getColorForRarity(card2.rarity),
+    };
+  }
+
+  // Helper to map player data for UI display (matches sendPlayerAndWinnerDataToCaptivate)
+  function mapPlayerDataForCaptivate(gameState, roundObj) {
+    const player1 = gameState.player1 || {};
+    const player2 = gameState.player2 || {};
+
+    // Winner card - only if there's a round with a winner
+    let winnerCard = null;
+    if (roundObj?.winner === 'P1') winnerCard = roundObj.C1;
+    if (roundObj?.winner === 'P2') winnerCard = roundObj.C2;
+
+    return {
+      // Player 1
+      player1_name: player1.name ?? '',
+      player1_handle: player1.handle ?? '',
+      player1_avatarUrl: player1.avatarUrl ?? '',
+      player1_aura: player1.score?.aura ?? 0,
+      player1_skill: player1.score?.skill ?? 0,
+      player1_stamina: player1.score?.stamina ?? 0,
+      // Player 2
+      player2_name: player2.name ?? '',
+      player2_handle: player2.handle ?? '',
+      player2_avatarUrl: player2.avatarUrl ?? '',
+      player2_aura: player2.score?.aura ?? 0,
+      player2_skill: player2.score?.skill ?? 0,
+      player2_stamina: player2.score?.stamina ?? 0,
+      // Winner card (empty if no winner yet)
+      winner_character: winnerCard?.character ?? '',
+      winner_rarity: winnerCard?.rarity ?? '',
+      winner_score: winnerCard?.Score !== undefined ? Math.round(winnerCard.Score) : 0,
+      winner_aura: winnerCard?.Aura ?? 0,
+      winner_skill: winnerCard?.Skill ?? 0,
+      winner_stamina: winnerCard?.Stamina ?? 0,
+    };
+  }
 
   const handleStartGame = async () => {
     if (!selectedDeck1 || !selectedDeck2) {
@@ -357,17 +379,6 @@ function ProducerDashboard() {
       alert(`Cannot start game: Player 2's deck "${selectedDeck2.name}" only has ${selectedDeck2.cards.length} cards. A complete deck with 20 cards is required. Try another deck.`);
       return;
     }
-
-    // Detailed debugging
-    console.log('=== DECK DEBUGGING ===');
-    console.log('selectedDeck1 full object:', selectedDeck1);
-    console.log('selectedDeck1.handle:', selectedDeck1.handle);
-    console.log('selectedDeck1.firstName:', selectedDeck1.firstName);
-    console.log('selectedDeck1.lastName:', selectedDeck1.lastName);
-    console.log('selectedDeck2 full object:', selectedDeck2);
-    console.log('selectedDeck2.handle:', selectedDeck2.handle);
-    console.log('selectedDeck2.firstName:', selectedDeck2.firstName);
-    console.log('selectedDeck2.lastName:', selectedDeck2.lastName);
 
     const player1Data = { 
       name: `${selectedDeck1.firstName} ${selectedDeck1.lastName}`.trim(),
@@ -389,37 +400,56 @@ function ProducerDashboard() {
       deck: selectedDeck2.cards 
     };
 
-    console.log('player1Data being sent:', player1Data);
-    console.log('player2Data being sent:', player2Data);
-
     try {
-      const res = await axios.post(`${API_BASE}/api/games`, {
+      // Step 1: Create the game
+      const createRes = await axios.post(`${API_BASE}/api/games`, {
         player1: player1Data,
         player2: player2Data
       });
       
-      console.log('Game created response:', res.data);
-      console.log('Game player1 handle:', res.data.player1?.handle);
-      console.log('Game player2 handle:', res.data.player2?.handle);
-      
-      const newGameId = res.data._id;
+      const newGameId = createRes.data._id;
       setGameId(newGameId);
+      
+      console.log('Game created, ID:', newGameId);
+      
+      // Step 2: Wait for backend to complete game setup (including first round)
+      console.log('Waiting for backend to complete game setup...');
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Step 3: Fetch the complete game state
+      const gameRes = await axios.get(`${API_BASE}/api/games/${newGameId}`);
+      const completeGame = gameRes.data;
+      setGameState(completeGame);
+      
+      console.log('Complete game state fetched');
       
       // Navigate to producer URL with gameId
       navigate(`/producer?gameId=${newGameId}`);
       
       alert(`Game started! Game ID: ${newGameId}`);
+      
+      // Step 4: Send initial data to Captivate
+      console.log('Sending initial data to Captivate...');
+      
+      // Send player scores (all zeros initially)
+      await sendPlayerAndWinnerDataToCaptivate(completeGame, null);
+      const playerDebugData = mapPlayerDataForCaptivate(completeGame, null);
+      setLastPlayerData(playerDebugData);
+      console.log('✅ Player data sent to Captivate successfully');
 
-      // Send initial round data to Captivate (since game auto-starts first round)
-      const game = res.data;
-      const currentRound = game.currentRound;
-      const rounds = game.rounds || [];
+      // Send round data
+      const currentRound = completeGame.currentRound;
+      const rounds = completeGame.rounds || [];
       const roundObj = rounds[currentRound - 1];
+      
       if (roundObj) {
         lastRoundIdRef.current = roundObj._id;
         await sendRoundDataToCaptivate(roundObj);
-        setLastCaptivateData(mapRoundDataForCaptivate(roundObj));
+        const roundDebugData = mapRoundDataForCaptivate(roundObj);
+        setLastCaptivateData(roundDebugData);
+        console.log('✅ Round data sent to Captivate successfully');
       }
+      
     } catch (err) {
       console.error('Error starting game:', err);
       alert('Failed to start game');
@@ -445,40 +475,6 @@ function ProducerDashboard() {
     }
   };
 
-  // Helper to map round data for UI display (matches sendRoundDataToCaptivate)
-  function mapRoundDataForCaptivate(roundData) {
-    const card1 = roundData.C1 || {};
-    const card2 = roundData.C2 || {};
-    return {
-      card1_aura: card1.Aura ?? 0,
-      card1_skill: card1.Skill ?? 0,
-      card1_stamina: card1.Stamina ?? 0,
-      card1_character: card1.character ?? "",
-      card1_rarity: card1.rarity ?? "",
-      card1_score: card1.Score !== undefined ? Math.round(card1.Score) : 0,
-      card1_color: getColorForRarity(card1.rarity),
-      card1_imageUrl: card1.card ?? "",
-      card1_rarityImageUrl: card1.rarityImage ?? "",
-      card1_tier: card1.tier ?? "",
-      card1_quote: card1.quote ?? "",
-      card1_vfc: card1.vfc ?? "",
-      card1_cardId: card1.card ?? "",
-      card2_aura: card2.Aura ?? 0,
-      card2_skill: card2.Skill ?? 0,
-      card2_stamina: card2.Stamina ?? 0,
-      card2_character: card2.character ?? "",
-      card2_rarity: card2.rarity ?? "",
-      card2_score: card2.Score !== undefined ? Math.round(card2.Score) : 0,
-      card2_color: getColorForRarity(card2.rarity),
-      card2_imageUrl: card2.card ?? "",
-      card2_rarityImageUrl: card2.rarityImage ?? "",
-      card2_tier: card2.tier ?? "",
-      card2_quote: card2.quote ?? "",
-      card2_vfc: card2.vfc ?? "",
-      card2_cardId: card2.card ?? "",
-    };
-  }
-
   const handleLoadGame = async () => {
     if (!loadGameId) {
       alert('Please enter a Game ID to load.');
@@ -493,7 +489,6 @@ function ProducerDashboard() {
       const game = res.data;
       if (game.player1) {
         setPlayer1Email(game.player1.email || '');
-        // Create deck object for player 1
         const player1Deck = {
           _id: `loaded-p1-${loadGameId}`,
           firstName: game.player1.firstName || '',
@@ -504,12 +499,11 @@ function ProducerDashboard() {
           cards: game.player1.deck || []
         };
         setSelectedDeck1(player1Deck);
-        setPlayer1Decks([player1Deck]); // Add to decks list for display
+        setPlayer1Decks([player1Deck]);
       }
       
       if (game.player2) {
         setPlayer2Email(game.player2.email || '');
-        // Create deck object for player 2
         const player2Deck = {
           _id: `loaded-p2-${loadGameId}`,
           firstName: game.player2.firstName || '',
@@ -520,7 +514,7 @@ function ProducerDashboard() {
           cards: game.player2.deck || []
         };
         setSelectedDeck2(player2Deck);
-        setPlayer2Decks([player2Deck]); // Add to decks list for display
+        setPlayer2Decks([player2Deck]);
       }
       
       // Navigate to producer URL with gameId
@@ -529,6 +523,14 @@ function ProducerDashboard() {
       alert(`Game loaded! Game ID: ${loadGameId}`);
       
       if (game.player1 && game.player2) {
+        // Send current player scores to Captivate
+        await sendPlayerAndWinnerDataToCaptivate(game, null);
+        console.log('Current player scores sent to Captivate');
+        
+        // Store the player data for debugging
+        const playerDebugData = mapPlayerDataForCaptivate(game, null);
+        setLastPlayerData(playerDebugData);
+        
         // Send current round data to Captivate
         const currentRound = game.currentRound;
         const rounds = game.rounds || [];
@@ -545,66 +547,113 @@ function ProducerDashboard() {
     }
   };
 
-  // Function to handle loading game from URL
-  const handleLoadGameFromUrl = async (gameIdToLoad) => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/games/${gameIdToLoad}`);
-      setGameId(gameIdToLoad);
-      setGameState(res.data);
-      
-      // Auto-fill player data from loaded game
-      const game = res.data;
-      if (game.player1) {
-        setPlayer1Email(game.player1.email || '');
-        // Create deck object for player 1
-        const player1Deck = {
-          _id: `loaded-p1-${gameIdToLoad}`,
-          firstName: game.player1.firstName || '',
-          lastName: game.player1.lastName || '',
-          handle: game.player1.handle || '',
-          platform: game.player1.platform || '',
-          email: game.player1.email || '',
-          cards: game.player1.deck || []
-        };
-        setSelectedDeck1(player1Deck);
-        setPlayer1Decks([player1Deck]); // Add to decks list for display
-      }
-      
-      if (game.player2) {
-        setPlayer2Email(game.player2.email || '');
-        // Create deck object for player 2
-        const player2Deck = {
-          _id: `loaded-p2-${gameIdToLoad}`,
-          firstName: game.player2.firstName || '',
-          lastName: game.player2.lastName || '',
-          handle: game.player2.handle || '',
-          platform: game.player2.platform || '',
-          email: game.player2.email || '',
-          cards: game.player2.deck || []
-        };
-        setSelectedDeck2(player2Deck);
-        setPlayer2Decks([player2Deck]); // Add to decks list for display
-      }
-      
-      // Navigate to producer URL with gameId (replace current URL)
-      navigate(`/producer?gameId=${gameIdToLoad}`, { replace: true });
-      
-      if (game.player1 && game.player2) {
-        // Send current round data to Captivate
-        const currentRound = game.currentRound;
-        const rounds = game.rounds || [];
+  // Handle loading game from URL parameter
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const gameIdFromUrl = urlParams.get('gameId');
+    
+    if (gameIdFromUrl && !gameId) {
+      const handleLoadGameFromUrl = async (gameIdToLoad) => {
+        try {
+          const res = await axios.get(`${API_BASE}/api/games/${gameIdToLoad}`);
+          setGameId(gameIdToLoad);
+          setGameState(res.data);
+          
+          const game = res.data;
+          if (game.player1) {
+            setPlayer1Email(game.player1.email || '');
+            const player1Deck = {
+              _id: `loaded-p1-${gameIdToLoad}`,
+              firstName: game.player1.firstName || '',
+              lastName: game.player1.lastName || '',
+              handle: game.player1.handle || '',
+              platform: game.player1.platform || '',
+              email: game.player1.email || '',
+              cards: game.player1.deck || []
+            };
+            setSelectedDeck1(player1Deck);
+            setPlayer1Decks([player1Deck]);
+          }
+          
+          if (game.player2) {
+            setPlayer2Email(game.player2.email || '');
+            const player2Deck = {
+              _id: `loaded-p2-${gameIdToLoad}`,
+              firstName: game.player2.firstName || '',
+              lastName: game.player2.lastName || '',
+              handle: game.player2.handle || '',
+              platform: game.player2.platform || '',
+              email: game.player2.email || '',
+              cards: game.player2.deck || []
+            };
+            setSelectedDeck2(player2Deck);
+            setPlayer2Decks([player2Deck]);
+          }
+          
+          if (game.player1 && game.player2) {
+            // Send current player scores to Captivate
+            await sendPlayerAndWinnerDataToCaptivate(game, null);
+            console.log('Current player scores sent to Captivate');
+            
+            // Store the player data for debugging
+            setLastPlayerData(mapPlayerDataForCaptivate(game, null));
+            
+            // Send current round data to Captivate
+            const currentRound = game.currentRound;
+            const rounds = game.rounds || [];
+            const roundObj = rounds[currentRound - 1];
+            if (roundObj) {
+              lastRoundIdRef.current = roundObj._id;
+              await sendRoundDataToCaptivate(roundObj);
+              setLastCaptivateData(mapRoundDataForCaptivate(roundObj));
+            }
+          }
+        } catch (err) {
+          console.error('Error loading game from URL:', err);
+          alert('Failed to load game from URL. Please check the Game ID.');
+        }
+      };
+
+      handleLoadGameFromUrl(gameIdFromUrl);
+    }
+  }, [gameId]);
+
+  // Poll for game state changes and send data to Captivate on round change
+  useEffect(() => {
+    if (!gameId) return;
+
+    const fetchGameState = async () => {
+      try {
+        const res = await axios.get(`${API_BASE}/api/games/${gameId}`);
+        setGameState(res.data);
+
+        const currentRound = res.data.currentRound;
+        const rounds = res.data.rounds || [];
         const roundObj = rounds[currentRound - 1];
-        if (roundObj) {
-          lastRoundIdRef.current = roundObj._id;
+        const roundId = roundObj?._id;
+
+        // Detect round change (send card1/card2 data)
+        if (roundId && lastRoundIdRef.current !== roundId) {
+          lastRoundIdRef.current = roundId;
           await sendRoundDataToCaptivate(roundObj);
           setLastCaptivateData(mapRoundDataForCaptivate(roundObj));
         }
+
+        // Detect round winner (send player/winner data)
+        if (roundObj?.winner && !roundObj._sentToCaptivate) {
+          await sendPlayerAndWinnerDataToCaptivate(res.data, roundObj);
+          setLastPlayerData(mapPlayerDataForCaptivate(res.data, roundObj));
+          roundObj._sentToCaptivate = true; // Prevent duplicate sends in polling
+        }
+      } catch (err) {
+        console.error('Error polling game state:', err);
       }
-    } catch (err) {
-      console.error('Error loading game from URL:', err);
-      alert('Failed to load game from URL. Please check the Game ID.');
-    }
-  };
+    };
+
+    fetchGameState();
+    const interval = setInterval(fetchGameState, 3000); // Poll every 3 seconds
+    return () => clearInterval(interval);
+  }, [gameId]);
 
   return (
     <div style={styles.container}>
@@ -814,6 +863,36 @@ function ProducerDashboard() {
           </div>
         )}
 
+        {/* Load Game Section - Only show when no game is active */}
+        {!gameId && (
+          <div style={styles.loadGameSection}>
+            <h3 style={styles.sectionTitle}>📥 Load Existing Game</h3>
+            <div style={styles.inputRow}>
+              <div style={styles.inputGroup}>
+                <label style={styles.label}>Game ID</label>
+                <input
+                  type="text"
+                  placeholder="Enter Game ID to load"
+                  value={loadGameId}
+                  onChange={(e) => setLoadGameId(e.target.value)}
+                  style={styles.input}
+                />
+              </div>
+              <button 
+                onClick={handleLoadGame}
+                style={styles.button}
+                onMouseEnter={e => Object.assign(e.target.style, styles.buttonHover)}
+                onMouseLeave={e => {
+                  e.target.style.transform = 'none';
+                  e.target.style.boxShadow = theme.shadows.button;
+                }}
+              >
+                📂 Load Game
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Game Status Section */}
         {gameId && (
           <div style={styles.gameStatusSection}>
@@ -850,7 +929,7 @@ function ProducerDashboard() {
             {gameState && !gameState.winner && (
               <div style={{ textAlign: 'center' }}>
                 <p style={styles.gameStatusText}>Game In Progress</p>
-                <div style={styles.inputRow}>
+                <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
                   <button 
                     onClick={handleStartRound}
                     style={styles.button}
@@ -862,6 +941,7 @@ function ProducerDashboard() {
                   >
                     ▶️ Start Next Round
                   </button>
+                  
                   <button 
                     onClick={() => setShowAdminEdit(!showAdminEdit)}
                     style={styles.adminToggleButton}
@@ -871,7 +951,7 @@ function ProducerDashboard() {
                       e.target.style.boxShadow = theme.shadows.button;
                     }}
                   >
-                    ⚙️ {showAdminEdit ? 'Hide' : 'Show'} Admin Edit
+                    {showAdminEdit ? '🔒 Hide Admin Edit' : '⚙️ Show Admin Edit'}
                   </button>
                 </div>
               </div>
@@ -882,17 +962,6 @@ function ProducerDashboard() {
                 <p style={styles.gameStatusText}>
                   <strong>Game Status:</strong> FINISHED - {gameState.winner} Wins! 🏆
                 </p>
-                <button 
-                  onClick={() => setShowAdminEdit(!showAdminEdit)}
-                  style={styles.adminToggleButton}
-                  onMouseEnter={e => Object.assign(e.target.style, styles.buttonHover)}
-                  onMouseLeave={e => {
-                    e.target.style.transform = 'none';
-                    e.target.style.boxShadow = theme.shadows.button;
-                  }}
-                >
-                  ⚙️ {showAdminEdit ? 'Hide' : 'Show'} Admin Edit
-                </button>
               </div>
             )}
           </div>
@@ -902,103 +971,118 @@ function ProducerDashboard() {
         {gameId && gameState && showAdminEdit && (
           <div style={styles.adminEditSection}>
             <h3 style={styles.sectionTitle}>⚙️ Admin Edit Mode</h3>
-            <p style={{ color: theme.colors.white, marginBottom: '1rem' }}>
-              ⚠️ <strong>Warning:</strong> Direct database modifications. Use carefully!
-            </p>
-
-            {/* Player Handles & Scores */}
-            <div style={styles.roundCard}>
-              <div style={styles.roundHeader}>Player Information & Scores</div>
+            
+            {/* Player Score Editor */}
+            <div style={{ marginBottom: '2rem' }}>
+              <h4 style={{ color: theme.colors.gold, marginBottom: '1rem' }}>
+                Player Scores
+              </h4>
               
-              <div style={styles.editRow}>
-                <span style={styles.editLabel}>Player 1 Handle:</span>
-                <input 
-                  style={styles.editInput}
-                  defaultValue={gameState.player1?.handle || ''}
-                  onBlur={(e) => updateGameData('player1_handle', e.target.value)}
-                />
-              </div>
-              
-              <div style={styles.editRow}>
-                <span style={styles.editLabel}>Player 2 Handle:</span>
-                <input 
-                  style={styles.editInput}
-                  defaultValue={gameState.player2?.handle || ''}
-                  onBlur={(e) => updateGameData('player2_handle', e.target.value)}
-                />
-              </div>
-
-              <div style={styles.editRow}>
-                <span style={styles.editLabel}>P1 Aura Score:</span>
-                <input 
-                  style={styles.editInput}
-                  type="number"
-                  defaultValue={gameState.player1?.score?.aura || 0}
-                  onBlur={(e) => updateGameData('player1_score_aura', e.target.value)}
-                />
-              </div>
-
-              <div style={styles.editRow}>
-                <span style={styles.editLabel}>P1 Skill Score:</span>
-                <input 
-                  style={styles.editInput}
-                  type="number"
-                  defaultValue={gameState.player1?.score?.skill || 0}
-                  onBlur={(e) => updateGameData('player1_score_skill', e.target.value)}
-                />
-              </div>
-
-              <div style={styles.editRow}>
-                <span style={styles.editLabel}>P1 Stamina Score:</span>
-                <input 
-                  style={styles.editInput}
-                  type="number"
-                  defaultValue={gameState.player1?.score?.stamina || 0}
-                  onBlur={(e) => updateGameData('player1_score_stamina', e.target.value)}
-                />
-              </div>
-
-              <div style={styles.editRow}>
-                <span style={styles.editLabel}>P2 Aura Score:</span>
-                <input 
-                  style={styles.editInput}
-                  type="number"
-                  defaultValue={gameState.player2?.score?.aura || 0}
-                  onBlur={(e) => updateGameData('player2_score_aura', e.target.value)}
-                />
+              {/* Player 1 Scores */}
+              <div>
+                <h4 style={{ color: theme.colors.lightBlue, margin: '0.5rem 0' }}>
+                  Player 1: {gameState.player1?.name || 'Unknown'}
+                </h4>
+                
+                <div style={styles.editRow}>
+                  <span style={styles.editLabel}>Handle:</span>
+                  <input
+                    style={styles.editInput}
+                    type="text"
+                    defaultValue={gameState.player1?.handle || ''}
+                    onBlur={(e) => updateGameData('player1_handle', e.target.value)}
+                  />
+                </div>
+                
+                <div style={styles.editRow}>
+                  <span style={styles.editLabel}>Aura:</span>
+                  <input
+                    style={styles.editInput}
+                    type="number"
+                    defaultValue={gameState.player1?.score?.aura || 0}
+                    onBlur={(e) => updateGameData('player1_score_aura', e.target.value)}
+                  />
+                </div>
+                
+                <div style={styles.editRow}>
+                  <span style={styles.editLabel}>Skill:</span>
+                  <input
+                    style={styles.editInput}
+                    type="number"
+                    defaultValue={gameState.player1?.score?.skill || 0}
+                    onBlur={(e) => updateGameData('player1_score_skill', e.target.value)}
+                  />
+                </div>
+                
+                <div style={styles.editRow}>
+                  <span style={styles.editLabel}>Stamina:</span>
+                  <input
+                    style={styles.editInput}
+                    type="number"
+                    defaultValue={gameState.player1?.score?.stamina || 0}
+                    onBlur={(e) => updateGameData('player1_score_stamina', e.target.value)}
+                  />
+                </div>
               </div>
 
-              <div style={styles.editRow}>
-                <span style={styles.editLabel}>P2 Skill Score:</span>
-                <input 
-                  style={styles.editInput}
-                  type="number"
-                  defaultValue={gameState.player2?.score?.skill || 0}
-                  onBlur={(e) => updateGameData('player2_score_skill', e.target.value)}
-                />
-              </div>
-
-              <div style={styles.editRow}>
-                <span style={styles.editLabel}>P2 Stamina Score:</span>
-                <input 
-                  style={styles.editInput}
-                  type="number"
-                  defaultValue={gameState.player2?.score?.stamina || 0}
-                  onBlur={(e) => updateGameData('player2_score_stamina', e.target.value)}
-                />
+              {/* Player 2 Scores */}
+              <div style={{ marginTop: '1rem' }}>
+                <h4 style={{ color: theme.colors.lightBlue, margin: '0.5rem 0' }}>
+                  Player 2: {gameState.player2?.name || 'Unknown'}
+                </h4>
+                
+                <div style={styles.editRow}>
+                  <span style={styles.editLabel}>Handle:</span>
+                  <input
+                    style={styles.editInput}
+                    type="text"
+                    defaultValue={gameState.player2?.handle || ''}
+                    onBlur={(e) => updateGameData('player2_handle', e.target.value)}
+                  />
+                </div>
+                
+                <div style={styles.editRow}>
+                  <span style={styles.editLabel}>Aura:</span>
+                  <input
+                    style={styles.editInput}
+                    type="number"
+                    defaultValue={gameState.player2?.score?.aura || 0}
+                    onBlur={(e) => updateGameData('player2_score_aura', e.target.value)}
+                  />
+                </div>
+                
+                <div style={styles.editRow}>
+                  <span style={styles.editLabel}>Skill:</span>
+                  <input
+                    style={styles.editInput}
+                    type="number"
+                    defaultValue={gameState.player2?.score?.skill || 0}
+                    onBlur={(e) => updateGameData('player2_score_skill', e.target.value)}
+                  />
+                </div>
+                
+                <div style={styles.editRow}>
+                  <span style={styles.editLabel}>Stamina:</span>
+                  <input
+                    style={styles.editInput}
+                    type="number"
+                    defaultValue={gameState.player2?.score?.stamina || 0}
+                    onBlur={(e) => updateGameData('player2_score_stamina', e.target.value)}
+                  />
+                </div>
               </div>
             </div>
 
-            {/* Current Round Data */}
-            {gameState.rounds && gameState.currentRound > 0 && (() => {
+            {/* Round Card Editor - C1 and C2 fields */}
+            {gameState.rounds && gameState.rounds.length > 0 && gameState.currentRound > 0 && (() => {
               const currentRoundIndex = gameState.currentRound - 1;
               const currentRound = gameState.rounds[currentRoundIndex];
               
-              if (!currentRound) return null;
-              
               return (
-                <div style={styles.roundCard}>
-                  <div style={styles.roundHeader}>Current Round {currentRound.round} - Card Data</div>
+                <div>
+                  <h4 style={{ color: theme.colors.gold, marginBottom: '1rem' }}>
+                    Edit Round {gameState.currentRound} Cards
+                  </h4>
                   
                   {/* Player 1 Card (C1) */}
                   <div style={{ marginBottom: '1rem' }}>
@@ -1006,7 +1090,7 @@ function ProducerDashboard() {
                     
                     <div style={styles.editRow}>
                       <span style={styles.editLabel}>Character:</span>
-                      <input 
+                      <input
                         style={styles.editInput}
                         defaultValue={currentRound.C1?.character || ''}
                         onBlur={(e) => updateGameData('round_card_character', e.target.value, currentRoundIndex, 'C1')}
@@ -1015,7 +1099,7 @@ function ProducerDashboard() {
                     
                     <div style={styles.editRow}>
                       <span style={styles.editLabel}>Rarity:</span>
-                      <input 
+                      <input
                         style={styles.editInput}
                         defaultValue={currentRound.C1?.rarity || ''}
                         onBlur={(e) => updateGameData('round_card_rarity', e.target.value, currentRoundIndex, 'C1')}
@@ -1024,7 +1108,7 @@ function ProducerDashboard() {
                     
                     <div style={styles.editRow}>
                       <span style={styles.editLabel}>Aura:</span>
-                      <input 
+                      <input
                         style={styles.editInput}
                         type="number"
                         defaultValue={currentRound.C1?.Aura || 0}
@@ -1034,7 +1118,7 @@ function ProducerDashboard() {
                     
                     <div style={styles.editRow}>
                       <span style={styles.editLabel}>Skill:</span>
-                      <input 
+                      <input
                         style={styles.editInput}
                         type="number"
                         defaultValue={currentRound.C1?.Skill || 0}
@@ -1044,7 +1128,7 @@ function ProducerDashboard() {
                     
                     <div style={styles.editRow}>
                       <span style={styles.editLabel}>Stamina:</span>
-                      <input 
+                      <input
                         style={styles.editInput}
                         type="number"
                         defaultValue={currentRound.C1?.Stamina || 0}
@@ -1070,7 +1154,7 @@ function ProducerDashboard() {
                     
                     <div style={styles.editRow}>
                       <span style={styles.editLabel}>Character:</span>
-                      <input 
+                      <input
                         style={styles.editInput}
                         defaultValue={currentRound.C2?.character || ''}
                         onBlur={(e) => updateGameData('round_card_character', e.target.value, currentRoundIndex, 'C2')}
@@ -1079,7 +1163,7 @@ function ProducerDashboard() {
                     
                     <div style={styles.editRow}>
                       <span style={styles.editLabel}>Rarity:</span>
-                      <input 
+                      <input
                         style={styles.editInput}
                         defaultValue={currentRound.C2?.rarity || ''}
                         onBlur={(e) => updateGameData('round_card_rarity', e.target.value, currentRoundIndex, 'C2')}
@@ -1088,7 +1172,7 @@ function ProducerDashboard() {
                     
                     <div style={styles.editRow}>
                       <span style={styles.editLabel}>Aura:</span>
-                      <input 
+                      <input
                         style={styles.editInput}
                         type="number"
                         defaultValue={currentRound.C2?.Aura || 0}
@@ -1098,7 +1182,7 @@ function ProducerDashboard() {
                     
                     <div style={styles.editRow}>
                       <span style={styles.editLabel}>Skill:</span>
-                      <input 
+                      <input
                         style={styles.editInput}
                         type="number"
                         defaultValue={currentRound.C2?.Skill || 0}
@@ -1108,7 +1192,7 @@ function ProducerDashboard() {
                     
                     <div style={styles.editRow}>
                       <span style={styles.editLabel}>Stamina:</span>
-                      <input 
+                      <input
                         style={styles.editInput}
                         type="number"
                         defaultValue={currentRound.C2?.Stamina || 0}
@@ -1118,7 +1202,7 @@ function ProducerDashboard() {
                     
                     <div style={styles.editRow}>
                       <span style={styles.editLabel}>Score:</span>
-                      <input 
+                      <input
                         style={styles.editInput}
                         type="number"
                         step="0.01"
@@ -1130,186 +1214,146 @@ function ProducerDashboard() {
                 </div>
               );
             })()}
-
-            {/* Next Round Data */}
-            {gameState.rounds && gameState.rounds.length > gameState.currentRound && (() => {
-              const nextRoundIndex = gameState.currentRound; // This is the index of the next round
-              const nextRound = gameState.rounds[nextRoundIndex];
-              
-              if (!nextRound) return null;
-              
-              return (
-                <div style={styles.roundCard}>
-                  <div style={styles.roundHeader}>Next Round {nextRound.round} - Card Data</div>
-                  
-                  {/* Player 1 Card (C1) */}
-                  <div style={{ marginBottom: '1rem' }}>
-                    <h4 style={{ color: theme.colors.lightBlue, margin: '0.5rem 0' }}>Player 1 Card:</h4>
-                    
-                    <div style={styles.editRow}>
-                      <span style={styles.editLabel}>Character:</span>
-                      <input 
-                        style={styles.editInput}
-                        defaultValue={nextRound.C1?.character || ''}
-                        onBlur={(e) => updateGameData('round_card_character', e.target.value, nextRoundIndex, 'C1')}
-                      />
-                    </div>
-                    
-                    <div style={styles.editRow}>
-                      <span style={styles.editLabel}>Rarity:</span>
-                      <input 
-                        style={styles.editInput}
-                        defaultValue={nextRound.C1?.rarity || ''}
-                        onBlur={(e) => updateGameData('round_card_rarity', e.target.value, nextRoundIndex, 'C1')}
-                      />
-                    </div>
-                    
-                    <div style={styles.editRow}>
-                      <span style={styles.editLabel}>Aura:</span>
-                      <input 
-                        style={styles.editInput}
-                        type="number"
-                        defaultValue={nextRound.C1?.Aura || 0}
-                        onBlur={(e) => updateGameData('round_card_aura', e.target.value, nextRoundIndex, 'C1')}
-                      />
-                    </div>
-                    
-                    <div style={styles.editRow}>
-                      <span style={styles.editLabel}>Skill:</span>
-                      <input 
-                        style={styles.editInput}
-                        type="number"
-                        defaultValue={nextRound.C1?.Skill || 0}
-                        onBlur={(e) => updateGameData('round_card_skill', e.target.value, nextRoundIndex, 'C1')}
-                      />
-                    </div>
-                    
-                    <div style={styles.editRow}>
-                      <span style={styles.editLabel}>Stamina:</span>
-                      <input 
-                        style={styles.editInput}
-                        type="number"
-                        defaultValue={nextRound.C1?.Stamina || 0}
-                        onBlur={(e) => updateGameData('round_card_stamina', e.target.value, nextRoundIndex, 'C1')}
-                      />
-                    </div>
-                    
-                    <div style={styles.editRow}>
-                      <span style={styles.editLabel}>Score:</span>
-                      <input 
-                        style={styles.editInput}
-                        type="number"
-                        step="0.01"
-                        defaultValue={nextRound.C1?.Score || 0}
-                        onBlur={(e) => updateGameData('round_card_score', e.target.value, nextRoundIndex, 'C1')}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Player 2 Card (C2) */}
-                  <div>
-                    <h4 style={{ color: theme.colors.lightBlue, margin: '0.5rem 0' }}>Player 2 Card:</h4>
-                    
-                    <div style={styles.editRow}>
-                      <span style={styles.editLabel}>Character:</span>
-                      <input 
-                        style={styles.editInput}
-                        defaultValue={nextRound.C2?.character || ''}
-                        onBlur={(e) => updateGameData('round_card_character', e.target.value, nextRoundIndex, 'C2')}
-                      />
-                    </div>
-                    
-                    <div style={styles.editRow}>
-                      <span style={styles.editLabel}>Rarity:</span>
-                      <input 
-                        style={styles.editInput}
-                        defaultValue={nextRound.C2?.rarity || ''}
-                        onBlur={(e) => updateGameData('round_card_rarity', e.target.value, nextRoundIndex, 'C2')}
-                      />
-                    </div>
-                    
-                    <div style={styles.editRow}>
-                      <span style={styles.editLabel}>Aura:</span>
-                      <input 
-                        style={styles.editInput}
-                        type="number"
-                        defaultValue={nextRound.C2?.Aura || 0}
-                        onBlur={(e) => updateGameData('round_card_aura', e.target.value, nextRoundIndex, 'C2')}
-                      />
-                    </div>
-                    
-                    <div style={styles.editRow}>
-                      <span style={styles.editLabel}>Skill:</span>
-                      <input 
-                        style={styles.editInput}
-                        type="number"
-                        defaultValue={nextRound.C2?.Skill || 0}
-                        onBlur={(e) => updateGameData('round_card_skill', e.target.value, nextRoundIndex, 'C2')}
-                      />
-                    </div>
-                    
-                    <div style={styles.editRow}>
-                      <span style={styles.editLabel}>Stamina:</span>
-                      <input 
-                        style={styles.editInput}
-                        type="number"
-                        defaultValue={nextRound.C2?.Stamina || 0}
-                        onBlur={(e) => updateGameData('round_card_stamina', e.target.value, nextRoundIndex, 'C2')}
-                      />
-                    </div>
-                    
-                    <div style={styles.editRow}>
-                      <span style={styles.editLabel}>Score:</span>
-                      <input 
-                        style={styles.editInput}
-                        type="number"
-                        step="0.01"
-                        defaultValue={nextRound.C2?.Score || 0}
-                        onBlur={(e) => updateGameData('round_card_score', e.target.value, nextRoundIndex, 'C2')}
-                      />
-                    </div>
-                  </div>
-                </div>
-              );
-            })()}
+            
+            <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+              <p style={{ color: theme.colors.lightGray, fontSize: '0.9rem' }}>
+                Changes are saved automatically when you finish editing a field.
+              </p>
+            </div>
           </div>
         )}
 
-        {/* Load Existing Game Section */}
-        <div style={styles.loadGameSection}>
-          <h3 style={styles.sectionTitle}>📂 Load Existing Game</h3>
-          <div style={styles.inputRow}>
-            <div style={styles.inputGroup}>
-              <label style={styles.label}>Game ID</label>
-              <input
-                type="text"
-                placeholder="Enter Game ID"
-                value={loadGameId}
-                onChange={(e) => setLoadGameId(e.target.value)}
-                style={styles.input}
-              />
+        {/* Captivate Data Section */}
+        <div style={styles.captivateSection}>
+          <h3 style={styles.sectionTitle}>📡 Captivate Integration</h3>
+          
+          {/* Last Round Data Sent */}
+          {lastCaptivateData && (
+            <div>
+              <h4 style={{ color: theme.colors.lightBlue, marginBottom: '0.5rem' }}>
+                Last Round Data Sent to Captivate:
+              </h4>
+              <pre style={styles.captivateData}>
+                {JSON.stringify(lastCaptivateData, null, 2)}
+              </pre>
             </div>
+          )}
+
+          {/* Last Player Data Sent */}
+          {lastPlayerData && (
+            <div style={{ marginTop: '1rem' }}>
+              <h4 style={{ color: theme.colors.lightBlue, marginBottom: '0.5rem' }}>
+                Last Player/Score Data Sent to Captivate:
+              </h4>
+              <pre style={styles.captivateData}>
+                {JSON.stringify(lastPlayerData, null, 2)}
+              </pre>
+            </div>
+          )}
+
+          {/* Single Resend All Data Button - Simplified */}
+          {gameId && gameState && (
+            <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+              <button 
+                onClick={async () => {
+                  try {
+                    console.log('🔄 RESEND ALL: Starting complete data resync...');
+                    
+                    // First, refresh the game state
+                    const gameRes = await axios.get(`${API_BASE}/api/games/${gameId}`);
+                    const freshGameState = gameRes.data;
+                    setGameState(freshGameState);
+                    console.log('🔄 Fresh game state fetched');
+                    
+                    // Send player scores
+                    console.log('🔄 Sending player scores...');
+                    await sendPlayerAndWinnerDataToCaptivate(freshGameState, null);
+                    setLastPlayerData(mapPlayerDataForCaptivate(freshGameState, null));
+                    console.log('✅ Player scores sent');
+                    
+                    // Send current round data if available
+                    const currentRound = freshGameState.currentRound;
+                    const rounds = freshGameState.rounds || [];
+                    const roundObj = rounds[currentRound - 1];
+                    
+                    if (roundObj) {
+                      console.log('🔄 Sending current round data...');
+                      await sendRoundDataToCaptivate(roundObj);
+                      setLastCaptivateData(mapRoundDataForCaptivate(roundObj));
+                      console.log('✅ Round data sent');
+                    }
+                    
+                    alert('✅ All data successfully resent to Captivate!');
+                    console.log('🔄 RESEND ALL: Complete data resync finished successfully');
+                    
+                  } catch (err) {
+                    console.error('🔄 RESEND ALL: Failed to resend data:', err);
+                    alert('❌ Failed to resend data to Captivate. Check console for details.');
+                  }
+                }}
+                style={styles.button}
+                onMouseEnter={e => Object.assign(e.target.style, styles.buttonHover)}
+                onMouseLeave={e => {
+                  e.target.style.transform = 'none';
+                  e.target.style.boxShadow = theme.shadows.button;
+                }}
+              >
+                🔄 Resend All Data
+              </button>
+            </div>
+          )}
+
+          {(!lastCaptivateData && !lastPlayerData) && (
+            <p style={{ color: theme.colors.lightGray, fontStyle: 'italic' }}>
+              No data sent to Captivate yet. Start a game or round to see data here.
+            </p>
+          )}
+        </div>
+
+        {/* New Game Button - Only show when a game is active */}
+        {gameId && (
+          <div style={{
+            ...styles.gameControlSection,
+            backgroundColor: theme.colors.darkOrange,
+            borderColor: theme.colors.orange,
+            marginTop: '2rem'
+          }}>
+            <h3 style={styles.sectionTitle}>🔄 Start Over</h3>
             <button 
-              onClick={handleLoadGame}
-              style={styles.button}
-              onMouseEnter={e => Object.assign(e.target.style, styles.buttonHover)}
+              onClick={() => {
+                // Clear all game state
+                setGameId('');
+                setGameState(null);
+                setLastCaptivateData(null);
+                setLastPlayerData(null);
+                setLoadGameId('');
+                setShowAdminEdit(false);
+                
+                // Navigate to base producer URL (dynamic)
+                const baseUrl = window.location.origin + window.location.pathname.split('?')[0];
+                window.location.href = baseUrl;
+              }}
+              style={{
+                ...styles.button,
+                backgroundColor: theme.colors.orange,
+                borderColor: theme.colors.orange,
+                fontSize: '1.1rem',
+                padding: '0.75rem 1.5rem'
+              }}
+              onMouseEnter={e => Object.assign(e.target.style, {
+                transform: 'translateY(-2px)',
+                boxShadow: `0 8px 25px rgba(255, 165, 0, 0.3)`
+              })}
               onMouseLeave={e => {
                 e.target.style.transform = 'none';
                 e.target.style.boxShadow = theme.shadows.button;
               }}
             >
-              Load Game
+              🆕 New Game
             </button>
-          </div>
-        </div>
-
-        {/* Captivate Data Section */}
-        {lastCaptivateData && (
-          <div style={styles.captivateSection}>
-            <h3 style={styles.sectionTitle}>📡 Last Data Sent to Captivate</h3>
-            <pre style={styles.captivateData}>
-              {JSON.stringify(lastCaptivateData, null, 2)}
-            </pre>
+            <p style={{ color: theme.colors.lightGray, fontSize: '0.9rem', marginTop: '0.5rem' }}>
+              This will clear the current game and return to the main dashboard
+            </p>
           </div>
         )}
       </div>
