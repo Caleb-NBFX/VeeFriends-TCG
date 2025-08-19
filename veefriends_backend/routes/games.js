@@ -32,6 +32,41 @@ router.post('/', async (req, res) => {
       createdAt: new Date()
     });
 
+    // Pre-create one extra round for pre-rendering (don't increment currentRound)
+    if (newGame.player1.deck.length > 1 && newGame.player2.deck.length > 1) {
+      // Don't just peek - we need to get the actual card data from the database
+      const p1NextCardRef = newGame.player1.deck[1]; // Reference to next card
+      const p2NextCardRef = newGame.player2.deck[1]; // Reference to next card
+      
+      // Get full card data from database
+      const p1NextCard = await Card.findOne({ 
+        character: p1NextCardRef.character, 
+        rarity: p1NextCardRef.rarity 
+      });
+      const p2NextCard = await Card.findOne({ 
+        character: p2NextCardRef.character, 
+        rarity: p2NextCardRef.rarity 
+      });
+      
+      if (p1NextCard && p2NextCard) {
+        const nextRound = {
+          round: 1,
+          C1: p1NextCard.toObject(),
+          C2: p2NextCard.toObject(),
+          winner: null,
+          result: null,
+          attribute: null,
+          attacker: newGame.attacker, // This should be set by the first round creation
+          status: 'prepared',
+          challengedAttributes: [],
+          rejections: { Aura: false, Skill: false, Stamina: false }
+        };
+        
+        newGame.rounds.push(nextRound);
+        console.log('📦 Pre-created round 1 for pre-rendering with full card data');
+      }
+    }
+
     const savedGame = await newGame.save();
     
     // Auto-start first round

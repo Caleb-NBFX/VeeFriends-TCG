@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Game = require('../models/Game');
+const Card = require('../models/Card'); // Add this line
 
 // Fixed route to match the frontend call
 router.post('/:gameId/respond-turn', async (req, res) => {
@@ -302,6 +303,54 @@ router.post('/:gameId/respond-turn', async (req, res) => {
     console.log('Final game.usedTTT:', game.usedTTT);
     console.log('Final game.attacker:', game.attacker); // Add this line
 
+    // Pre-create next round when current round is resolved
+    if (round.winner || round.result === 'push') {
+      // Your existing attacker alternation logic stays here...
+      
+      // Create next round ahead of time for pre-rendering
+      const nextNextRoundNumber = game.currentRound + 1;
+      const nextNextRoundIndex = nextNextRoundNumber - 1; // Convert to 0-based index
+      
+      // Only create if it doesn't exist and we have cards
+      if (!game.rounds[nextNextRoundIndex] && game.player1.deck.length > 0 && game.player2.deck.length > 0) {
+        try {
+          const p1NextCardRef = game.player1.deck[0]; // Next card to be drawn
+          const p2NextCardRef = game.player2.deck[0]; // Next card to be drawn
+          
+          // Get full card data from database
+          const p1NextCard = await Card.findOne({ 
+            character: p1NextCardRef.character, 
+            rarity: p1NextCardRef.rarity 
+          });
+          const p2NextCard = await Card.findOne({ 
+            character: p2NextCardRef.character, 
+            rarity: p2NextCardRef.rarity 
+          });
+          
+          if (p1NextCard && p2NextCard) {
+            const futureRound = {
+              round: nextNextRoundNumber,
+              C1: p1NextCard.toObject(),
+              C2: p2NextCard.toObject(),
+              winner: null,
+              result: null,
+              attribute: null,
+              attacker: game.attacker, // Use updated attacker
+              status: 'prepared',
+              challengedAttributes: [],
+              rejections: { Aura: false, Skill: false, Stamina: false }
+            };
+            
+            game.rounds.push(futureRound);
+            console.log(`📦 Pre-created round ${nextNextRoundNumber} for pre-rendering with full card data`);
+          }
+        } catch (error) {
+          console.error('Failed to pre-create round:', error);
+          // Don't fail the whole request if pre-creation fails
+        }
+      }
+    }
+
     await game.save();
     
     // Debug: print the round state after saving
@@ -315,12 +364,12 @@ router.post('/:gameId/respond-turn', async (req, res) => {
     console.log('Persisted game.usedTTT:', savedGame.usedTTT);
     console.log('Persisted game.attacker:', savedGame.attacker); // Add this line
 
-    // Return whether the round is resolved
-    const isResolved = !!(round.winner || round.result === 'push');
+    // Return whether the round is resolved (use existing isResolved if it exists, or create it here)
+    const roundIsResolved = !!(round.winner || round.result === 'push');
     res.json({ 
       success: true, 
-      canContinue: !isResolved,
-      isResolved: isResolved,
+      canContinue: !roundIsResolved,
+      isResolved: roundIsResolved,
       round: round,
       gameWinner: gameWinner
     });
