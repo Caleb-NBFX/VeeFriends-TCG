@@ -32,6 +32,67 @@ export function getColorForRarity(rarity) {
   return RARITY_COLORS[rarity.toLowerCase()] || '';
 }
 
+// Generate next round data by "peeking" at the deck without modifying game state
+async function generateNextRoundDataByPeeking(gameState) {
+  console.log('👀 Generating next round data by peeking...');
+  console.log('👀 Full gameState received:', JSON.stringify(gameState, null, 2));
+  
+  try {
+    const currentRoundNumber = gameState.currentRound;
+    const player1 = gameState.player1;
+    const player2 = gameState.player2;
+    
+    console.log('👀 Current round:', currentRoundNumber);
+    console.log('👀 Player1 object keys:', Object.keys(player1 || {}));
+    console.log('👀 Player2 object keys:', Object.keys(player2 || {}));
+    
+    const player1Deck = player1?.deck || [];
+    const player2Deck = player2?.deck || [];
+    
+    console.log('👀 P1 deck length:', player1Deck.length);
+    console.log('👀 P2 deck length:', player2Deck.length);
+    console.log('👀 P1 deck first 3 cards:', player1Deck.slice(0, 3));
+    console.log('👀 P2 deck first 3 cards:', player2Deck.slice(0, 3));
+    
+    // Check if there are cards left for the next round
+    if (player1Deck.length === 0 || player2Deck.length === 0) {
+      console.log('👀 No cards left for next round - P1:', player1Deck.length, 'P2:', player2Deck.length);
+      return null;
+    }
+    
+    // Peek at the next cards (first cards in the remaining deck)
+    const nextP1Card = player1Deck[0];
+    const nextP2Card = player2Deck[0];
+    
+    console.log('👀 Next P1 card reference (full):', JSON.stringify(nextP1Card, null, 2));
+    console.log('👀 Next P2 card reference (full):', JSON.stringify(nextP2Card, null, 2));
+    
+    if (!nextP1Card || !nextP2Card) {
+      console.log('👀 Missing card references - P1:', !!nextP1Card, 'P2:', !!nextP2Card);
+      return null;
+    }
+    
+    // Create next round data using the card references
+    const nextRoundData = {
+      round: currentRoundNumber + 1,
+      C1: nextP1Card,
+      C2: nextP2Card,
+      winner: null,
+      result: null,
+      attribute: null,
+      attacker: gameState.attacker,
+      status: 'peeked'
+    };
+    
+    console.log('👀 Generated next round data (full):', JSON.stringify(nextRoundData, null, 2));
+    return nextRoundData;
+    
+  } catch (error) {
+    console.error('👀 Error generating next round data:', error);
+    return null;
+  }
+}
+
 // Send card1/card2 data (for new round)
 export async function sendRoundDataToCaptivate(roundData) {
   console.log('🟡 sendRoundDataToCaptivate called with:', roundData);
@@ -134,4 +195,138 @@ export async function sendPlayerAndWinnerDataToCaptivate(gameState, roundObj) {
   const result = await sendVariablesToCaptivate(variables);
   console.log('🔵 sendVariablesToCaptivate result:', result);
   return result;
+}
+
+// Send current round data with 'update' action
+export async function sendCurrentRoundDataToCaptivate(roundData) {
+  console.log('🟡 sendCurrentRoundDataToCaptivate called with:', roundData);
+  return await sendRoundDataToCaptivate(roundData);
+}
+
+// Send next round data with 'render' action to specific templates
+export async function sendNextRoundDataToCaptivate(roundData) {
+  console.log('🔮 sendNextRoundDataToCaptivate called with:', roundData);
+  
+  // Use the same data mapping as regular round data
+  const card1 = roundData.C1 || {};
+  const card2 = roundData.C2 || {};
+
+  const card1Urls = getCardImageUrls(card1);
+  const card2Urls = getCardImageUrls(card2);
+
+  const variables = {
+    card1_aura: card1.Aura ?? 0,
+    card1_skill: card1.Skill ?? 0,
+    card1_stamina: card1.Stamina ?? 0,
+    card1_character: card1.character ?? '',
+    card1_rarity: card1.rarity ?? '',
+    card1_score: card1.Score !== undefined ? Math.round(card1.Score) : 0,
+    card1_color: getColorForRarity(card1.rarity),
+    card1_imageUrl: card1Urls.card_imageUrl,
+    card1_socialImageUrl: card1Urls.card_socialImageUrl,
+    card1_characterUrl: card1Urls.card_characterUrl,
+    card1_rarityImageUrl: card1.rarityImage ?? '',
+    card1_tier: card1.tier ?? '',
+    card1_quote: card1.quote ?? '',
+    card1_vfc: card1.vfc ?? '',
+    // Card 2
+    card2_aura: card2.Aura ?? 0,
+    card2_skill: card2.Skill ?? 0,
+    card2_stamina: card2.Stamina ?? 0,
+    card2_character: card2.character ?? '',
+    card2_rarity: card2.rarity ?? '',
+    card2_score: card2.Score !== undefined ? Math.round(card2.Score) : 0,
+    card2_color: getColorForRarity(card2.rarity),
+    card2_imageUrl: card2Urls.card_imageUrl,
+    card2_socialImageUrl: card2Urls.card_socialImageUrl,
+    card2_characterUrl: card2Urls.card_characterUrl,
+    card2_rarityImageUrl: card2.rarityImage ?? '',
+    card2_tier: card2.tier ?? '',
+    card2_quote: card2.quote ?? '',
+    card2_vfc: card2.vfc ?? '',
+  };
+
+  console.log('🔮 About to send next round variables to Captivate for pre-rendering:', variables);
+  
+  try {
+    const { ServiceHandler } = await import('./servicehandler.mjs');
+    
+    if (!ServiceHandler.scheduler) {
+      console.warn('ServiceHandler scheduler not available for pre-rendering');
+      return null;
+    }
+
+    // Try to discover available titles/templates using command API
+    console.log('🔍 Attempting to discover available titles...');
+    try {
+      const projectInfo = await ServiceHandler.command('getProjectInfo');
+      console.log('🔍 Project info:', projectInfo);
+      
+      const titleList = await ServiceHandler.command('getTitles');
+      console.log('🔍 Available titles:', titleList);
+    } catch (error) {
+      console.log('🔍 Template discovery not available:', error);
+    }
+
+    // For now, use the hardcoded template names
+    const templateNames = ['Card L', 'Card R', 'Character L', 'Character R'];
+    
+    console.log('🎴 Templates to send render commands to:', templateNames);
+
+    // Send render command to each template
+    const renderResults = [];
+    for (const templateName of templateNames) {
+      try {
+        console.log(`🔮 Sending render command to template: ${templateName}`);
+        
+        const result = await ServiceHandler.scheduler.scheduleAction('render', ServiceHandler.inputName, templateName, variables);
+        renderResults.push({ template: templateName, result });
+        
+        console.log(`✅ Render command sent to ${templateName}:`, result);
+      } catch (error) {
+        console.error(`❌ Failed to send render to ${templateName}:`, error);
+        renderResults.push({ template: templateName, error: error.message });
+      }
+    }
+
+    console.log('🔮 All render results:', renderResults);
+    return renderResults;
+
+  } catch (error) {
+    console.error('🔴 Failed to send render commands:', error);
+    return null;
+  }
+}
+
+// Combined function to send both current and next round data
+export async function sendBothRoundsDataToCaptivate(currentRound, nextRound, gameState = null) {
+  console.log('🔄 sendBothRoundsDataToCaptivate called with:', { currentRound, nextRound });
+  
+  const results = {};
+  
+  if (currentRound) {
+    console.log('📤 Sending current round data...');
+    results.current = await sendCurrentRoundDataToCaptivate(currentRound);
+    console.log('📤 Current round result:', results.current);
+  } else {
+    console.log('⚠️ No current round data to send');
+  }
+  
+  // If no next round provided, try to generate it by peeking
+  let nextRoundToSend = nextRound;
+  if (!nextRoundToSend && gameState) {
+    console.log('👀 No next round provided, attempting to peek...');
+    nextRoundToSend = await generateNextRoundDataByPeeking(gameState);
+  }
+  
+  if (nextRoundToSend) {
+    console.log('📤 About to send next round data for pre-rendering...');
+    results.next = await sendNextRoundDataToCaptivate(nextRoundToSend);
+    console.log('📤 Next round result:', results.next);
+  } else {
+    console.log('⚠️ No next round data to send');
+  }
+  
+  console.log('🔄 sendBothRoundsDataToCaptivate final results:', results);
+  return results;
 }

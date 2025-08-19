@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import API_BASE from '../config';
-import { sendRoundDataToCaptivate, sendPlayerAndWinnerDataToCaptivate, getColorForRarity } from '../utils/sendRoundDataToCaptivate';
+import { sendRoundDataToCaptivate, sendPlayerAndWinnerDataToCaptivate, getColorForRarity, sendCurrentRoundDataToCaptivate, sendNextRoundDataToCaptivate, sendBothRoundsDataToCaptivate } from '../utils/sendRoundDataToCaptivate';
 import { getVeeFriendsLogoHeader } from '../utils/imageUtils';
 import { useVeeFriendsTheme, createFlexContainer } from '../theme/VeeFriendsTheme';
 
@@ -632,14 +632,34 @@ function ProducerDashboard() {
         const roundObj = rounds[currentRound - 1];
         const roundId = roundObj?._id;
 
-        // Detect round change (send card1/card2 data)
+        // Detect round change (send current + next round data)
         if (roundId && lastRoundIdRef.current !== roundId) {
           lastRoundIdRef.current = roundId;
-          await sendRoundDataToCaptivate(roundObj);
-          setLastCaptivateData(mapRoundDataForCaptivate(roundObj));
+          
+          console.log('🔄 Round changed, sending current and next round data...');
+          
+          // Get next round data
+          const nextRoundIndex = currentRound; // Next round (0-based indexing)
+          const nextRound = rounds[nextRoundIndex];
+          
+          console.log('Current round data:', roundObj);
+          console.log('Next round data:', nextRound);
+          
+          // Send both current and next round data
+          try {
+            console.log('🔄 About to call sendBothRoundsDataToCaptivate with:', { currentRound: roundObj, nextRound, gameState: res.data });
+            const results = await sendBothRoundsDataToCaptivate(roundObj, nextRound, res.data); // Pass the full game state
+            console.log('🟢 Successfully sent round data to Captivate:', results);
+            
+            // Update UI display
+            setLastCaptivateData(mapRoundDataForCaptivate(roundObj));
+            
+          } catch (error) {
+            console.error('🔴 Failed to send round data to Captivate:', error);
+          }
         }
 
-        // Detect round winner (send player/winner data)
+        // Detect round winner (send player/winner data) - keep existing logic
         if (roundObj?.winner && !roundObj._sentToCaptivate) {
           await sendPlayerAndWinnerDataToCaptivate(res.data, roundObj);
           setLastPlayerData(mapPlayerDataForCaptivate(res.data, roundObj));
@@ -1271,16 +1291,21 @@ function ProducerDashboard() {
                     setLastPlayerData(mapPlayerDataForCaptivate(freshGameState, null));
                     console.log('✅ Player scores sent');
                     
-                    // Send current round data if available
+                    // Send current and next round data
                     const currentRound = freshGameState.currentRound;
                     const rounds = freshGameState.rounds || [];
-                    const roundObj = rounds[currentRound - 1];
+                    const currentRoundObj = rounds[currentRound - 1];
+                    const nextRoundObj = rounds[currentRound]; // Next round
                     
-                    if (roundObj) {
-                      console.log('🔄 Sending current round data...');
-                      await sendRoundDataToCaptivate(roundObj);
-                      setLastCaptivateData(mapRoundDataForCaptivate(roundObj));
-                      console.log('✅ Round data sent');
+                    if (currentRoundObj || nextRoundObj) {
+                      console.log('🔄 Sending current and next round data...');
+                      const results = await sendBothRoundsDataToCaptivate(currentRoundObj, nextRoundObj, freshGameState); // Pass game state here too
+                      
+                      if (currentRoundObj) {
+                        setLastCaptivateData(mapRoundDataForCaptivate(currentRoundObj));
+                      }
+                      
+                      console.log('✅ Round data sent:', results);
                     }
                     
                     alert('✅ All data successfully resent to Captivate!');
@@ -1291,22 +1316,25 @@ function ProducerDashboard() {
                     alert('❌ Failed to resend data to Captivate. Check console for details.');
                   }
                 }}
-                style={styles.button}
-                onMouseEnter={e => Object.assign(e.target.style, styles.buttonHover)}
+                style={{
+                  ...styles.button,
+                  backgroundColor: theme.colors.orange,
+                  borderColor: theme.colors.orange,
+                  fontSize: '1.1rem',
+                  padding: '0.75rem 1.5rem'
+                }}
+                onMouseEnter={e => Object.assign(e.target.style, {
+                  transform: 'translateY(-2px)',
+                  boxShadow: `0 8px 25px rgba(255, 165, 0, 0.3)`
+                })}
                 onMouseLeave={e => {
                   e.target.style.transform = 'none';
                   e.target.style.boxShadow = theme.shadows.button;
                 }}
               >
-                🔄 Resend All Data
+                🔄 Resend All Data to Captivate
               </button>
             </div>
-          )}
-
-          {(!lastCaptivateData && !lastPlayerData) && (
-            <p style={{ color: theme.colors.lightGray, fontStyle: 'italic' }}>
-              No data sent to Captivate yet. Start a game or round to see data here.
-            </p>
           )}
         </div>
 
