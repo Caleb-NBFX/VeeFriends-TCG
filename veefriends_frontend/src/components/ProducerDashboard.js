@@ -311,7 +311,30 @@ function ProducerDashboard() {
   function mapRoundDataForCaptivate(roundData) {
     const card1 = roundData.C1 || {};
     const card2 = roundData.C2 || {};
+    
+    // Get image URLs using the same function as sendRoundDataToCaptivate
+    const getCardImageUrls = (card) => {
+      const toSlug = (str) => {
+        return (str || '')
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/(^-|-$)/g, '');
+      };
+      
+      const characterSlug = toSlug(card.character);
+      const raritySlug = (card.rarity || '').toLowerCase();
+      return {
+        card_imageUrl: characterSlug && raritySlug ? `${characterSlug}-${raritySlug}.png` : '',
+        card_socialImageUrl: characterSlug ? `${characterSlug}.png` : '',
+        card_characterUrl: characterSlug ? `${characterSlug}-classic-shrinkwrapped.png` : '',
+      };
+    };
+
+    const card1Urls = getCardImageUrls(card1);
+    const card2Urls = getCardImageUrls(card2);
+    
     return {
+      // Card 1 data
       card1_aura: card1.Aura ?? 0,
       card1_skill: card1.Skill ?? 0,
       card1_stamina: card1.Stamina ?? 0,
@@ -319,6 +342,14 @@ function ProducerDashboard() {
       card1_rarity: card1.rarity ?? "",
       card1_score: card1.Score !== undefined ? Math.round(card1.Score) : 0,
       card1_color: getColorForRarity(card1.rarity),
+      card1_imageUrl: card1Urls.card_imageUrl,
+      card1_socialImageUrl: card1Urls.card_socialImageUrl,
+      card1_characterUrl: card1Urls.card_characterUrl,
+      card1_rarityImageUrl: card1.rarityImage ?? '',
+      card1_tier: card1.tier ?? '',
+      card1_quote: card1.quote ?? '',
+      card1_vfc: card1.vfc ?? '',
+      // Card 2 data
       card2_aura: card2.Aura ?? 0,
       card2_skill: card2.Skill ?? 0,
       card2_stamina: card2.Stamina ?? 0,
@@ -326,6 +357,13 @@ function ProducerDashboard() {
       card2_rarity: card2.rarity ?? "",
       card2_score: card2.Score !== undefined ? Math.round(card2.Score) : 0,
       card2_color: getColorForRarity(card2.rarity),
+      card2_imageUrl: card2Urls.card_imageUrl,
+      card2_socialImageUrl: card2Urls.card_socialImageUrl,
+      card2_characterUrl: card2Urls.card_characterUrl,
+      card2_rarityImageUrl: card2.rarityImage ?? '',
+      card2_tier: card2.tier ?? '',
+      card2_quote: card2.quote ?? '',
+      card2_vfc: card2.vfc ?? '',
     };
   }
 
@@ -338,6 +376,26 @@ function ProducerDashboard() {
     let winnerCard = null;
     if (roundObj?.winner === 'P1') winnerCard = roundObj.C1;
     if (roundObj?.winner === 'P2') winnerCard = roundObj.C2;
+
+    // Get winner image URLs using the same function as sendPlayerAndWinnerDataToCaptivate
+    const getCardImageUrls = (card) => {
+      const toSlug = (str) => {
+        return (str || '')
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/(^-|-$)/g, '');
+      };
+      
+      const characterSlug = toSlug(card?.character);
+      const raritySlug = (card?.rarity || '').toLowerCase();
+      return {
+        card_imageUrl: characterSlug && raritySlug ? `${characterSlug}-${raritySlug}.png` : '',
+        card_socialImageUrl: characterSlug ? `${characterSlug}.png` : '',
+        card_characterUrl: characterSlug ? `${characterSlug}-classic-shrinkwrapped.png` : '',
+      };
+    };
+
+    const winnerUrls = winnerCard ? getCardImageUrls(winnerCard) : { card_imageUrl: '', card_socialImageUrl: '', card_characterUrl: '' };
 
     return {
       // Player 1
@@ -354,13 +412,21 @@ function ProducerDashboard() {
       player2_aura: player2.score?.aura ?? 0,
       player2_skill: player2.score?.skill ?? 0,
       player2_stamina: player2.score?.stamina ?? 0,
-      // Winner card (empty if no winner yet)
+      // Winner card data with image URLs
       winner_character: winnerCard?.character ?? '',
       winner_rarity: winnerCard?.rarity ?? '',
       winner_score: winnerCard?.Score !== undefined ? Math.round(winnerCard.Score) : 0,
       winner_aura: winnerCard?.Aura ?? 0,
       winner_skill: winnerCard?.Skill ?? 0,
       winner_stamina: winnerCard?.Stamina ?? 0,
+      winner_color: getColorForRarity(winnerCard?.rarity),
+      winner_imageUrl: winnerUrls.card_imageUrl,
+      winner_socialImageUrl: winnerUrls.card_socialImageUrl,
+      winner_characterUrl: winnerUrls.card_characterUrl,
+      winner_rarityImageUrl: winnerCard?.rarityImage ?? '',
+      winner_tier: winnerCard?.tier ?? '',
+      winner_quote: winnerCard?.quote ?? '',
+      winner_vfc: winnerCard?.vfc ?? '',
     };
   }
 
@@ -1281,25 +1347,19 @@ function ProducerDashboard() {
             </div>
           )}
 
-          {/* Single Resend All Data Button - Simplified */}
+          {/* Two Separate Resend Buttons */}
           {gameId && gameState && (
-            <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+            <div style={{ marginTop: '1rem', textAlign: 'center', display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
               <button 
                 onClick={async () => {
                   try {
-                    console.log('🔄 RESEND ALL: Starting complete data resync...');
+                    console.log('🔄 RESEND ROUND: Starting round data resync...');
                     
                     // First, refresh the game state
                     const gameRes = await axios.get(`${API_BASE}/api/games/${gameId}`);
                     const freshGameState = gameRes.data;
                     setGameState(freshGameState);
                     console.log('🔄 Fresh game state fetched');
-                    
-                    // Send player scores
-                    console.log('🔄 Sending player scores...');
-                    await sendPlayerAndWinnerDataToCaptivate(freshGameState, null);
-                    setLastPlayerData(mapPlayerDataForCaptivate(freshGameState, null));
-                    console.log('✅ Player scores sent');
                     
                     // Send current and next round data
                     const currentRound = freshGameState.currentRound;
@@ -1309,43 +1369,95 @@ function ProducerDashboard() {
                     
                     if (currentRoundObj || nextRoundObj) {
                       console.log('🔄 Sending current and next round data...');
-                      const results = await sendBothRoundsDataToCaptivate(currentRoundObj, nextRoundObj, freshGameState); // Pass game state here too
+                      const results = await sendBothRoundsDataToCaptivate(currentRoundObj, nextRoundObj, freshGameState);
                       
                       if (currentRoundObj) {
                         setLastCaptivateData(mapRoundDataForCaptivate(currentRoundObj));
                       }
                       
                       console.log('✅ Round data sent:', results);
+                      alert('✅ Round data successfully resent to Captivate!');
+                    } else {
+                      alert('⚠️ No round data available to send');
                     }
                     
-                    alert('✅ All data successfully resent to Captivate!');
-                    console.log('🔄 RESEND ALL: Complete data resync finished successfully');
+                    console.log('🔄 RESEND ROUND: Round data resync finished successfully');
                     
                   } catch (err) {
-                    console.error('🔄 RESEND ALL: Failed to resend data:', err);
-                    alert('❌ Failed to resend data to Captivate. Check console for details.');
+                    console.error('🔄 RESEND ROUND: Failed to resend round data:', err);
+                    alert('❌ Failed to resend round data to Captivate. Check console for details.');
                   }
                 }}
                 style={{
                   ...styles.button,
-                  backgroundColor: theme.colors.orange,
-                  borderColor: theme.colors.orange,
-                  fontSize: '1.1rem',
-                  padding: '0.75rem 1.5rem'
+                  backgroundColor: theme.colors.blue,
+                  borderColor: theme.colors.blue,
+                  fontSize: '1rem',
+                  padding: '0.75rem 1.25rem'
                 }}
                 onMouseEnter={e => Object.assign(e.target.style, {
                   transform: 'translateY(-2px)',
-                  boxShadow: `0 8px 25px rgba(255, 165, 0, 0.3)`
+                  boxShadow: `0 8px 25px rgba(59, 130, 246, 0.3)`
                 })}
                 onMouseLeave={e => {
                   e.target.style.transform = 'none';
                   e.target.style.boxShadow = theme.shadows.button;
                 }}
               >
-                🔄 Resend All Data to Captivate
+                🎴 Resend Round Data
+              </button>
+
+              <button 
+                onClick={async () => {
+                  try {
+                    console.log('🔄 RESEND WINNER: Starting winner/player data resync...');
+                    
+                    // First, refresh the game state
+                    const gameRes = await axios.get(`${API_BASE}/api/games/${gameId}`);
+                    const freshGameState = gameRes.data;
+                    setGameState(freshGameState);
+                    console.log('🔄 Fresh game state fetched');
+                    
+                    // Get the current round for winner data
+                    const currentRound = freshGameState.currentRound;
+                    const rounds = freshGameState.rounds || [];
+                    const currentRoundObj = rounds[currentRound - 1];
+                    
+                    // Send player scores and winner data
+                    console.log('🔄 Sending player/winner data...');
+                    await sendPlayerAndWinnerDataToCaptivate(freshGameState, currentRoundObj);
+                    setLastPlayerData(mapPlayerDataForCaptivate(freshGameState, currentRoundObj));
+                    console.log('✅ Player/winner data sent');
+                    
+                    alert('✅ Winner/Player data successfully resent to Captivate!');
+                    console.log('🔄 RESEND WINNER: Winner/player data resync finished successfully');
+                    
+                  } catch (err) {
+                    console.error('🔄 RESEND WINNER: Failed to resend winner/player data:', err);
+                    alert('❌ Failed to resend winner/player data to Captivate. Check console for details.');
+                  }
+                }}
+                style={{
+                  ...styles.button,
+                  backgroundColor: theme.colors.green,
+                  borderColor: theme.colors.green,
+                  fontSize: '1rem',
+                  padding: '0.75rem 1.25rem'
+                }}
+                onMouseEnter={e => Object.assign(e.target.style, {
+                  transform: 'translateY(-2px)',
+                  boxShadow: `0 8px 25px rgba(34, 197, 94, 0.3)`
+                })}
+                onMouseLeave={e => {
+                  e.target.style.transform = 'none';
+                  e.target.style.boxShadow = theme.shadows.button;
+                }}
+              >
+                🏆 Resend Winner Data
               </button>
             </div>
           )}
+
         </div>
 
         {/* New Game Button - Only show when a game is active */}
@@ -1375,23 +1487,23 @@ function ProducerDashboard() {
                 ...styles.button,
                 backgroundColor: theme.colors.orange,
                 borderColor: theme.colors.orange,
-                fontSize: '1.1rem',
-                padding: '0.75rem 1.5rem'
+                fontSize: '1.2rem',
+                padding: '0.75rem 1.5rem',
+                width: '100%',
+                maxWidth: '300px',
+                margin: '0 auto'
               }}
               onMouseEnter={e => Object.assign(e.target.style, {
                 transform: 'translateY(-2px)',
-                boxShadow: `0 8px 25px rgba(255, 165, 0, 0.3)`
+                boxShadow: `0 8px 25px rgba(234, 88, 12, 0.3)`
               })}
               onMouseLeave={e => {
                 e.target.style.transform = 'none';
                 e.target.style.boxShadow = theme.shadows.button;
               }}
             >
-              🆕 New Game
+              🔄 Start New Game
             </button>
-            <p style={{ color: theme.colors.lightGray, fontSize: '0.9rem', marginTop: '0.5rem' }}>
-              This will clear the current game and return to the main dashboard
-            </p>
           </div>
         )}
       </div>
