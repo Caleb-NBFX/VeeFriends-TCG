@@ -726,9 +726,15 @@ function ProducerDashboard() {
           }
         }
 
-        // Winner detection - only send if not already sent
+        // Winner detection - send winner data for any round with a winner that hasn't been sent yet
+        // This includes the final round when game.winner is set
         if (roundObj?.winner && !sentWinnersRef.current.has(roundObj._id)) {
           console.log('🏆 Polling: NEW winner detected, sending winner data...', roundObj.winner);
+          
+          // Check if this is the final round (game has ended)
+          if (res.data.winner) {
+            console.log('🏆 Game has ended, this is the final round winner');
+          }
           
           try {
             await sendPlayerAndWinnerDataToCaptivate(res.data, roundObj);
@@ -747,7 +753,7 @@ function ProducerDashboard() {
     };
 
     fetchGameState();
-    const interval = setInterval(fetchGameState, 3000); // Poll every 3 seconds
+    const interval = setInterval(fetchGameState, 500); // Poll every 0.5 seconds
     return () => clearInterval(interval);
   }, [gameId]);
 
