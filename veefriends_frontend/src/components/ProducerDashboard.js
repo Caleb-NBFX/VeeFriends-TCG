@@ -23,6 +23,7 @@ function ProducerDashboard() {
   const [showAdminEdit, setShowAdminEdit] = useState(false);
 
   const lastRoundIdRef = useRef(null);
+  const sentWinnersRef = useRef(new Set());
   const navigate = useNavigate();
 
   // Use the centralized theme
@@ -659,11 +660,20 @@ function ProducerDashboard() {
           }
         }
 
-        // Detect round winner (send player/winner data) - keep existing logic
-        if (roundObj?.winner && !roundObj._sentToCaptivate) {
-          await sendPlayerAndWinnerDataToCaptivate(res.data, roundObj);
-          setLastPlayerData(mapPlayerDataForCaptivate(res.data, roundObj));
-          roundObj._sentToCaptivate = true; // Prevent duplicate sends in polling
+        // Winner detection - only send if not already sent
+        if (roundObj?.winner && !sentWinnersRef.current.has(roundObj._id)) {
+          console.log('🏆 Polling: NEW winner detected, sending winner data...', roundObj.winner);
+          
+          try {
+            await sendPlayerAndWinnerDataToCaptivate(res.data, roundObj);
+            setLastPlayerData(mapPlayerDataForCaptivate(res.data, roundObj));
+            sentWinnersRef.current.add(roundObj._id); // Mark this round's winner as sent
+            console.log('🏆 Polling: Winner data sent successfully');
+          } catch (error) {
+            console.log('🏆 Polling: Failed to send winner data:', error);
+          }
+        } else if (roundObj?.winner) {
+          console.log('🏆 Polling: Winner already sent for this round, skipping');
         }
       } catch (err) {
         console.error('Error polling game state:', err);
