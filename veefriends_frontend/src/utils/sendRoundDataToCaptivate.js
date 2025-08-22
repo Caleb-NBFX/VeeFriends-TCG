@@ -143,38 +143,25 @@ export async function sendRoundDataToCaptivate(roundData) {
 }
 
 // Send player and winner data (after round winner is decided)
-export async function sendPlayerAndWinnerDataToCaptivate(gameState, roundObj) {
-  console.log('🔵 sendPlayerAndWinnerDataToCaptivate called with:', { gameState, roundObj });
+export async function sendPlayerAndWinnerDataToCaptivate(gameState, roundData) {
+  console.log('🏆 sendPlayerAndWinnerDataToCaptivate called with:', { gameState: !!gameState, roundData: !!roundData });
   
-  // Player 1 and 2
   const player1 = gameState.player1 || {};
   const player2 = gameState.player2 || {};
+  
+  // Extract player data using the function we just defined
+  const playerData = extractPlayerDataForCaptivate(player1, player2);
+  console.log('🏆 Player data extracted:', playerData);
 
-  console.log('🔵 Player data extracted:', { player1, player2 });
+  // Get winner card data if available
+  const winnerCard = roundData?.winner === 'P1' ? roundData?.C1 : roundData?.winner === 'P2' ? roundData?.C2 : null;
+  const winnerUrls = winnerCard ? getCardImageUrls(winnerCard) : { card_imageUrl: '', card_socialImageUrl: '', card_characterUrl: '' };
 
-  // Winner card - only if there's a round with a winner
-  let winnerCard = null;
-  if (roundObj?.winner === 'P1') winnerCard = roundObj.C1;
-  if (roundObj?.winner === 'P2') winnerCard = roundObj.C2;
-
-  const winnerUrls = getCardImageUrls(winnerCard || {});
-
+  // Use the exact same variables structure as before
   const variables = {
-    // Player 1
-    player1_name: player1.name ?? '',
-    player1_handle: player1.handle ?? '',
-    player1_avatarUrl: player1.avatarUrl ?? '',
-    player1_aura: player1.score?.aura ?? 0,
-    player1_skill: player1.score?.skill ?? 0,
-    player1_stamina: player1.score?.stamina ?? 0,
-    // Player 2
-    player2_name: player2.name ?? '',
-    player2_handle: player2.handle ?? '',
-    player2_avatarUrl: player2.avatarUrl ?? '',
-    player2_aura: player2.score?.aura ?? 0,
-    player2_skill: player2.score?.skill ?? 0,
-    player2_stamina: player2.score?.stamina ?? 0,
-    // Winner card (empty if no winner yet)
+    // Player data (keep exact same structure)
+    ...playerData,
+    // Winner card data (keep exact same structure)
     winner_character: winnerCard?.character ?? '',
     winner_imageUrl: winnerUrls.card_imageUrl,
     winner_socialImageUrl: winnerUrls.card_socialImageUrl,
@@ -191,16 +178,97 @@ export async function sendPlayerAndWinnerDataToCaptivate(gameState, roundObj) {
     winner_vfc: winnerCard?.vfc ?? '',
   };
 
-  console.log('🔵 About to send player variables to Captivate:', variables);
-  const result = await sendVariablesToCaptivate(variables);
-  console.log('🔵 sendVariablesToCaptivate result:', result);
-  return result;
+  console.log('🏆 About to send winner variables to Captivate:', variables);
+  
+  // Revert to the original working method for now
+  try {
+    const result = await sendVariablesToCaptivate(variables);
+    console.log('🏆 Winner data sent successfully:', result);
+    return result;
+  } catch (error) {
+    console.error('🔴 Failed to send winner data:', error);
+    throw error;
+  }
 }
 
 // Send current round data with 'update' action
 export async function sendCurrentRoundDataToCaptivate(roundData) {
-  console.log('🟡 sendCurrentRoundDataToCaptivate called with:', roundData);
-  return await sendRoundDataToCaptivate(roundData);
+  console.log(`[TIMING ${new Date().toISOString()}] 🟡 sendCurrentRoundDataToCaptivate ENTRY`);
+  
+  const card1 = roundData.C1 || {};
+  const card2 = roundData.C2 || {};
+
+  const card1Urls = getCardImageUrls(card1);
+  const card2Urls = getCardImageUrls(card2);
+
+  const variables = {
+    // Card 1
+    card1_aura: card1.Aura ?? 0,
+    card1_skill: card1.Skill ?? 0,
+    card1_stamina: card1.Stamina ?? 0,
+    card1_character: card1.character ?? '',
+    card1_rarity: card1.rarity ?? '',
+    card1_score: card1.Score !== undefined ? Math.round(card1.Score) : 0,
+    card1_color: getColorForRarity(card1.rarity),
+    card1_imageUrl: card1Urls.card_imageUrl,
+    card1_socialImageUrl: card1Urls.card_socialImageUrl,
+    card1_characterUrl: card1Urls.card_characterUrl,
+    card1_rarityImageUrl: card1.rarityImage ?? '',
+    card1_tier: card1.tier ?? '',
+    card1_quote: card1.quote ?? '',
+    card1_vfc: card1.vfc ?? '',
+    // Card 2
+    card2_aura: card2.Aura ?? 0,
+    card2_skill: card2.Skill ?? 0,
+    card2_stamina: card2.Stamina ?? 0,
+    card2_character: card2.character ?? '',
+    card2_rarity: card2.rarity ?? '',
+    card2_score: card2.Score !== undefined ? Math.round(card2.Score) : 0,
+    card2_color: getColorForRarity(card2.rarity),
+    card2_imageUrl: card2Urls.card_imageUrl,
+    card2_socialImageUrl: card2Urls.card_socialImageUrl,
+    card2_characterUrl: card2Urls.card_characterUrl,
+    card2_rarityImageUrl: card2.rarityImage ?? '',
+    card2_tier: card2.tier ?? '',
+    card2_quote: card2.quote ?? '',
+    card2_vfc: card2.vfc ?? '',
+  };
+
+  console.log(`[TIMING ${new Date().toISOString()}] 🟡 About to send UPDATE commands using scheduleAction...`);
+  
+  try {
+    const { ServiceHandler } = await import('./servicehandler.mjs');
+    
+    if (!ServiceHandler.scheduler) {
+      console.warn('ServiceHandler scheduler not available for updates');
+      return null;
+    }
+
+    const templateNames = ['Card L', 'Card R', 'Character L', 'Character R'];
+    
+    const updateResults = [];
+    
+    for (const templateName of templateNames) {
+      try {
+        console.log(`[TIMING ${new Date().toISOString()}] 🟡 Sending UPDATE command to template: ${templateName}`);
+        
+        const result = await ServiceHandler.scheduler.scheduleAction('update', ServiceHandler.inputName, templateName, variables);
+        updateResults.push({ template: templateName, result });
+        
+        console.log(`[TIMING ${new Date().toISOString()}] ✅ UPDATE command sent to ${templateName}:`, result);
+      } catch (error) {
+        console.error(`[TIMING ${new Date().toISOString()}] ❌ Failed to send UPDATE to ${templateName}:`, error);
+        updateResults.push({ template: templateName, error: error.message });
+      }
+    }
+
+    console.log(`[TIMING ${new Date().toISOString()}] 🟡 All UPDATE results:`, updateResults);
+    return updateResults;
+
+  } catch (error) {
+    console.error(`[TIMING ${new Date().toISOString()}] 🔴 Failed to send UPDATE commands:`, error);
+    throw error;
+  }
 }
 
 // Send next round data with 'render' action to specific templates
@@ -300,33 +368,75 @@ export async function sendNextRoundDataToCaptivate(roundData) {
 
 // Combined function to send both current and next round data
 export async function sendBothRoundsDataToCaptivate(currentRound, nextRound, gameState = null) {
-  console.log('🔄 sendBothRoundsDataToCaptivate called with:', { currentRound, nextRound });
+  const startTime = Date.now();
+  console.log(`[TIMING ${new Date().toISOString()}] 🔄 sendBothRoundsDataToCaptivate ENTRY`);
   
   const results = {};
   
+  // Send UPDATE and RENDER commands simultaneously (no delay)
+  const promises = [];
+  
+  // UPDATE commands (current round)
   if (currentRound) {
-    console.log('📤 Sending current round data...');
-    results.current = await sendCurrentRoundDataToCaptivate(currentRound);
-    console.log('📤 Current round result:', results.current);
-  } else {
-    console.log('⚠️ No current round data to send');
+    console.log(`[TIMING ${new Date().toISOString()}] 📤 Starting UPDATE commands...`);
+    promises.push(
+      sendCurrentRoundDataToCaptivate(currentRound)
+        .then(result => {
+          console.log(`[TIMING ${new Date().toISOString()}] ✅ UPDATE commands completed`);
+          results.current = result;
+        })
+        .catch(error => {
+          console.log(`[TIMING ${new Date().toISOString()}] ❌ UPDATE commands failed:`, error);
+        })
+    );
   }
   
-  // If no next round provided, try to generate it by peeking
+  // RENDER commands (next round) - start immediately
   let nextRoundToSend = nextRound;
   if (!nextRoundToSend && gameState) {
-    console.log('👀 No next round provided, attempting to peek...');
+    console.log(`[TIMING ${new Date().toISOString()}] 👀 Peeking for next round...`);
     nextRoundToSend = await generateNextRoundDataByPeeking(gameState);
   }
   
   if (nextRoundToSend) {
-    console.log('📤 About to send next round data for pre-rendering...');
-    results.next = await sendNextRoundDataToCaptivate(nextRoundToSend);
-    console.log('📤 Next round result:', results.next);
-  } else {
-    console.log('⚠️ No next round data to send');
+    console.log(`[TIMING ${new Date().toISOString()}] 📤 Starting RENDER commands...`);
+    promises.push(
+      sendNextRoundDataToCaptivate(nextRoundToSend)
+        .then(result => {
+          console.log(`[TIMING ${new Date().toISOString()}] ✅ RENDER commands completed`);
+          results.next = result;
+        })
+        .catch(error => {
+          console.log(`[TIMING ${new Date().toISOString()}] ❌ RENDER commands failed:`, error);
+        })
+    );
   }
   
-  console.log('🔄 sendBothRoundsDataToCaptivate final results:', results);
+  // Wait for all commands to complete
+  await Promise.all(promises);
+  
+  const totalTime = Date.now() - startTime;
+  console.log(`[TIMING ${new Date().toISOString()}] 🔄 sendBothRoundsDataToCaptivate COMPLETED in ${totalTime}ms`);
   return results;
+}
+
+// Add this function to sendRoundDataToCaptivate.js (it was missing):
+
+function extractPlayerDataForCaptivate(player1, player2) {
+  return {
+    // Player 1
+    player1_name: player1.name ?? '',
+    player1_handle: player1.handle ?? '',
+    player1_avatarUrl: player1.avatarUrl ?? '',
+    player1_aura: player1.score?.aura ?? 0,
+    player1_skill: player1.score?.skill ?? 0,
+    player1_stamina: player1.score?.stamina ?? 0,
+    // Player 2
+    player2_name: player2.name ?? '',
+    player2_handle: player2.handle ?? '',
+    player2_avatarUrl: player2.avatarUrl ?? '',
+    player2_aura: player2.score?.aura ?? 0,
+    player2_skill: player2.score?.skill ?? 0,
+    player2_stamina: player2.score?.stamina ?? 0,
+  };
 }
