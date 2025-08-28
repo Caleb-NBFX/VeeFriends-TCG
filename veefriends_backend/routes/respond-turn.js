@@ -7,7 +7,7 @@ const Card = require('../models/Card'); // Add this line
 router.post('/:gameId/respond-turn', async (req, res) => {
   console.log('📩 Incoming respond-turn:', JSON.stringify(req.body));
   try {
-    const { decision, useTTT, counterAttribute } = req.body;
+    const { decision, useTTT, counterAttribute, playerRole } = req.body; // Add playerRole to request
     const gameId = req.params.gameId;
     const game = await Game.findById(gameId);
 
@@ -32,11 +32,16 @@ router.post('/:gameId/respond-turn', async (req, res) => {
     const currentChallenger = round.counterChallenger || round.attacker;
     const currentDefender = currentChallenger === 'P1' ? 'P2' : 'P1';
     
+    // CRITICAL FIX: Determine who is actually using TTT
+    // TTT can be used by either challenger or defender, so we need to know which player is making the request
+    const tttUser = playerRole; // This should come from the frontend
+    
     console.log('🎯 BEFORE PROCESSING:');
     console.log('round.attacker:', round.attacker);
     console.log('round.counterChallenger:', round.counterChallenger);
     console.log('currentChallenger:', currentChallenger);
     console.log('currentDefender:', currentDefender);
+    console.log('tttUser:', tttUser);
     console.log('decision:', decision);
     console.log('counterAttribute:', counterAttribute);
     console.log('useTTT:', useTTT);
@@ -61,14 +66,14 @@ router.post('/:gameId/respond-turn', async (req, res) => {
     }
 
     if (useTTT) {
-      console.log('🪙 TTT requested by:', currentDefender);
+      console.log('🪙 TTT requested by:', tttUser);
       
-      // Check if this player has already used TTT
-      if (game.usedTTT[currentDefender]) {
+      // FIXED: Check if the actual player using TTT has already used it
+      if (game.usedTTT[tttUser]) {
         return res.status(400).json({ error: 'You have already used TTT this game' });
       }
 
-      console.log('🪙 TTT used by player:', currentDefender);
+      console.log('🪙 TTT used by player:', tttUser);
       round.attribute = 'Total Score';
 
       const challengerScore = Math.round(challengerCard.Score);
@@ -103,9 +108,9 @@ router.post('/:gameId/respond-turn', async (req, res) => {
         console.log('🤝 TTT Push - Pending points:', game.pendingPoints);
       }
 
-      // Mark TTT as used for this player
-      game.usedTTT[currentDefender] = true;
-      console.log('🪙 TTT marked as used for:', currentDefender);
+      // FIXED: Mark TTT as used for the actual player who used it
+      game.usedTTT[tttUser] = true;
+      console.log('🪙 TTT marked as used for:', tttUser);
 
     } else if (decision === 'accept') {
       const attr = round.attribute;

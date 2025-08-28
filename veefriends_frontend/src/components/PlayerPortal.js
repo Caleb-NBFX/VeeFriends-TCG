@@ -354,6 +354,7 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
         decision,
         useTTT,
         counterAttribute,
+        playerRole // Add this line to send the player's role
       });
 
       console.log('Response:', res.data);
