@@ -3,6 +3,7 @@ const router = express.Router();
 const Game = require('../models/Game');
 const Card = require('../models/Card');
 const shuffle = require('../utils/shuffle');
+const reshuffleDecks = require('../utils/reshuffle'); // ADD THIS LINE
 
 // POST /api/games — create new game
 router.post('/', async (req, res) => {
@@ -84,6 +85,12 @@ async function startRoundForGame(gameId) {
   console.log(`⚡ Starting round for game ${gameId}`);
   const game = await Game.findById(gameId);
   if (!game) throw new Error('Game not found');
+
+  // ADD THIS SECTION: Check if both decks are empty and need reshuffling
+  if (game.player1.deck.length === 0 && game.player2.deck.length === 0) {
+    console.log('🔄 Both decks empty, reshuffling...');
+    reshuffleDecks(game);
+  }
 
   const getRarityMultiplier = (rarity) => {
     switch (rarity) {
@@ -235,27 +242,6 @@ async function startRoundForGame(gameId) {
     attacker: game.attacker // Store attacker for this round
   });
   console.log('DEBUG: Round created with attacker', game.rounds[game.rounds.length - 1].attacker);
-
-  // Check if game should end due to no more cards
-  if (game.player1.deck.length === 0 && game.player2.deck.length === 0) {
-    const p1Score = game.player1.score.aura + game.player1.score.skill + game.player1.score.stamina;
-    const p2Score = game.player2.score.aura + game.player2.score.skill + game.player2.score.stamina;
-    if (p1Score > p2Score) game.winner = 'P1';
-    else if (p2Score > p1Score) game.winner = 'P2';
-    else game.winner = 'Tie';
-  }
-
-  // If both decks are empty and no win, reshuffle and continue
-  if (game.player1.deck.length === 0 && game.player2.deck.length === 0 && !game.winner) {
-    const shuffle = require('../utils/shuffle');
-    game.player1.deck = shuffle(game.player1.deck.concat(game.rounds.map(r => r.C1)));
-    game.player2.deck = shuffle(game.player2.deck.concat(game.rounds.map(r => r.C2)));
-    game.rounds = [];
-    game.currentRound = 0;
-    game.player1.drawnCard = null;
-    game.player2.drawnCard = null;
-    console.log('🔄 Decks reshuffled for both players.');
-  }
 
   await game.save();
   console.log(`✅ Round ${game.currentRound} saved with drawn cards.`);

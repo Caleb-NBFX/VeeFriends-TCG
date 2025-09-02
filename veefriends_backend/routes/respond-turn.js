@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const Game = require('../models/Game');
-const Card = require('../models/Card'); // Add this line
+const Card = require('../models/Card');
+const reshuffleDecks = require('../utils/reshuffle'); // ADD THIS LINE
 
 // Fixed route to match the frontend call
 router.post('/:gameId/respond-turn', async (req, res) => {
   console.log('📩 Incoming respond-turn:', JSON.stringify(req.body));
   try {
-    const { decision, useTTT, counterAttribute, playerRole } = req.body; // Add playerRole to request
+    const { decision, useTTT, counterAttribute } = req.body;
     const gameId = req.params.gameId;
     const game = await Game.findById(gameId);
 
@@ -32,16 +33,11 @@ router.post('/:gameId/respond-turn', async (req, res) => {
     const currentChallenger = round.counterChallenger || round.attacker;
     const currentDefender = currentChallenger === 'P1' ? 'P2' : 'P1';
     
-    // CRITICAL FIX: Determine who is actually using TTT
-    // TTT can be used by either challenger or defender, so we need to know which player is making the request
-    const tttUser = playerRole; // This should come from the frontend
-    
     console.log('🎯 BEFORE PROCESSING:');
     console.log('round.attacker:', round.attacker);
     console.log('round.counterChallenger:', round.counterChallenger);
     console.log('currentChallenger:', currentChallenger);
     console.log('currentDefender:', currentDefender);
-    console.log('tttUser:', tttUser);
     console.log('decision:', decision);
     console.log('counterAttribute:', counterAttribute);
     console.log('useTTT:', useTTT);
@@ -66,14 +62,14 @@ router.post('/:gameId/respond-turn', async (req, res) => {
     }
 
     if (useTTT) {
-      console.log('🪙 TTT requested by:', tttUser);
+      console.log('🪙 TTT requested by:', currentDefender);
       
-      // FIXED: Check if the actual player using TTT has already used it
-      if (game.usedTTT[tttUser]) {
+      // Check if this player has already used TTT
+      if (game.usedTTT[currentDefender]) {
         return res.status(400).json({ error: 'You have already used TTT this game' });
       }
 
-      console.log('🪙 TTT used by player:', tttUser);
+      console.log('🪙 TTT used by player:', currentDefender);
       round.attribute = 'Total Score';
 
       const challengerScore = Math.round(challengerCard.Score);
@@ -108,9 +104,9 @@ router.post('/:gameId/respond-turn', async (req, res) => {
         console.log('🤝 TTT Push - Pending points:', game.pendingPoints);
       }
 
-      // FIXED: Mark TTT as used for the actual player who used it
-      game.usedTTT[tttUser] = true;
-      console.log('🪙 TTT marked as used for:', tttUser);
+      // Mark TTT as used for this player
+      game.usedTTT[currentDefender] = true;
+      console.log('🪙 TTT marked as used for:', currentDefender);
 
     } else if (decision === 'accept') {
       const attr = round.attribute;
@@ -300,13 +296,24 @@ router.post('/:gameId/respond-turn', async (req, res) => {
       }
     }
 
+    // ADD THIS SECTION: Check if both decks are empty after round completion and handle reshuffling
+    if ((round.winner || round.result === 'push') && 
+        game.player1.deck.length === 0 && 
+        game.player2.deck.length === 0 && 
+        !game.winner) {
+      
+      console.log('🔄 RESHUFFLE CHECK: Both decks empty after round completion');
+      reshuffleDecks(game);
+      console.log('🔄 Decks reshuffled successfully, game continues...');
+    }
+
     console.log('💾 BEFORE SAVE:');
     console.log('Final round.counterChallenger:', round.counterChallenger);
     console.log('Final round.attribute:', round.attribute);
     console.log('Final round.rejections:', round.rejections);
     console.log('Final game.winner:', game.winner);
     console.log('Final game.usedTTT:', game.usedTTT);
-    console.log('Final game.attacker:', game.attacker); // Add this line
+    console.log('Final game.attacker:', game.attacker);
 
     // Pre-create next round when current round is resolved
     if (round.winner || round.result === 'push') {
@@ -367,7 +374,7 @@ router.post('/:gameId/respond-turn', async (req, res) => {
     console.log('Persisted round.rejections:', savedRound.rejections);
     console.log('Persisted game.winner:', savedGame.winner);
     console.log('Persisted game.usedTTT:', savedGame.usedTTT);
-    console.log('Persisted game.attacker:', savedGame.attacker); // Add this line
+    console.log('Persisted game.attacker:', savedGame.attacker);
 
     // Return whether the round is resolved (use existing isResolved if it exists, or create it here)
     const roundIsResolved = !!(round.winner || round.result === 'push');
