@@ -77,26 +77,30 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
     },
     cardSection: {
       marginBottom: '2rem',
-      padding: '1rem',
+      padding: '0', // Remove padding from section
       border: `2px solid ${theme.colors.subtleBorder}`,
       borderRadius: theme.borderRadius.lg,
       backgroundColor: theme.colors.darkPurple
     },
+    cardSectionInner: {
+      padding: '2rem' // Add new inner container with padding
+    },
     cardsContainer: {
       display: 'flex',
       gap: '2rem',
-      justifyContent: 'space-between',
+      justifyContent: 'center',
       alignItems: 'flex-start',
       flexWrap: 'nowrap',
-      minHeight: '600px'
+      minHeight: '600px',
+      padding: '0'
     },
     cardWrapper: {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'flex-start',
-      flex: '1 1 50%',
-      maxWidth: '50%',
-      minWidth: '300px'
+      flex: '0 0 auto',
+      width: '350px',
+      minWidth: '350px'
     },
     cardInfo: {
       marginTop: '1rem',
@@ -712,36 +716,38 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
       {/* Card Display - Combined for both players */}
       {(drawnCard || opponentCard) && (
         <div style={styles.cardSection}>
-          <h3 style={styles.sectionTitle}>🃏 Cards This Round</h3>
-          <div style={styles.cardsContainer}>
-            {/* Player's Card */}
-            <div style={styles.cardWrapper}>
-              <div style={{ textAlign: 'left', marginBottom: '0.5rem', color: theme.colors.gold, fontWeight: 'bold', textTransform: 'uppercase' }}>
-                @{cleanHandle}
+          <div style={styles.cardSectionInner}>
+            <h3 style={styles.sectionTitle}>🃏 Cards This Round</h3>
+            <div style={styles.cardsContainer}>
+              {/* Player's Card */}
+              <div style={styles.cardWrapper}>
+                <div style={{ textAlign: 'left', marginBottom: '0.5rem', color: theme.colors.gold, fontWeight: 'bold', textTransform: 'uppercase' }}>
+                  @{cleanHandle}
+                </div>
+                {drawnCard ? (
+                  <CardDisplay card={drawnCard} size="xlarge" layout="vertical" />
+                ) : (
+                  <div style={{ color: theme.colors.white, textTransform: 'none' }}>No card drawn yet</div>
+                )}
               </div>
-              {drawnCard ? (
-                <CardDisplay card={drawnCard} size="xlarge" layout="vertical" />
-              ) : (
-                <div style={{ color: theme.colors.white, textTransform: 'none' }}>No card drawn yet</div>
-              )}
-            </div>
 
-            {/* Opponent's Card */}
-            <div style={styles.cardWrapper}>
-              <div style={{ textAlign: 'left', marginBottom: '0.5rem', color: theme.colors.gold, fontWeight: 'bold', textTransform: 'uppercase' }}>
-                @{playerRole === 'P1' ? (game?.player2?.handle ? game.player2.handle.replace(/^@+/, '') : 'Opponent') : (game?.player1?.handle ? game.player1.handle.replace(/^@+/, '') : 'Opponent')}
+              {/* Opponent's Card */}
+              <div style={styles.cardWrapper}>
+                <div style={{ textAlign: 'left', marginBottom: '0.5rem', color: theme.colors.gold, fontWeight: 'bold', textTransform: 'uppercase' }}>
+                  @{playerRole === 'P1' ? (game?.player2?.handle ? game.player2.handle.replace(/^@+/, '') : 'Opponent') : (game?.player1?.handle ? game.player1.handle.replace(/^@+/, '') : 'Opponent')}
+                </div>
+                {opponentCard ? (
+                  <>
+                    {isResolved ? (
+                      <CardDisplay card={opponentCard} size="xlarge" layout="vertical" />
+                    ) : (
+                      <CardBack />
+                    )}
+                  </>
+                ) : (
+                  <div style={{ color: theme.colors.white, textTransform: 'none' }}>No card drawn yet</div>
+                )}
               </div>
-              {opponentCard ? (
-                <>
-                  {isResolved ? (
-                    <CardDisplay card={opponentCard} size="xlarge" layout="vertical" />
-                  ) : (
-                    <CardBack />
-                  )}
-                </>
-              ) : (
-                <div style={{ color: theme.colors.white, textTransform: 'none' }}>No card drawn yet</div>
-              )}
             </div>
           </div>
         </div>

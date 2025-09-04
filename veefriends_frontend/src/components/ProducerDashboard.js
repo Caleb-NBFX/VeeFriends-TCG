@@ -322,7 +322,7 @@ function ProducerDashboard() {
       };
       
       const characterSlug = toSlug(card.character);
-      const raritySlug = (card.rarity || '').toLowerCase();
+      const raritySlug = (card.rarity || '').toLowerCase().replace(/\s+/g, '');
       return {
         card_imageUrl: characterSlug && raritySlug ? `${characterSlug}-${raritySlug}.png` : '',
         card_socialImageUrl: characterSlug ? `${characterSlug}.png` : '',

@@ -4,6 +4,7 @@ export function getCardImageUrl(card) {
   
   const characterSlug = card.character
     .toLowerCase()
+    .replace(/'/g, '')  // Remove apostrophes first
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '');
   
@@ -44,6 +45,7 @@ export function getOptimizedCardImageUrl(card, options = {}) {
   
   const characterSlug = card.character
     .toLowerCase()
+    .replace(/'/g, '')  // Remove apostrophes first
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '');
   
