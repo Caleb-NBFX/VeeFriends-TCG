@@ -21,6 +21,7 @@ function ProducerDashboard() {
   const [lastCaptivateData, setLastCaptivateData] = useState(null);
   const [lastPlayerData, setLastPlayerData] = useState(null);
   const [showAdminEdit, setShowAdminEdit] = useState(false);
+  const [showDeckManifest, setShowDeckManifest] = useState(false); // Add this line
 
   const lastRoundIdRef = useRef(null);
   const sentWinnersRef = useRef(new Set());
@@ -233,6 +234,54 @@ function ProducerDashboard() {
       ...baseStyles.input,
       flex: 1,
       minWidth: '150px'
+    },
+    deckManifestSection: {
+      ...baseStyles.section,
+      padding: '1.5rem',
+      border: `2px solid ${theme.colors.subtleBorder}`, // Changed from lightBlue to subtleBorder
+      borderRadius: theme.borderRadius.lg,
+      backgroundColor: theme.colors.darkPurple, // Changed from darkBlue to darkPurple
+      marginBottom: '2rem'
+    },
+    deckManifestButton: {
+      ...baseStyles.button,
+      backgroundColor: theme.colors.lightBlue,
+      borderColor: theme.colors.lightBlue,
+      fontSize: '0.9rem',
+      padding: '0.5rem 1rem'
+    },
+    deckList: {
+      backgroundColor: theme.colors.black,
+      padding: '1rem',
+      borderRadius: theme.borderRadius.sm,
+      border: `1px solid ${theme.colors.subtleBorder}`,
+      marginBottom: '1rem'
+    },
+    deckHeader: {
+      color: theme.colors.gold,
+      fontSize: '1.1rem',
+      fontWeight: 'bold',
+      marginBottom: '0.5rem'
+    },
+    cardList: {
+      color: theme.colors.white,
+      fontSize: '0.9rem',
+      listStyle: 'none',
+      padding: 0,
+      margin: 0
+    },
+    cardItem: {
+      padding: '0.25rem 0',
+      borderBottom: `1px solid ${theme.colors.subtleBorder}`,
+      display: 'flex',
+      justifyContent: 'space-between'
+    },
+    cardName: {
+      color: theme.colors.white
+    },
+    cardRarity: {
+      color: theme.colors.lightGray,
+      fontSize: '0.8rem'
     }
   };
 
@@ -1055,6 +1104,13 @@ function ProducerDashboard() {
                   >
                     {showAdminEdit ? '🔒 Hide Admin Edit' : '⚙️ Show Admin Edit'}
                   </button>
+
+                  <button
+                    onClick={() => setShowDeckManifest(!showDeckManifest)}
+                    style={styles.deckManifestButton}
+                  >
+                    {showDeckManifest ? 'Hide Full Decks' : 'Show Full Decks'}
+                  </button>
                 </div>
               </div>
             )}
@@ -1321,6 +1377,99 @@ function ProducerDashboard() {
               <p style={{ color: theme.colors.lightGray, fontSize: '0.9rem' }}>
                 Changes are saved automatically when you finish editing a field.
               </p>
+            </div>
+          </div>
+        )}
+
+        {/* Deck Manifest Section */}
+        {gameId && gameState && showDeckManifest && (
+          <div style={styles.deckManifestSection}>
+            <h3 style={styles.sectionTitle}>📋 Full Deck Manifests</h3>
+            <p style={{ color: theme.colors.lightGray, fontSize: '0.9rem', marginBottom: '1.5rem' }}>
+              Cards are listed in the order they will be drawn. Round {gameState.currentRound} cards have already been drawn.
+            </p>
+            
+            <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
+              {/* Player 1 Deck */}
+              <div style={{ flex: '1', minWidth: '300px' }}>
+                <div style={styles.deckList}>
+                  <div style={styles.deckHeader}>
+                    🎴 Player 1: {gameState.player1?.name || 'Unknown'}
+                    {gameState.player1?.handle && (
+                      <div style={{ fontSize: '0.9rem', fontWeight: 'normal', marginTop: '0.25rem' }}>
+                        (@{gameState.player1.handle.replace(/^@+/, '')})
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ color: theme.colors.lightGray, fontSize: '0.8rem', marginBottom: '0.5rem' }}>
+                    {gameState.player1?.deck?.length || 0} cards remaining
+                  </div>
+                  <ul style={styles.cardList}>
+                    {gameState.player1?.deck?.map((card, index) => (
+                      <li key={index} style={styles.cardItem}>
+                        <span style={styles.cardName}>
+                          {index + 1}. {card.character}
+                        </span>
+                        <span style={styles.cardRarity}>({card.rarity})</span>
+                      </li>
+                    )) || <li style={{ color: theme.colors.lightGray }}>No cards remaining</li>}
+                  </ul>
+                </div>
+              </div>
+
+              {/* Player 2 Deck */}
+              <div style={{ flex: '1', minWidth: '300px' }}>
+                <div style={styles.deckList}>
+                  <div style={styles.deckHeader}>
+                    🎴 Player 2: {gameState.player2?.name || 'Unknown'}
+                    {gameState.player2?.handle && (
+                      <div style={{ fontSize: '0.9rem', fontWeight: 'normal', marginTop: '0.25rem' }}>
+                        (@{gameState.player2.handle.replace(/^@+/, '')})
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ color: theme.colors.lightGray, fontSize: '0.8rem', marginBottom: '0.5rem' }}>
+                    {gameState.player2?.deck?.length || 0} cards remaining
+                  </div>
+                  <ul style={styles.cardList}>
+                    {gameState.player2?.deck?.map((card, index) => (
+                      <li key={index} style={styles.cardItem}>
+                        <span style={styles.cardName}>
+                          {index + 1}. {card.character}
+                        </span>
+                        <span style={styles.cardRarity}>({card.rarity})</span>
+                      </li>
+                    )) || <li style={{ color: theme.colors.lightGray }}>No cards remaining</li>}
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Optional: Print button */}
+            <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+              <button
+                onClick={() => {
+                  const manifestContent = `VEEFRIENDS CARD GAME - DECK MANIFEST\nGame ID: ${gameId}\n\nPLAYER 1: ${gameState.player1?.name}${gameState.player1?.handle ? ` (@${gameState.player1.handle.replace(/^@+/, '')})` : ''}\n${gameState.player1?.deck?.map((card, i) => `${i+1}. ${card.character} (${card.rarity})`).join('\n') || 'No cards remaining'}\n\nPLAYER 2: ${gameState.player2?.name}${gameState.player2?.handle ? ` (@${gameState.player2.handle.replace(/^@+/, '')})` : ''}\n${gameState.player2?.deck?.map((card, i) => `${i+1}. ${card.character} (${card.rarity})`).join('\n') || 'No cards remaining'}`;
+                  
+                  const printWindow = window.open('', '_blank');
+                  printWindow.document.write(`
+                    <html><head><title>Deck Manifest - ${gameId}</title></head>
+                    <body style="font-family: monospace; white-space: pre-wrap; padding: 20px;">
+                      ${manifestContent}
+                    </body></html>
+                  `);
+                  printWindow.print();
+                }}
+                style={{
+                  ...baseStyles.button,
+                  backgroundColor: theme.colors.green,
+                  borderColor: theme.colors.green,
+                  fontSize: '0.9rem',
+                  padding: '0.5rem 1rem'
+                }}
+              >
+                🖨️ Print Manifest
+              </button>
             </div>
           </div>
         )}
