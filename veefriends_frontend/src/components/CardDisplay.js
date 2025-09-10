@@ -67,10 +67,10 @@ const CardDisplay = ({ card, size = 'medium', showStats = true, layout = 'horizo
     ? { display: 'flex', flexDirection: 'column', alignItems: 'flex-start', ...style }
     : { display: 'flex', gap: '1rem', alignItems: 'flex-start', ...style };
 
-  // Stats style for vertical layout
+  // Stats style for different layouts
   const statsStyle = layout === 'vertical' 
-    ? { marginTop: '1rem', width: sizeStyles[size].maxWidth }
-    : {};
+    ? { marginTop: '1rem', width: sizeStyles[size].maxWidth, textAlign: 'left' }
+    : { flex: 1, textAlign: 'left' };
   
   return (
     <div style={containerStyle}>

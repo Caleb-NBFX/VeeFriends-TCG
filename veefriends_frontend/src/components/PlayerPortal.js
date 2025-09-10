@@ -87,17 +87,17 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
     },
     cardsContainer: {
       display: 'flex',
+      flexDirection: 'column', // Changed from side-by-side to stacked
       gap: '2rem',
       justifyContent: 'center',
-      alignItems: 'flex-start',
-      flexWrap: 'nowrap',
+      alignItems: 'center',
       minHeight: '600px',
       padding: '0'
     },
     cardWrapper: {
       display: 'flex',
       flexDirection: 'column',
-      alignItems: 'flex-start',
+      alignItems: 'center', // Keep cards centered
       flex: '0 0 auto',
       width: '350px',
       minWidth: '350px'
@@ -690,37 +690,46 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
         <div style={{
           ...styles.completedSection,
           backgroundColor: round.result === 'push' 
-            ? '#B8860B' // Dark goldenrod for push - readable and thematic
+            ? '#B8860B'
             : round.winner === playerRole 
-              ? theme.colors.darkGreen // Green for winner  
-              : '#8B0000', // Dark red for loser
+              ? theme.colors.darkGreen
+              : '#8B0000',
           borderColor: round.result === 'push'
-            ? '#DAA520' // Lighter goldenrod border for contrast
+            ? '#DAA520'
             : round.winner === playerRole
               ? theme.colors.green
               : theme.colors.red
         }}>
-          <h3 style={styles.sectionTitle}>🏆 Round {roundIndex + 1} Complete!</h3>
-          {round.winner && (
-            <p style={{ color: theme.colors.white, textTransform: 'none' }}>
-              <strong>Winner: @{round.winner === 'P1' 
-                ? (game?.player1?.handle ? game.player1.handle.replace(/^@+/, '') : 'Player1')
-                : (game?.player2?.handle ? game.player2.handle.replace(/^@+/, '') : 'Player2')
-              }</strong>
-            </p>
-          )}
-          {round.result === 'push' && (
-            <p style={{ color: theme.colors.white, textTransform: 'none' }}>
-              <strong>Result: Push (Tie)</strong>
-            </p>
-          )}
-          <p style={{ color: theme.colors.white, textTransform: 'none' }}>
-            <strong>Attribute:</strong> {round.attribute}
-          </p>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
+            <div style={{ flex: 1 }}>
+              <h3 style={styles.sectionTitle}>🏆 Round {roundIndex + 1} Complete!</h3>
+              {round.winner && (
+                <p style={{ color: theme.colors.white, textTransform: 'none' }}>
+                  <strong>Winner: @{round.winner === 'P1' 
+                    ? (game?.player1?.handle ? game.player1.handle.replace(/^@+/, '') : 'Player1')
+                    : (game?.player2?.handle ? game.player2.handle.replace(/^@+/, '') : 'Player2')
+                  }</strong>
+                </p>
+              )}
+              {round.result === 'push' && (
+                <p style={{ color: theme.colors.white, textTransform: 'none' }}>
+                  <strong>Result: Push (Tie)</strong>
+                </p>
+              )}
+              <p style={{ color: theme.colors.white, textTransform: 'none' }}>
+                <strong>Attribute:</strong> {round.attribute}
+              </p>
+            </div>
+            {opponentCard && (
+              <div style={{ flex: '0 0 auto' }}>
+                <CardDisplay card={opponentCard} size="small" showStats={false} />
+              </div>
+            )}
+          </div>
         </div>
       )}
 
-      {/* Card Display - Combined for both players */}
+      {/* Cards This Round */}
       {(drawnCard || opponentCard) && (
         <div style={styles.cardSection}>
           <div style={styles.cardSectionInner}>
@@ -728,7 +737,7 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
             <div style={styles.cardsContainer}>
               {/* Player's Card */}
               <div style={styles.cardWrapper}>
-                <div style={{ textAlign: 'left', marginBottom: '0.5rem', color: theme.colors.gold, fontWeight: 'bold', textTransform: 'uppercase' }}>
+                <div style={{ textAlign: 'left', alignSelf: 'flex-start', marginBottom: '0.5rem', color: theme.colors.gold, fontWeight: 'bold', textTransform: 'uppercase' }}>
                   @{cleanHandle}
                 </div>
                 {drawnCard ? (
@@ -740,7 +749,7 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
 
               {/* Opponent's Card */}
               <div style={styles.cardWrapper}>
-                <div style={{ textAlign: 'left', marginBottom: '0.5rem', color: theme.colors.gold, fontWeight: 'bold', textTransform: 'uppercase' }}>
+                <div style={{ textAlign: 'left', alignSelf: 'flex-start', marginBottom: '0.5rem', color: theme.colors.gold, fontWeight: 'bold', textTransform: 'uppercase' }}>
                   @{playerRole === 'P1' ? (game?.player2?.handle ? game.player2.handle.replace(/^@+/, '') : 'Opponent') : (game?.player1?.handle ? game.player1.handle.replace(/^@+/, '') : 'Opponent')}
                 </div>
                 {opponentCard ? (
