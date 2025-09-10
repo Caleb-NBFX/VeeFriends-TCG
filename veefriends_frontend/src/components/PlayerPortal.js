@@ -443,11 +443,18 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
   const canStartNextRound = isResolved && playerRole === expectedAttacker;
 
   const CardBack = () => (
-    <div style={styles.cardPlaceholder}>
-      <div>🃏</div>
-      <div style={{ fontSize: '0.9rem', marginTop: '0.5rem' }}>VeeFriends</div>
-      <div style={{ fontSize: '0.8rem' }}>Card Back</div>
-    </div>
+    <img 
+      src="https://res.cloudinary.com/dfecvzwvg/image/upload/v1/VeeFriends/assets/series-2-card-back.png"
+      alt="VeeFriends Card Back"
+      style={{
+        width: '350px',
+        height: '490px',
+        objectFit: 'cover',
+        borderRadius: theme.borderRadius.lg,
+        border: `3px solid ${theme.colors.gold}`,
+        boxShadow: theme.shadows.card
+      }}
+    />
   );
 
   if (!gameId || !playerEmail) return <RedirectForm styles={styles} theme={theme} />;
