@@ -87,20 +87,21 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
     },
     cardsContainer: {
       display: 'flex',
-      flexDirection: 'column', // Changed from side-by-side to stacked
+      flexDirection: 'column',
       gap: '2rem',
       justifyContent: 'center',
       alignItems: 'center',
       minHeight: '600px',
-      padding: '0'
+      padding: '0 1rem', // Add horizontal padding
+      width: '100%'
     },
     cardWrapper: {
       display: 'flex',
       flexDirection: 'column',
-      alignItems: 'center', // Keep cards centered
-      flex: '0 0 auto',
-      width: '350px',
-      minWidth: '350px'
+      alignItems: 'flex-start', // Changed to flex-start for consistent left alignment
+      width: '100%',
+      maxWidth: '350px', // Constrain max width
+      minWidth: 0 // Allow shrinking below natural width
     },
     cardInfo: {
       marginTop: '1rem',
@@ -737,7 +738,14 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
             <div style={styles.cardsContainer}>
               {/* Player's Card */}
               <div style={styles.cardWrapper}>
-                <div style={{ textAlign: 'left', alignSelf: 'flex-start', marginBottom: '0.5rem', color: theme.colors.gold, fontWeight: 'bold', textTransform: 'uppercase' }}>
+                <div style={{ 
+                  textAlign: 'left', 
+                  marginBottom: '0.5rem', 
+                  color: theme.colors.gold, 
+                  fontWeight: 'bold', 
+                  textTransform: 'uppercase',
+                  width: '100%'
+                }}>
                   @{cleanHandle}
                 </div>
                 {drawnCard ? (
@@ -749,7 +757,14 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
 
               {/* Opponent's Card */}
               <div style={styles.cardWrapper}>
-                <div style={{ textAlign: 'left', alignSelf: 'flex-start', marginBottom: '0.5rem', color: theme.colors.gold, fontWeight: 'bold', textTransform: 'uppercase' }}>
+                <div style={{ 
+                  textAlign: 'left', 
+                  marginBottom: '0.5rem', 
+                  color: theme.colors.gold, 
+                  fontWeight: 'bold', 
+                  textTransform: 'uppercase',
+                  width: '100%'
+                }}>
                   @{playerRole === 'P1' ? (game?.player2?.handle ? game.player2.handle.replace(/^@+/, '') : 'Opponent') : (game?.player1?.handle ? game.player1.handle.replace(/^@+/, '') : 'Opponent')}
                 </div>
                 {opponentCard ? (

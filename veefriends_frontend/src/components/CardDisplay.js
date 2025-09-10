@@ -18,18 +18,34 @@ const CardDisplay = ({ card, size = 'medium', showStats = true, layout = 'horizo
   if (!card) return null;
   
   const sizeStyles = {
-    small: { maxWidth: '100px', height: 'auto' },
-    medium: { maxWidth: '200px', height: 'auto' },
-    large: { maxWidth: '300px', height: 'auto' },
-    xlarge: { maxWidth: '350px', height: 'auto' }
+    small: { 
+      maxWidth: '100px', 
+      width: '100%',
+      height: 'auto' 
+    },
+    medium: { 
+      maxWidth: '200px', 
+      width: '100%',
+      height: 'auto' 
+    },
+    large: { 
+      maxWidth: '300px', 
+      width: '100%',
+      height: 'auto' 
+    },
+    xlarge: { 
+      maxWidth: isMobile ? '100%' : '350px',
+      width: isMobile ? '100%' : '350px',
+      height: 'auto' 
+    }
   };
 
-  // Size configurations for Cloudinary optimization
+  // Size configurations for Cloudinary optimization - adjust based on container
   const sizeConfig = {
     small: { width: 100, height: 140 },
     medium: { width: 200, height: 280 },
     large: { width: 300, height: 420 },
-    xlarge: { width: 350, height: 490 }
+    xlarge: { width: isMobile ? 300 : 350, height: isMobile ? 420 : 490 }
   };
   
   const { width, height } = sizeConfig[size] || sizeConfig.medium;
@@ -64,12 +80,22 @@ const CardDisplay = ({ card, size = 'medium', showStats = true, layout = 'horizo
 
   // Container style based on layout
   const containerStyle = layout === 'vertical' 
-    ? { display: 'flex', flexDirection: 'column', alignItems: 'flex-start', ...style }
+    ? { 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'flex-start',
+        width: '100%',
+        ...style 
+      }
     : { display: 'flex', gap: '1rem', alignItems: 'flex-start', ...style };
 
   // Stats style for different layouts
   const statsStyle = layout === 'vertical' 
-    ? { marginTop: '1rem', width: sizeStyles[size].maxWidth, textAlign: 'left' }
+    ? { 
+        marginTop: '1rem', 
+        width: '100%',
+        textAlign: 'left' 
+      }
     : { flex: 1, textAlign: 'left' };
   
   return (
