@@ -6,6 +6,17 @@ import CardDisplay from './CardDisplay';
 import { useVeeFriendsTheme } from '../theme/VeeFriendsTheme';
 
 const PlayerPortal = ({ gameId, playerEmail }) => {
+  // Set page title and favicon
+  useEffect(() => {
+    document.title = 'VeeFriends Player Portal';
+    
+    // Add favicon dynamically
+    const favicon = document.querySelector('link[rel="icon"]') || document.createElement('link');
+    favicon.rel = 'icon';
+    favicon.href = 'https://res.cloudinary.com/dfecvzwvg/image/upload/c_scale,w_32,h_32/VeeFriends/assets/logo-cat-purple.png';
+    document.head.appendChild(favicon);
+  }, []);
+
   const [game, setGame] = useState(null);
   const [playerRole, setPlayerRole] = useState('');
   const [isLoading, setIsLoading] = useState(false);

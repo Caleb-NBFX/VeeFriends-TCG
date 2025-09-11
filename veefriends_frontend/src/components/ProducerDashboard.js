@@ -9,6 +9,17 @@ import { useVeeFriendsTheme, createFlexContainer } from '../theme/VeeFriendsThem
 function ProducerDashboard() {
   console.log('ProducerDashboard mounted');
 
+  // Set page title and favicon
+  useEffect(() => {
+    document.title = 'VeeFriends Producer Dashboard';
+    
+    // Add favicon dynamically
+    const favicon = document.querySelector('link[rel="icon"]') || document.createElement('link');
+    favicon.rel = 'icon';
+    favicon.href = 'https://res.cloudinary.com/dfecvzwvg/image/upload/c_scale,w_32,h_32/VeeFriends/assets/logo-cat-purple.png';
+    document.head.appendChild(favicon);
+  }, []);
+
   const [player1Email, setPlayer1Email] = useState('');
   const [player2Email, setPlayer2Email] = useState('');
   const [player1Decks, setPlayer1Decks] = useState([]);

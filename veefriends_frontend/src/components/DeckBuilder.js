@@ -6,6 +6,17 @@ import { getOptimizedCardImageUrl, getCardFallbackImage, getVeeFriendsLogoHeader
 import { useVeeFriendsTheme, createGridStyles, createHoverTransform, createFlexContainer } from '../theme/VeeFriendsTheme';
 
 function DeckBuilder() {
+  // Set page title and favicon
+  useEffect(() => {
+    document.title = 'VeeFriends Deck Builder';
+    
+    // Add favicon dynamically
+    const favicon = document.querySelector('link[rel="icon"]') || document.createElement('link');
+    favicon.rel = 'icon';
+    favicon.href = 'https://res.cloudinary.com/dfecvzwvg/image/upload/c_scale,w_32,h_32/VeeFriends/assets/logo-cat-purple.png';
+    document.head.appendChild(favicon);
+  }, []);
+
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [handle, setHandle] = useState('');
@@ -27,6 +38,12 @@ function DeckBuilder() {
   // Component-specific styles that extend the base styles
   const styles = {
     ...baseStyles,
+    container: {
+      ...baseStyles.container,
+      padding: '2rem',
+      maxWidth: '800px', // Changed from 1000px to 800px to match PlayerPortal
+      margin: '0 auto'
+    },
     deckGrid: createGridStyles('120px', '1rem'),
     cardContainer: {
       position: 'relative',
@@ -433,6 +450,53 @@ function DeckBuilder() {
           />
           <br />
           <small style={styles.requiredText}>* Required fields</small>
+          
+          {/* Load Saved Decks - moved here from bottom */}
+          <div style={{ marginTop: '1.5rem', paddingTop: '1rem', borderTop: `1px solid ${theme.colors.subtleBorder}` }}>
+            <h4 style={{ ...styles.sectionTitle, fontSize: '1.1rem', marginBottom: '1rem' }}>💾 Load Saved Decks</h4>
+            <button 
+              onClick={loadDecks}
+              style={styles.button}
+              onMouseEnter={e => Object.assign(e.target.style, styles.buttonHover)}
+              onMouseLeave={e => {
+                e.target.style.transform = 'none';
+                e.target.style.boxShadow = theme.shadows.button;
+              }}
+            >
+              Load Saved Decks
+            </button>
+            {savedDecks.length > 0 && (
+              <ul style={{ marginTop: '1rem', listStyle: 'none', padding: 0 }}>
+                {savedDecks.map((d, i) => (
+                  <li key={i} style={styles.savedDeckItem}>
+                    <span style={styles.savedDeckText}>
+                      {d.name} ({d.cards.length}/20 cards) 
+                      {d.cards.length === 20 ? (
+                        <span style={{ color: theme.colors.green }}> - Complete</span>
+                      ) : (
+                        <span style={{ color: theme.colors.orange }}> - Incomplete</span>
+                      )}
+                      <br />
+                      <small style={{ color: theme.colors.lightGray }}>
+                        {new Date(d.createdAt).toLocaleString()}
+                      </small>
+                    </span>
+                    <button 
+                      onClick={() => loadSelectedDeck(d)}
+                      style={{ ...styles.button, padding: '5px 10px', fontSize: '14px' }}
+                      onMouseEnter={e => Object.assign(e.target.style, styles.buttonHover)}
+                      onMouseLeave={e => {
+                        e.target.style.transform = 'none';
+                        e.target.style.boxShadow = theme.shadows.button;
+                      }}
+                    >
+                      Load
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
 
         {/* Preview Card */}
@@ -628,52 +692,8 @@ function DeckBuilder() {
 
         <hr style={styles.hr} />
         
-        <div style={styles.section}>
-          <h3 style={styles.sectionTitle}>💾 Load Saved Decks</h3>
-          <button 
-            onClick={loadDecks}
-            style={styles.button}
-            onMouseEnter={e => Object.assign(e.target.style, styles.buttonHover)}
-            onMouseLeave={e => {
-              e.target.style.transform = 'none';
-              e.target.style.boxShadow = theme.shadows.button;
-            }}
-          >
-            Load Saved Decks
-          </button>
-          {savedDecks.length > 0 && (
-            <ul style={{ marginTop: '1rem', listStyle: 'none', padding: 0 }}>
-              {savedDecks.map((d, i) => (
-                <li key={i} style={styles.savedDeckItem}>
-                  <span style={styles.savedDeckText}>
-                    {d.name} ({d.cards.length}/20 cards) 
-                    {/* Fixed: Check isComplete properly and show correct status */}
-                    {d.cards.length === 20 ? (
-                      <span style={{ color: theme.colors.green }}> - Complete</span>
-                    ) : (
-                      <span style={{ color: theme.colors.orange }}> - Incomplete</span>
-                    )}
-                    <br />
-                    <small style={{ color: theme.colors.lightGray }}>
-                      {new Date(d.createdAt).toLocaleString()}
-                    </small>
-                  </span>
-                  <button 
-                    onClick={() => loadSelectedDeck(d)}
-                    style={{ ...styles.button, padding: '5px 10px', fontSize: '14px' }}
-                    onMouseEnter={e => Object.assign(e.target.style, styles.buttonHover)}
-                    onMouseLeave={e => {
-                      e.target.style.transform = 'none';
-                      e.target.style.boxShadow = theme.shadows.button;
-                    }}
-                  >
-                    Load
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+        {/* Remove the old Load Saved Decks section - it's now moved up */}
+
       </div>
     </div>
   );
