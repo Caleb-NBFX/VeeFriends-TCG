@@ -9,9 +9,19 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
   const [game, setGame] = useState(null);
   const [playerRole, setPlayerRole] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   // Use the centralized theme
   const { theme, baseStyles } = useVeeFriendsTheme();
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Component-specific styles that extend the base styles
   const styles = {
@@ -448,8 +458,9 @@ const PlayerPortal = ({ gameId, playerEmail }) => {
       src="https://res.cloudinary.com/dfecvzwvg/image/upload/v1/VeeFriends/assets/series-2-card-back.png"
       alt="VeeFriends Card Back"
       style={{
-        width: '350px',
-        height: '490px',
+        width: isMobile ? '100%' : '350px',
+        maxWidth: isMobile ? '100%' : '350px',
+        height: 'auto',
         objectFit: 'cover',
         borderRadius: theme.borderRadius.lg,
         border: `3px solid ${theme.colors.gold}`,
