@@ -45,11 +45,27 @@ function DeckBuilder() {
     // Responsive input styles for mobile
     responsiveInput: {
       ...baseStyles.input,
-      width: '300px',
-      '@media (max-width: 768px)': {
-        width: '100%',
-        maxWidth: '280px'
-      }
+      width: '100%',
+      maxWidth: '300px',
+      boxSizing: 'border-box'
+    },
+    responsiveInputShort: {
+      ...baseStyles.input,
+      width: '100%',
+      maxWidth: '200px',
+      boxSizing: 'border-box'
+    },
+    // Responsive input row container
+    inputRow: {
+      display: 'flex',
+      gap: '10px',
+      flexWrap: 'wrap',
+      marginBottom: '10px',
+      width: '100%'
+    },
+    inputRowItem: {
+      flex: '1 1 auto',
+      minWidth: '150px'
     },
     // Responsive deck title for mobile
     deckTitle: {
@@ -294,21 +310,25 @@ function DeckBuilder() {
         {/* User Information Section */}
         <div style={styles.section}>
           <h3 style={styles.sectionTitle}>👤 User Information</h3>
-          <div style={{ marginBottom: '10px' }}>
-            <input
-              type="text"
-              placeholder="First Name *"
-              value={firstName}
-              onChange={e => setFirstName(e.target.value)}
-              style={{ ...styles.input, width: '200px' }}
-            />
-            <input
-              type="text"
-              placeholder="Last Name"
-              value={lastName}
-              onChange={e => setLastName(e.target.value)}
-              style={{ ...styles.input, width: '200px' }}
-            />
+          <div style={styles.inputRow}>
+            <div style={styles.inputRowItem}>
+              <input
+                type="text"
+                placeholder="First Name *"
+                value={firstName}
+                onChange={e => setFirstName(e.target.value)}
+                style={styles.responsiveInputShort}
+              />
+            </div>
+            <div style={styles.inputRowItem}>
+              <input
+                type="text"
+                placeholder="Last Name"
+                value={lastName}
+                onChange={e => setLastName(e.target.value)}
+                style={styles.responsiveInputShort}
+              />
+            </div>
           </div>
           <div style={{ marginBottom: '10px' }}>
             <input
@@ -316,7 +336,7 @@ function DeckBuilder() {
               placeholder="Whatnot Username (Display Name) *"
               value={handle}
               onChange={e => setHandle(e.target.value)}
-              style={{ ...styles.input, width: '300px' }}
+              style={styles.responsiveInput}
             />
           </div>
           <input
@@ -324,7 +344,7 @@ function DeckBuilder() {
             placeholder="Email *"
             value={email}
             onChange={e => setEmail(e.target.value)}
-            style={{ ...styles.input, width: '300px' }}
+            style={styles.responsiveInput}
           />
           <br />
           <input
@@ -332,7 +352,7 @@ function DeckBuilder() {
             placeholder="Deck Name *"
             value={deckName}
             onChange={e => setDeckName(e.target.value)}
-            style={{ ...styles.input, width: '300px' }}
+            style={styles.responsiveInput}
           />
           <br />
           <small style={styles.requiredText}>* Required fields</small>
@@ -340,7 +360,7 @@ function DeckBuilder() {
 
         {/* Preview Card */}
         {previewCard && (
-          <div style={styles.previewCard}>
+          <div style={styles.previewCardMobile}>
             <h3 style={styles.previewTitle}>
               ✅ Card Added to Deck!
             </h3>
@@ -359,7 +379,14 @@ function DeckBuilder() {
                 value={character}
                 onChange={handleCharacterInput}
                 autoComplete="off"
-                style={{ ...styles.input, width: '200px', marginRight: 0, marginBottom: 0 }}
+                style={{ 
+                  ...styles.input, 
+                  width: '100%',
+                  maxWidth: '200px',
+                  marginRight: 0, 
+                  marginBottom: 0,
+                  boxSizing: 'border-box'
+                }}
               />
               {filteredCharacters.length > 0 && (
                 <div style={styles.autocomplete}>
@@ -383,7 +410,10 @@ function DeckBuilder() {
             <select 
               value={rarity} 
               onChange={e => setRarity(e.target.value)}
-              style={styles.select}
+              style={{
+                ...styles.select,
+                boxSizing: 'border-box'
+              }}
             >
               <option>Core</option>
               <option>Rare</option>
