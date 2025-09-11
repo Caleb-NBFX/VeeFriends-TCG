@@ -49,24 +49,6 @@ function DeckBuilder() {
       maxWidth: '300px',
       boxSizing: 'border-box'
     },
-    responsiveInputShort: {
-      ...baseStyles.input,
-      width: '100%',
-      maxWidth: '200px',
-      boxSizing: 'border-box'
-    },
-    // Responsive input row container
-    inputRow: {
-      display: 'flex',
-      gap: '10px',
-      flexWrap: 'wrap',
-      marginBottom: '10px',
-      width: '100%'
-    },
-    inputRowItem: {
-      flex: '1 1 auto',
-      minWidth: '150px'
-    },
     // Responsive deck title for mobile
     deckTitle: {
       ...baseStyles.sectionTitle,
@@ -175,7 +157,7 @@ function DeckBuilder() {
   };
 
   const submitDeck = async (forceOverwrite = false) => {
-    if (!firstName.trim() || !handle.trim() || !email.trim() || !deckName.trim() || deck.length === 0) {
+    if (!firstName.trim() || !handle.trim() || !email.trim() || !deckName.trim() || !deck.length) {
       alert('Please fill all required fields (First Name, Handle, Email, Deck Name) and add at least one card.');
       return;
     }
@@ -286,6 +268,106 @@ function DeckBuilder() {
     setFilteredCharacters([]);
   };
 
+  const fillOutDeck = async () => {
+    if (deck.length >= 20) {
+      alert('Deck is already full!');
+      return;
+    }
+
+    try {
+      // Fetch all available cards
+      const res = await axios.get(`${API_BASE}/api/cards`);
+      const availableCards = res.data;
+      
+      // Get characters already in deck
+      const usedCharacters = deck.map(card => card.character.toUpperCase());
+      
+      // Filter out already used characters
+      const unusedCards = availableCards.filter(card => 
+        !usedCharacters.includes(card.character.toUpperCase())
+      );
+      
+      if (unusedCards.length === 0) {
+        alert('No more unique characters available!');
+        return;
+      }
+
+      // Current state
+      const currentDeck = [...deck];
+      let currentRarityPoints = totalRarityPoints;
+      const remainingSlots = 20 - currentDeck.length;
+      
+      // Rarities we can use (excluding spectacular classes)
+      const allowedRarities = ['Core', 'Rare', 'Very Rare', 'Epic'];
+      const maxRarityPoints = 15;
+      
+      // Shuffle available cards for randomness
+      const shuffledCards = [...unusedCards].sort(() => Math.random() - 0.5);
+      
+      // Fill remaining slots
+      for (let i = 0; i < remainingSlots && shuffledCards.length > 0; i++) {
+        const remainingSlotsAfterThis = remainingSlots - i - 1;
+        const remainingPointBudget = maxRarityPoints - currentRarityPoints;
+        
+        // Determine what rarities are feasible for this slot
+        const feasibleRarities = allowedRarities.filter(rarity => {
+          const points = rarityPoints[rarity] || 0;
+          // Can we afford this rarity and still have budget for remaining slots?
+          return points <= remainingPointBudget;
+        });
+        
+        if (feasibleRarities.length === 0) {
+          // If no rarities fit budget, force Core (0 points)
+          feasibleRarities.push('Core');
+        }
+        
+        // Weighted selection favoring higher rarities when budget allows
+        let selectedRarity;
+        if (remainingPointBudget >= 4 && feasibleRarities.includes('Epic')) {
+          // Prefer Epic if we have budget
+          const weights = { 'Core': 1, 'Rare': 2, 'Very Rare': 3, 'Epic': 4 };
+          const weightedRarities = feasibleRarities.flatMap(rarity => 
+            Array(weights[rarity] || 1).fill(rarity)
+          );
+          selectedRarity = weightedRarities[Math.floor(Math.random() * weightedRarities.length)];
+        } else {
+          // Random selection from feasible options
+          selectedRarity = feasibleRarities[Math.floor(Math.random() * feasibleRarities.length)];
+        }
+        
+        // Select a random card and assign the selected rarity
+        const cardIndex = Math.floor(Math.random() * shuffledCards.length);
+        const selectedCard = shuffledCards.splice(cardIndex, 1)[0];
+        
+        const newCard = {
+          character: selectedCard.character,
+          rarity: selectedRarity,
+          ...selectedCard
+        };
+        
+        currentDeck.push(newCard);
+        currentRarityPoints += rarityPoints[selectedRarity] || 0;
+      }
+      
+      setDeck(currentDeck);
+      
+      const finalRarityPoints = currentDeck.reduce((sum, card) => {
+        return sum + (rarityPoints[card.rarity] || 0);
+      }, 0);
+      
+      alert(
+        `Deck automatically filled!\n` +
+        `Total cards: ${currentDeck.length}/20\n` +
+        `Rarity points: ${finalRarityPoints}/15\n` +
+        `Added ${remainingSlots} random cards.`
+      );
+      
+    } catch (err) {
+      console.error('Failed to fill out deck:', err);
+      alert('Failed to fill out deck. Please try again.');
+    }
+  };
+
   return (
     <div style={styles.container}>
       <div style={styles.content}>
@@ -310,35 +392,30 @@ function DeckBuilder() {
         {/* User Information Section */}
         <div style={styles.section}>
           <h3 style={styles.sectionTitle}>👤 User Information</h3>
-          <div style={styles.inputRow}>
-            <div style={styles.inputRowItem}>
-              <input
-                type="text"
-                placeholder="First Name *"
-                value={firstName}
-                onChange={e => setFirstName(e.target.value)}
-                style={styles.responsiveInputShort}
-              />
-            </div>
-            <div style={styles.inputRowItem}>
-              <input
-                type="text"
-                placeholder="Last Name"
-                value={lastName}
-                onChange={e => setLastName(e.target.value)}
-                style={styles.responsiveInputShort}
-              />
-            </div>
-          </div>
-          <div style={{ marginBottom: '10px' }}>
-            <input
-              type="text"
-              placeholder="Whatnot Username (Display Name) *"
-              value={handle}
-              onChange={e => setHandle(e.target.value)}
-              style={styles.responsiveInput}
-            />
-          </div>
+          <input
+            type="text"
+            placeholder="First Name *"
+            value={firstName}
+            onChange={e => setFirstName(e.target.value)}
+            style={styles.responsiveInput}
+          />
+          <br />
+          <input
+            type="text"
+            placeholder="Last Name"
+            value={lastName}
+            onChange={e => setLastName(e.target.value)}
+            style={styles.responsiveInput}
+          />
+          <br />
+          <input
+            type="text"
+            placeholder="Whatnot Username (Display Name) *"
+            value={handle}
+            onChange={e => setHandle(e.target.value)}
+            style={styles.responsiveInput}
+          />
+          <br />
           <input
             type="email"
             placeholder="Email *"
@@ -505,21 +582,43 @@ function DeckBuilder() {
         </div>
         
         <div style={{ textAlign: 'center', marginTop: '2rem' }}>
-          <button 
-            onClick={() => submitDeck(false)}
-            style={{
-              ...styles.submitButton,
-              backgroundColor: deck.length < 20 ? theme.colors.orange : styles.submitButton.backgroundColor
-            }}
-            onMouseEnter={e => Object.assign(e.target.style, styles.buttonHover)}
-            onMouseLeave={e => {
-              e.target.style.transform = 'none';
-              e.target.style.boxShadow = theme.shadows.button;
-              e.target.style.backgroundColor = deck.length < 20 ? theme.colors.orange : styles.submitButton.backgroundColor;
-            }}
-          >
-            {deck.length < 20 ? '💾 Save Incomplete Deck' : '🚀 Submit Complete Deck'}
-          </button>
+          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <button 
+              onClick={() => submitDeck(false)}
+              style={{
+                ...styles.submitButton,
+                backgroundColor: deck.length < 20 ? theme.colors.orange : styles.submitButton.backgroundColor
+              }}
+              onMouseEnter={e => Object.assign(e.target.style, styles.buttonHover)}
+              onMouseLeave={e => {
+                e.target.style.transform = 'none';
+                e.target.style.boxShadow = theme.shadows.button;
+                e.target.style.backgroundColor = deck.length < 20 ? theme.colors.orange : styles.submitButton.backgroundColor;
+              }}
+            >
+              {deck.length < 20 ? '💾 Save Incomplete Deck' : '🚀 Submit Complete Deck'}
+            </button>
+            
+            {deck.length < 20 && (
+              <button 
+                onClick={fillOutDeck}
+                style={{
+                  ...styles.button,
+                  backgroundColor: theme.colors.green,
+                  color: 'white'
+                }}
+                onMouseEnter={e => Object.assign(e.target.style, styles.buttonHover)}
+                onMouseLeave={e => {
+                  e.target.style.transform = 'none';
+                  e.target.style.boxShadow = theme.shadows.button;
+                  e.target.style.backgroundColor = theme.colors.green;
+                }}
+              >
+                🎲 Fill Out Deck
+              </button>
+            )}
+          </div>
+          
           {deck.length < 20 && (
             <p style={{ color: theme.colors.orange, fontSize: '0.9rem', marginTop: '0.5rem' }}>
               ⚠️ Incomplete decks can be saved but cannot be used to start games
